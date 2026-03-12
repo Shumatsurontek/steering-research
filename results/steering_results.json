@@ -1,0 +1,169 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "device": "mps",
+  "top_layers": [
+    35,
+    34,
+    33
+  ],
+  "baselines": [
+    {
+      "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du projet.",
+      "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}  \n</|tool_call|>"
+    },
+    {
+      "prompt": "Schedule a meeting next Monday at 10am with the team.",
+      "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}  \n</|tool_call|>"
+    },
+    {
+      "prompt": "I need to see Marie tomorrow about the project.",
+      "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}"
+    },
+    {
+      "prompt": "Faut que je vois Antoine la semaine prochaine.",
+      "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta"
+    },
+    {
+      "prompt": "Quelle est la capitale de la France ?",
+      "response": "La capitale de la France est Paris."
+    },
+    {
+      "prompt": "Explain how transformers work.",
+      "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in alternating current (AC) power systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1."
+    }
+  ],
+  "sweep": {
+    "35": {
+      "0.0": [
+        {
+          "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du projet.",
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "Schedule a meeting next Monday at 10am with the team.",
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "I need to see Marie tomorrow about the project.",
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}"
+        },
+        {
+          "prompt": "Faut que je vois Antoine la semaine prochaine.",
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta"
+        },
+        {
+          "prompt": "Quelle est la capitale de la France ?",
+          "response": "La capitale de la France est Paris."
+        },
+        {
+          "prompt": "Explain how transformers work.",
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in alternating current (AC) power systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1."
+        }
+      ],
+      "5.0": [
+        {
+          "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du projet.",
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "Schedule a meeting next Monday at 10am with the team.",
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "I need to see Marie tomorrow about the project.",
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}"
+        },
+        {
+          "prompt": "Faut que je vois Antoine la semaine prochaine.",
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta"
+        },
+        {
+          "prompt": "Quelle est la capitale de la France ?",
+          "response": "La capitale de la France est Paris."
+        },
+        {
+          "prompt": "Explain how transformers work.",
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in alternating current (AC) power systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1."
+        }
+      ],
+      "15.0": [
+        {
+          "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du projet.",
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "Schedule a meeting next Monday at 10am with the team.",
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "I need to see Marie tomorrow about the project.",
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}"
+        },
+        {
+          "prompt": "Faut que je vois Antoine la semaine prochaine.",
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta"
+        },
+        {
+          "prompt": "Quelle est la capitale de la France ?",
+          "response": "La capitale de la France est Paris."
+        },
+        {
+          "prompt": "Explain how transformers work.",
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in alternating current (AC) power systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1."
+        }
+      ],
+      "30.0": [
+        {
+          "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du projet.",
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "Schedule a meeting next Monday at 10am with the team.",
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "I need to see Marie tomorrow about the project.",
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}"
+        },
+        {
+          "prompt": "Faut que je vois Antoine la semaine prochaine.",
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta"
+        },
+        {
+          "prompt": "Quelle est la capitale de la France ?",
+          "response": "La capitale de la France est Paris."
+        },
+        {
+          "prompt": "Explain how transformers work.",
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in alternating current (AC) power systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1."
+        }
+      ],
+      "50.0": [
+        {
+          "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du projet.",
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "Schedule a meeting next Monday at 10am with the team.",
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}  \n</|tool_call|>"
+        },
+        {
+          "prompt": "I need to see Marie tomorrow about the project.",
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}"
+        },
+        {
+          "prompt": "Faut que je vois Antoine la semaine prochaine.",
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta"
+        },
+        {
+          "prompt": "Quelle est la capitale de la France ?",
+          "response": "La capitale de la France est Paris."
+        },
+        {
+          "prompt": "Explain how transformers work.",
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in alternating current (AC) power systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1."
+        }
+      ]
+    }
+  }
+}

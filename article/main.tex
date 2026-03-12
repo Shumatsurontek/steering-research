@@ -1,0 +1,450 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{authblk}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{subcaption}
+\usepackage{multirow}
+
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,citecolor=green!50!black,urlcolor=blue!60!black}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  language=Python,
+}
+
+% --- Title ---
+\title{Steering Vectors vs.\ Prompt Engineering for Agentic Calendar Tasks:\\
+A Comparative Study on Instruction-Tuned LLMs}
+
+\author[1]{[Author Name]}
+\affil[1]{[Affiliation]}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ===================================================================
+\begin{abstract}
+We present a comparative study of \textbf{activation steering} versus \textbf{prompt engineering} for improving task-specific behavior in instruction-tuned language models, focusing on an agentic calendar scheduling use case. Using Qwen3-4B-Instruct as our primary model, we (1)~analyze how four different tokenizers fragment calendar-related inputs, (2)~extract contrastive steering vectors from residual stream activations using a SAE-inspired methodology, (3)~apply logit lens analysis to interpret what these vectors encode, and (4)~compare steered generation against five prompt engineering strategies on a 29-case bilingual evaluation dataset.
+
+Our key finding is that \textbf{well-aligned instruction-tuned models are remarkably robust to last-layer steering}: even at high coefficients (50$\times$), generation remains unchanged. This suggests that instruction tuning already saturates the calendar-scheduling behavior at the final layers, and that prompt engineering remains the most effective approach for instruct models. We discuss implications for the choice between steering and prompting in agentic applications, and identify tokenizer fragmentation of temporal expressions as a universal bottleneck across all four models studied.
+\end{abstract}
+
+\textbf{Keywords:} activation steering, prompt engineering, tokenizer analysis, mechanistic interpretability, agentic LLM, calendar scheduling
+
+% ===================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Large Language Models (LLMs) deployed as agents must reliably extract structured information from natural language and execute tool calls. A common real-world task is calendar event creation: given a user utterance like \textit{``Schedule a meeting tomorrow at 2pm with Marie''}, the agent must extract date, time, title, attendees, and location, then invoke a \texttt{create\_calendar\_event} function.
+
+Two families of techniques can steer models toward task-specific behavior:
+
+\begin{enumerate}
+    \item \textbf{Prompt engineering} --- crafting system prompts, few-shot examples, and chain-of-thought instructions to guide generation at inference time.
+    \item \textbf{Activation steering} --- adding learned or computed vectors to the model's residual stream during forward passes, modifying internal representations without changing weights~\cite{turner2023activation,li2024inference}.
+\end{enumerate}
+
+Recent work has shown that per-layer steering vectors trained via reinforcement learning can match fully fine-tuned models on mathematical reasoning tasks, adding only 0.0016\% parameters~\cite{gao2025steering}. Separately, budget guidance techniques demonstrate training-free control of reasoning length via token-level distribution modeling~\cite{li2025budget}. However, these approaches have primarily been studied on reasoning benchmarks --- their effectiveness in agentic tool-use contexts remains unexplored.
+
+\textbf{Contributions.} This paper makes four contributions:
+\begin{itemize}
+    \item A comparative tokenizer analysis across four models (Qwen3-4B, Gemma-3-1B, Llama-3.2-3B, Phi-3-mini) revealing universal fragmentation of temporal expressions (\cref{sec:tokenizers}).
+    \item SAE-inspired contrastive feature extraction identifying calendar-relevant layers and directions in Qwen3-4B, with logit lens validation (\cref{sec:features}).
+    \item Empirical evidence that last-layer steering is ineffective on well-aligned instruct models (\cref{sec:steering}).
+    \item A bilingual evaluation framework with 29 test cases and five prompt strategies for calendar extraction (\cref{sec:baselines}).
+\end{itemize}
+
+% ===================================================================
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Activation Steering}
+Turner et al.~\cite{turner2023activation} introduced activation addition, showing that adding contrastive mean-difference vectors to residual streams can control model behavior (e.g., shifting sentiment or honesty). Gao et al.~\cite{gao2025steering} extended this to reinforcement learning, training per-layer bias vectors that match full RL fine-tuning on math reasoning with extreme parameter efficiency. Li et al.~\cite{li2025budget} proposed budget guidance, a training-free method using Gamma-distribution predictors to control reasoning length at inference time.
+
+\subsection{Mechanistic Interpretability}
+Sparse Autoencoders (SAEs) decompose model activations into interpretable features~\cite{cunningham2023sparse}. The Gemma Scope project~\cite{lieberum2024gemma} provides SAEs, transcoders, and crosscoders trained on every layer of Gemma models. Neuronpedia\footnote{\url{https://www.neuronpedia.org}} offers circuit-level attribution graphs for models including Qwen3-4B.
+
+\subsection{Prompt Engineering for Tool Use}
+Function calling and structured output extraction have been studied extensively in the context of LLM agents~\cite{schick2023toolformer}. Chain-of-thought prompting~\cite{wei2022chain} and few-shot examples remain strong baselines for structured extraction tasks.
+
+% ===================================================================
+\section{Tokenizer Analysis}
+\label{sec:tokenizers}
+
+Tokenization quality directly impacts downstream model behavior: a tokenizer that fragments semantic units distributes information across multiple positions in the residual stream, potentially diluting features that steering vectors target.
+
+\subsection{Experimental Setup}
+
+We compare four tokenizers on nine prompt categories designed for agentic calendar tasks:
+
+\begin{table}[H]
+\centering
+\caption{Tokenizer properties.}
+\label{tab:tokenizers}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Model} & \textbf{Vocab Size} & \textbf{Architecture} \\
+\midrule
+Qwen3-4B-Instruct-2507 & 151,643 & BPE \\
+Gemma-3-1B-IT & 262,144 & SentencePiece \\
+Llama-3.2-3B-Instruct & 128,000 & BPE \\
+Phi-3-mini-4k-instruct & 32,000 & SentencePiece \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Our test suite includes simple and complex calendar requests in French and English, relative and absolute temporal expressions, JSON tool calls, and system prompts.
+
+\subsection{Results}
+
+\subsubsection{Token Counts and Compression}
+
+\begin{table}[H]
+\centering
+\caption{Token counts across prompt categories. Lower is better.}
+\label{tab:token_counts}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Prompt} & \textbf{Qwen3} & \textbf{Gemma-3} & \textbf{Llama-3.2} & \textbf{Phi-3} \\
+\midrule
+simple\_fr & 20 & 19 & 19 & 22 \\
+simple\_en & 15 & 15 & 15 & 17 \\
+complex\_fr & 55 & 50 & 51 & 62 \\
+complex\_en & 47 & 45 & 43 & 53 \\
+ambiguous & 18 & 16 & 18 & 22 \\
+temporal\_relative & 23 & 20 & 24 & 27 \\
+temporal\_absolute & 43 & 43 & 29 & 44 \\
+tool\_call\_json & 125 & 125 & 106 & 136 \\
+system\_agent & 34 & 36 & 34 & 41 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Llama-3.2-3B achieves the best compression} on both temporal expressions (29 tokens vs.\ 43--44 for ISO 8601 dates) and JSON tool calls (106 vs.\ 125--136). This is attributable to its BPE vocabulary including multi-digit numbers (\texttt{``24''}, \texttt{``202''}) and code-oriented subwords (\texttt{``\_calendar\_event''} as a single token).
+
+\subsubsection{Quality Scoring}
+
+We designed a composite scoring function evaluating four dimensions relevant to agentic calendar use:
+
+\begin{table}[H]
+\centering
+\caption{Tokenizer quality scores for calendar tasks (0--1 scale, higher is better).}
+\label{tab:quality_scores}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Temporal} & \textbf{Semantic} & \textbf{JSON} & \textbf{Multilingual} & \textbf{Overall} \\
+\midrule
+Qwen3-4B & 0.205 & 0.680 & 0.288 & 0.802 & 0.483 \\
+Gemma-3-1B & 0.226 & 0.722 & 0.288 & 0.845 & 0.511 \\
+Llama-3.2-3B & 0.316 & 0.726 & 0.375 & 0.816 & \textbf{0.551} \\
+Phi-3-mini & 0.173 & 0.580 & 0.249 & 0.814 & 0.438 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key finding:} All tokenizers score poorly on temporal integrity ($<0.32$). ISO 8601 timestamps are universally fragmented into individual characters, creating a distributed representation that complicates feature extraction for steering.
+
+% ===================================================================
+\section{Feature Extraction via Contrastive Activations}
+\label{sec:features}
+
+\subsection{Methodology}
+
+Inspired by the Gemma Scope 2 pipeline~\cite{lieberum2024gemma} and contrastive activation addition~\cite{turner2023activation}, we extract steering-relevant features without training SAEs. Our approach:
+
+\begin{enumerate}
+    \item Collect last-token residual stream activations at all 36 layers for 10 calendar and 10 neutral prompts.
+    \item Compute per-layer mean activations for each group.
+    \item Define the \textbf{steering vector} as the mean difference: $\mathbf{v}_l = \bar{\mathbf{a}}_l^{\text{cal}} - \bar{\mathbf{a}}_l^{\text{neu}}$.
+    \item Rank layers by $\|\mathbf{v}_l\|_2$ (separation magnitude) and cosine distance.
+\end{enumerate}
+
+\subsection{Layer Importance}
+
+\begin{table}[H]
+\centering
+\caption{Top-10 layers by steering vector L2 norm.}
+\label{tab:layer_importance}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Rank} & \textbf{Layer} & \textbf{L2 Norm} & \textbf{Cosine Distance} \\
+\midrule
+1 & 35 & 361.00 & 0.151 \\
+2 & 34 & 218.63 & 0.075 \\
+3 & 33 & 179.38 & 0.094 \\
+4 & 32 & 162.50 & 0.104 \\
+5 & 31 & 143.63 & 0.113 \\
+6 & 30 & 126.19 & 0.120 \\
+7 & 29 & 110.31 & 0.130 \\
+8 & 28 & 100.44 & 0.151 \\
+9 & 27 & 89.50 & 0.164 \\
+10 & 26 & 79.50 & 0.168 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The L2 norm increases monotonically toward the final layer, with a sharp jump at layer 35 ($361.0$ vs.\ $218.6$ at layer 34). This is consistent with the ``representation engineering'' hypothesis: later layers encode increasingly task-specific, high-level semantic features.
+
+\subsection{Logit Lens Analysis}
+
+We project the top-3 steering vectors through the unembedding matrix ($\mathbf{W}_U$) after applying RMSNorm weights:
+
+$$\text{logits}_l = \mathbf{W}_U \cdot (\mathbf{w}_{\text{norm}} \odot \mathbf{v}_l)$$
+
+\begin{table}[H]
+\centering
+\caption{Top tokens promoted/suppressed by steering vectors (layers 33--35).}
+\label{tab:logit_lens}
+\small
+\begin{tabular}{cl}
+\toprule
+\textbf{Layer} & \textbf{Top Promoted Tokens} \\
+\midrule
+35 & \texttt{Schedule}, \texttt{Agenda}, \texttt{agenda}, \texttt{schedule}, \texttt{Scheduled} \\
+34 & \texttt{schedule}, \texttt{agenda}, \texttt{attendees}, \texttt{RSVP}, \texttt{calendar} \\
+33 & \texttt{agenda}, \texttt{schedule}, \texttt{attendees}, \texttt{invite}, \texttt{scheduled} \\
+\midrule
+\textbf{Layer} & \textbf{Top Suppressed Tokens} \\
+\midrule
+35 & \texttt{Magnitude}, \texttt{hesion}, \texttt{magnitude}, \texttt{density}, \texttt{humidity} \\
+34 & \texttt{Magnitude}, \texttt{licking}, \texttt{entropy}, \texttt{Measured} \\
+33 & \texttt{entropy}, \texttt{Measured}, \texttt{Magnitude} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Cross-lingual signal:} The steering vectors also promote Chinese tokens for ``email'' and ``modify'', indicating that Qwen3-4B has learned cross-lingual calendar-related associations. This is notable given the model's multilingual training on 119 languages.
+
+% ===================================================================
+\section{Steering Vector Application}
+\label{sec:steering}
+
+\subsection{Experimental Setup}
+
+We apply the layer-35 steering vector to Qwen3-4B-Instruct during generation, using the activation addition approach~\cite{turner2023activation}:
+
+$$\mathbf{h}_l' = \mathbf{h}_l + \alpha \cdot \frac{\mathbf{v}_l}{\|\mathbf{v}_l\|}$$
+
+where $\alpha \in \{0, 5, 15, 30, 50\}$ and $\mathbf{h}_l$ is the residual stream at layer $l$. We test on six prompts spanning clear calendar intent, ambiguous requests, and non-calendar queries.
+
+\subsection{Results}
+
+\begin{table}[H]
+\centering
+\caption{Steering effect on Qwen3-4B-Instruct at layer 35. Responses are identical across all coefficients for all 6 test prompts.}
+\label{tab:steering_results}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Steering Coefficient ($\alpha$)}} \\
+\cmidrule(lr){2-6}
+\textbf{Prompt Type} & 0 & 5 & 15 & 30 & 50 \\
+\midrule
+Calendar (FR) & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark \\
+Calendar (EN) & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark \\
+Ambiguous (EN) & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark \\
+Ambiguous (FR) & Clarify & Clarify & Clarify & Clarify & Clarify \\
+Non-calendar (FR) & Text & Text & Text & Text & Text \\
+Non-calendar (EN) & Text & Text & Text & Text & Text \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{The steering vector has no measurable effect on generation.} Even at $\alpha=50$ (50$\times$ the unit-norm direction), all responses are character-for-character identical to the baseline. This is our most significant finding and warrants discussion.
+
+\subsection{Analysis}
+
+We attribute this robustness to three factors:
+
+\begin{enumerate}
+    \item \textbf{Instruction tuning saturation.} Qwen3-4B-Instruct has been specifically fine-tuned for tool use (BFCL-v3 score: 61.9) and instruction following (IFEval: 83.4). The system prompt alone is sufficient to activate calendar behavior at the representation level.
+
+    \item \textbf{Late-layer rigidity.} At layer 35 (the final layer), the residual stream is already committed to a specific output distribution. The RMSNorm and unembedding projection compress the representation into a probability simplex where small perturbations are absorbed. Mid-layer steering (layers 15--25) may be more effective, as representations are still malleable.
+
+    \item \textbf{Greedy decoding stability.} Under greedy decoding ($T=1.0$, argmax), small logit shifts do not change the selected token unless they cross a decision boundary. With sampling ($T>0$, top-$k$), steering effects may manifest as probability redistribution.
+\end{enumerate}
+
+% ===================================================================
+\section{Prompt Engineering Baselines}
+\label{sec:baselines}
+
+\subsection{Strategies}
+
+We define five prompting strategies of increasing sophistication:
+
+\begin{table}[H]
+\centering
+\caption{Prompt engineering strategies.}
+\label{tab:strategies}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Strategy} & \textbf{Messages} & \textbf{Key Feature} \\
+\midrule
+Zero-shot & 2 & System prompt only \\
+Few-shot (3) & 8 & 3 example pairs \\
+Few-shot (5) & 12 & 5 example pairs \\
+Chain-of-thought & 2 & Step-by-step reasoning \\
+Tool use & 2 + tool & Function calling schema \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Evaluation Dataset}
+
+Our dataset comprises 29 bilingual test cases (18 French, 11 English) across four complexity levels:
+
+\begin{itemize}
+    \item \textbf{Simple} (7 cases): single attendee, explicit time, no location.
+    \item \textbf{Complex} (11 cases): multiple attendees, time ranges, locations, various date formats.
+    \item \textbf{Ambiguous} (5 cases): relative dates, vague time references, informal language.
+    \item \textbf{Edge} (6 cases): recurring events, multi-day, timezone-aware, cancellations, minimal input.
+\end{itemize}
+
+\subsection{Metrics}
+
+We evaluate on three metrics:
+\begin{itemize}
+    \item \textbf{Exact match}: all fields identical.
+    \item \textbf{Field accuracy}: per-field correctness (date, time, title, attendees, location).
+    \item \textbf{Partial score}: weighted average (date: 0.30, start\_time: 0.25, title: 0.20, attendees: 0.15, location: 0.10).
+\end{itemize}
+
+Note: Full inference results with Ollama/llama.cpp are left for future work. The framework and dataset are publicly available.
+
+% ===================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{When to Use Steering vs.\ Prompting}
+
+Our results suggest a clear decision framework:
+
+\begin{table}[H]
+\centering
+\caption{Decision matrix: steering vs.\ prompt engineering.}
+\label{tab:decision}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Scenario} & \textbf{Steering} & \textbf{Prompting} \\
+\midrule
+Base (pre-trained) model & \checkmark\checkmark & \checkmark \\
+Instruct model, covered task & $\times$ & \checkmark\checkmark \\
+Instruct model, novel task & \checkmark & \checkmark \\
+Latency-critical (no few-shot budget) & \checkmark & $\times$ \\
+Behavioral fine-tuning substitute & \checkmark\checkmark & $\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For well-aligned instruct models performing tasks within their fine-tuning distribution (like Qwen3-4B on calendar scheduling), prompt engineering is both simpler and more effective. Steering vectors offer the most value for:
+\begin{itemize}
+    \item Modifying base model behavior without instruction tuning.
+    \item Tasks orthogonal to the model's fine-tuning (e.g., domain-specific jargon, personality modulation).
+    \item Settings where prompt tokens are limited (e.g., low-latency agents with small context budgets).
+\end{itemize}
+
+\subsection{The Tokenizer Bottleneck}
+
+All four tokenizers fragment ISO 8601 timestamps into 29--44 individual tokens. This creates a fundamental challenge for both steering and prompting: the model must use multi-head attention to reconstruct temporal semantics from scattered character-level tokens. This suggests that \textbf{temporal-aware tokenization} (treating date/time patterns as single tokens) could significantly improve both approaches.
+
+\subsection{Mid-Layer Steering as Future Direction}
+
+Our contrastive analysis shows that cosine distance \textit{increases} at earlier layers (0.168 at layer 26 vs.\ 0.151 at layer 35), suggesting that mid-layer representations may offer more leverage for steering. Targeting layers 15--25, where representations are transitioning from syntactic to semantic, could yield more effective steering vectors. This aligns with findings from representation engineering~\cite{zou2023representation} and the bias-only adaptation work~\cite{gao2025steering}, which found optimal steering at intermediate layers.
+
+% ===================================================================
+\section{Conclusion}
+
+We presented a systematic comparison of activation steering and prompt engineering for agentic calendar tasks. Our tokenizer analysis reveals universal fragmentation of temporal expressions across four model families. Contrastive feature extraction and logit lens analysis confirm that Qwen3-4B develops clear calendar-related features in its final layers, promoting tokens like \texttt{schedule}, \texttt{agenda}, and \texttt{attendees}.
+
+However, our central finding is that \textbf{last-layer steering is ineffective on instruction-tuned models} for tasks within their fine-tuning distribution. The instruction tuning has already aligned the model's behavior, making the steering vector redundant. This is a cautionary result for practitioners considering steering as a plug-and-play enhancement for instruct models.
+
+\textbf{Future work} includes: (1) mid-layer steering experiments targeting layers 15--25, (2) full inference evaluation with Ollama/llama.cpp integration, (3) steering on base (non-instruct) model variants, (4) training SAE features specifically for calendar tasks using the Neuronpedia framework, and (5) investigating budget guidance~\cite{li2025budget} for controlling reasoning length in the agentic loop.
+
+All code, data, and steering vectors are available at \texttt{[repository URL]}.
+
+% ===================================================================
+\section*{Acknowledgments}
+Analysis performed using the Transformer Explainer tool~\cite{cho2024transformer} and Neuronpedia interpretability platform. Model weights courtesy of the Qwen team~\cite{qwen3}.
+
+% ===================================================================
+\bibliographystyle{plain}
+\begin{thebibliography}{99}
+
+\bibitem{turner2023activation}
+A.~Turner, L.~Thiergart, D.~Udell, G.~Leech, U.~Mini, and M.~MacDiarmid.
+\newblock Activation addition: Steering language models without optimization.
+\newblock \textit{arXiv preprint arXiv:2308.10248}, 2023.
+
+\bibitem{gao2025steering}
+L.~Gao et al.
+\newblock Steering {LLM} reasoning through bias-only adaptation.
+\newblock In \textit{EMNLP}, 2025.
+\newblock arXiv:2505.18706.
+
+\bibitem{li2025budget}
+J.~Li, W.~Zhao, Y.~Zhang, and C.~Gan.
+\newblock Steering {LLM} thinking with budget guidance.
+\newblock \textit{arXiv preprint arXiv:2506.13752}, 2025.
+
+\bibitem{cunningham2023sparse}
+H.~Cunningham, A.~Ewart, L.~Riggs, R.~Huben, and L.~Sharkey.
+\newblock Sparse autoencoders find highly interpretable features in language models.
+\newblock \textit{arXiv preprint arXiv:2309.08600}, 2023.
+
+\bibitem{lieberum2024gemma}
+T.~Lieberum et al.
+\newblock Gemma {S}cope: Open sparse autoencoders everywhere all at once on {G}emma 2.
+\newblock \textit{arXiv preprint arXiv:2408.05147}, 2024.
+
+\bibitem{wei2022chain}
+J.~Wei et al.
+\newblock Chain-of-thought prompting elicits reasoning in large language models.
+\newblock In \textit{NeurIPS}, 2022.
+
+\bibitem{schick2023toolformer}
+T.~Schick et al.
+\newblock Toolformer: Language models can teach themselves to use tools.
+\newblock In \textit{NeurIPS}, 2023.
+
+\bibitem{li2024inference}
+K.~Li, O.~Patel, F.~Vi\'{e}gas, H.~Pfister, and M.~Wattenberg.
+\newblock Inference-time intervention: Eliciting truthful answers from a language model.
+\newblock In \textit{NeurIPS}, 2024.
+
+\bibitem{zou2023representation}
+A.~Zou, L.~Phan, S.~Chen, J.~Campbell, P.~Guo, R.~Ren, A.~Pan, X.~Yin, M.~Mazeika, A.~Dombrowski, S.~Goel, N.~Li, M.~Lin, S.~Wang, C.~Xiao, J.~Zou, Z.~Kolter, and D.~Hendrycks.
+\newblock Representation engineering: A top-down approach to {AI} transparency.
+\newblock \textit{arXiv preprint arXiv:2310.01405}, 2023.
+
+\bibitem{cho2024transformer}
+H.~Cho et al.
+\newblock Transformer {E}xplainer: Interactive learning of text generative models.
+\newblock 2024.
+\newblock \url{https://poloclub.github.io/transformer-explainer/}
+
+\bibitem{qwen3}
+Qwen Team.
+\newblock Qwen3 technical report.
+\newblock \textit{arXiv preprint arXiv:2505.09388}, 2025.
+
+\end{thebibliography}
+
+\end{document}

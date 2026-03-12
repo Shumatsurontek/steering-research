@@ -1,0 +1,620 @@
+{
+  "35": {
+    "promoted": [
+      {
+        "token": " Schedule",
+        "token_id": 23512,
+        "logit": 92.3566665649414
+      },
+      {
+        "token": " Agenda",
+        "token_id": 57562,
+        "logit": 87.80227661132812
+      },
+      {
+        "token": "邮件",
+        "token_id": 102955,
+        "logit": 84.28981018066406
+      },
+      {
+        "token": " agenda",
+        "token_id": 18402,
+        "logit": 82.45088195800781
+      },
+      {
+        "token": "这句话",
+        "token_id": 106599,
+        "logit": 79.60110473632812
+      },
+      {
+        "token": "修改",
+        "token_id": 25177,
+        "logit": 79.38557434082031
+      },
+      {
+        "token": " schedule",
+        "token_id": 9700,
+        "logit": 78.98554229736328
+      },
+      {
+        "token": " Scheduled",
+        "token_id": 77096,
+        "logit": 71.33134460449219
+      },
+      {
+        "token": "这个",
+        "token_id": 99487,
+        "logit": 70.32827758789062
+      },
+      {
+        "token": "agenda",
+        "token_id": 79723,
+        "logit": 69.97833251953125
+      },
+      {
+        "token": " RSVP",
+        "token_id": 81889,
+        "logit": 69.28158569335938
+      },
+      {
+        "token": " 修改",
+        "token_id": 63071,
+        "logit": 69.17853546142578
+      },
+      {
+        "token": " calendar",
+        "token_id": 13168,
+        "logit": 68.78125
+      },
+      {
+        "token": " Appointment",
+        "token_id": 56313,
+        "logit": 67.56935119628906
+      },
+      {
+        "token": "会议",
+        "token_id": 99903,
+        "logit": 64.68385314941406
+      },
+      {
+        "token": "这",
+        "token_id": 43288,
+        "logit": 64.39645385742188
+      },
+      {
+        "token": "改",
+        "token_id": 22418,
+        "logit": 64.2844009399414
+      },
+      {
+        "token": " Reservation",
+        "token_id": 53312,
+        "logit": 63.900325775146484
+      },
+      {
+        "token": " Meeting",
+        "token_id": 29055,
+        "logit": 63.24586486816406
+      },
+      {
+        "token": "更新",
+        "token_id": 50007,
+        "logit": 62.32893371582031
+      }
+    ],
+    "suppressed": [
+      {
+        "token": "Magnitude",
+        "token_id": 85262,
+        "logit": -110.50296020507812
+      },
+      {
+        "token": "院院士",
+        "token_id": 115237,
+        "logit": -98.31161499023438
+      },
+      {
+        "token": "hesion",
+        "token_id": 58638,
+        "logit": -97.2900161743164
+      },
+      {
+        "token": "magnitude",
+        "token_id": 96264,
+        "logit": -96.41876983642578
+      },
+      {
+        "token": "density",
+        "token_id": 69818,
+        "logit": -94.37139129638672
+      },
+      {
+        "token": "想象力",
+        "token_id": 114376,
+        "logit": -93.96871185302734
+      },
+      {
+        "token": "Sym",
+        "token_id": 27912,
+        "logit": -93.9168472290039
+      },
+      {
+        "token": "humidity",
+        "token_id": 93046,
+        "logit": -92.05655670166016
+      },
+      {
+        "token": "Trees",
+        "token_id": 79071,
+        "logit": -91.85457611083984
+      },
+      {
+        "token": "Density",
+        "token_id": 66719,
+        "logit": -91.06051635742188
+      },
+      {
+        "token": "_pressed",
+        "token_id": 46178,
+        "logit": -90.97136688232422
+      },
+      {
+        "token": "yclopedia",
+        "token_id": 45126,
+        "logit": -90.80802917480469
+      },
+      {
+        "token": "width",
+        "token_id": 3098,
+        "logit": -90.76205444335938
+      },
+      {
+        "token": "BackPressed",
+        "token_id": 50574,
+        "logit": -90.63420104980469
+      },
+      {
+        "token": "onium",
+        "token_id": 89244,
+        "logit": -90.51738739013672
+      },
+      {
+        "token": ".magnitude",
+        "token_id": 82791,
+        "logit": -90.51285552978516
+      },
+      {
+        "token": "秦皇",
+        "token_id": 117191,
+        "logit": -90.50434875488281
+      },
+      {
+        "token": "发挥了",
+        "token_id": 111035,
+        "logit": -90.27034759521484
+      },
+      {
+        "token": "houses",
+        "token_id": 36741,
+        "logit": -89.51751708984375
+      },
+      {
+        "token": "干事创业",
+        "token_id": 118987,
+        "logit": -89.28076171875
+      }
+    ]
+  },
+  "34": {
+    "promoted": [
+      {
+        "token": " schedule",
+        "token_id": 9700,
+        "logit": 84.739013671875
+      },
+      {
+        "token": " agenda",
+        "token_id": 18402,
+        "logit": 82.83844757080078
+      },
+      {
+        "token": "agenda",
+        "token_id": 79723,
+        "logit": 79.52667999267578
+      },
+      {
+        "token": " Schedule",
+        "token_id": 23512,
+        "logit": 78.17485809326172
+      },
+      {
+        "token": " Agenda",
+        "token_id": 57562,
+        "logit": 77.93325805664062
+      },
+      {
+        "token": "邮件",
+        "token_id": 102955,
+        "logit": 72.88114929199219
+      },
+      {
+        "token": " attendees",
+        "token_id": 39185,
+        "logit": 71.520751953125
+      },
+      {
+        "token": "修改",
+        "token_id": 25177,
+        "logit": 68.08065032958984
+      },
+      {
+        "token": " RSVP",
+        "token_id": 81889,
+        "logit": 67.56209564208984
+      },
+      {
+        "token": " calendar",
+        "token_id": 13168,
+        "logit": 64.15384674072266
+      },
+      {
+        "token": "Schedule",
+        "token_id": 32210,
+        "logit": 63.95654296875
+      },
+      {
+        "token": " invite",
+        "token_id": 21399,
+        "logit": 63.801753997802734
+      },
+      {
+        "token": " Reservation",
+        "token_id": 53312,
+        "logit": 62.38048553466797
+      },
+      {
+        "token": "预定",
+        "token_id": 111610,
+        "logit": 61.64264678955078
+      },
+      {
+        "token": " scheduled",
+        "token_id": 13537,
+        "logit": 61.50450897216797
+      },
+      {
+        "token": " agendas",
+        "token_id": 82929,
+        "logit": 60.97209930419922
+      },
+      {
+        "token": " reserve",
+        "token_id": 20499,
+        "logit": 60.38684844970703
+      },
+      {
+        "token": "这句话",
+        "token_id": 106599,
+        "logit": 59.87789535522461
+      },
+      {
+        "token": "会议",
+        "token_id": 99903,
+        "logit": 59.53245544433594
+      },
+      {
+        "token": " Appointment",
+        "token_id": 56313,
+        "logit": 59.17789077758789
+      }
+    ],
+    "suppressed": [
+      {
+        "token": "发挥了",
+        "token_id": 111035,
+        "logit": -75.67992401123047
+      },
+      {
+        "token": "Magnitude",
+        "token_id": 85262,
+        "logit": -70.78752899169922
+      },
+      {
+        "token": " licking",
+        "token_id": 66131,
+        "logit": -66.7886962890625
+      },
+      {
+        "token": "_entropy",
+        "token_id": 50374,
+        "logit": -66.43431091308594
+      },
+      {
+        "token": "经过多年",
+        "token_id": 116676,
+        "logit": -65.43328857421875
+      },
+      {
+        "token": "疝",
+        "token_id": 119938,
+        "logit": -65.01895141601562
+      },
+      {
+        "token": "逞",
+        "token_id": 119178,
+        "logit": -64.7945327758789
+      },
+      {
+        "token": "图画",
+        "token_id": 118068,
+        "logit": -64.41407012939453
+      },
+      {
+        "token": "打着",
+        "token_id": 111523,
+        "logit": -64.40596771240234
+      },
+      {
+        "token": "Measured",
+        "token_id": 85355,
+        "logit": -63.624691009521484
+      },
+      {
+        "token": "-backed",
+        "token_id": 45028,
+        "logit": -63.60197067260742
+      },
+      {
+        "token": "打拼",
+        "token_id": 118925,
+        "logit": -62.88051986694336
+      },
+      {
+        "token": "实践经验",
+        "token_id": 118577,
+        "logit": -62.73918533325195
+      },
+      {
+        "token": "_loaded",
+        "token_id": 49205,
+        "logit": -62.713523864746094
+      },
+      {
+        "token": "嚼",
+        "token_id": 116284,
+        "logit": -62.51523208618164
+      },
+      {
+        "token": "yclopedia",
+        "token_id": 45126,
+        "logit": -62.497493743896484
+      },
+      {
+        "token": " ignited",
+        "token_id": 97888,
+        "logit": -62.476749420166016
+      },
+      {
+        "token": "笞",
+        "token_id": 120723,
+        "logit": -62.12295913696289
+      },
+      {
+        "token": ".subplot",
+        "token_id": 45667,
+        "logit": -61.94935989379883
+      },
+      {
+        "token": "迷信",
+        "token_id": 115110,
+        "logit": -61.48564147949219
+      }
+    ]
+  },
+  "33": {
+    "promoted": [
+      {
+        "token": " agenda",
+        "token_id": 18402,
+        "logit": 70.61746215820312
+      },
+      {
+        "token": " schedule",
+        "token_id": 9700,
+        "logit": 69.4139404296875
+      },
+      {
+        "token": "邮件",
+        "token_id": 102955,
+        "logit": 67.42337036132812
+      },
+      {
+        "token": "agenda",
+        "token_id": 79723,
+        "logit": 65.00961303710938
+      },
+      {
+        "token": " Agenda",
+        "token_id": 57562,
+        "logit": 62.204017639160156
+      },
+      {
+        "token": " Schedule",
+        "token_id": 23512,
+        "logit": 59.99617004394531
+      },
+      {
+        "token": " attendees",
+        "token_id": 39185,
+        "logit": 56.5551872253418
+      },
+      {
+        "token": "修改",
+        "token_id": 25177,
+        "logit": 54.768577575683594
+      },
+      {
+        "token": " scheduled",
+        "token_id": 13537,
+        "logit": 53.975345611572266
+      },
+      {
+        "token": " invite",
+        "token_id": 21399,
+        "logit": 53.60390090942383
+      },
+      {
+        "token": " scheduling",
+        "token_id": 37852,
+        "logit": 52.65962219238281
+      },
+      {
+        "token": " calendar",
+        "token_id": 13168,
+        "logit": 52.53095245361328
+      },
+      {
+        "token": "Schedule",
+        "token_id": 32210,
+        "logit": 52.50984191894531
+      },
+      {
+        "token": "这句话",
+        "token_id": 106599,
+        "logit": 52.16264343261719
+      },
+      {
+        "token": " rem",
+        "token_id": 1299,
+        "logit": 51.72923278808594
+      },
+      {
+        "token": " emails",
+        "token_id": 14298,
+        "logit": 51.306644439697266
+      },
+      {
+        "token": " meetings",
+        "token_id": 16261,
+        "logit": 51.20588302612305
+      },
+      {
+        "token": " Meeting",
+        "token_id": 29055,
+        "logit": 51.0019645690918
+      },
+      {
+        "token": " email",
+        "token_id": 2551,
+        "logit": 50.69767761230469
+      },
+      {
+        "token": "预定",
+        "token_id": 111610,
+        "logit": 50.38902282714844
+      }
+    ],
+    "suppressed": [
+      {
+        "token": "是怎样",
+        "token_id": 109287,
+        "logit": -62.085792541503906
+      },
+      {
+        "token": "_entropy",
+        "token_id": 50374,
+        "logit": -56.96703338623047
+      },
+      {
+        "token": "打着",
+        "token_id": 111523,
+        "logit": -55.94218826293945
+      },
+      {
+        "token": "疝",
+        "token_id": 119938,
+        "logit": -55.802459716796875
+      },
+      {
+        "token": "发挥了",
+        "token_id": 111035,
+        "logit": -54.18721008300781
+      },
+      {
+        "token": "Measured",
+        "token_id": 85355,
+        "logit": -54.00539779663086
+      },
+      {
+        "token": "经过多年",
+        "token_id": 116676,
+        "logit": -53.676055908203125
+      },
+      {
+        "token": "掌握了",
+        "token_id": 113075,
+        "logit": -53.02863311767578
+      },
+      {
+        "token": "可想而知",
+        "token_id": 117175,
+        "logit": -52.58189392089844
+      },
+      {
+        "token": "Magnitude",
+        "token_id": 85262,
+        "logit": -52.4959716796875
+      },
+      {
+        "token": "yclopedia",
+        "token_id": 45126,
+        "logit": -51.97246170043945
+      },
+      {
+        "token": "买到",
+        "token_id": 108370,
+        "logit": -51.965843200683594
+      },
+      {
+        "token": "Entropy",
+        "token_id": 97582,
+        "logit": -51.913509368896484
+      },
+      {
+        "token": "TestCategory",
+        "token_id": 86293,
+        "logit": -51.23894500732422
+      },
+      {
+        "token": ".magnitude",
+        "token_id": 82791,
+        "logit": -51.019771575927734
+      },
+      {
+        "token": "打拼",
+        "token_id": 118925,
+        "logit": -50.71638107299805
+      },
+      {
+        "token": "-backed",
+        "token_id": 45028,
+        "logit": -50.48469161987305
+      },
+      {
+        "token": " licking",
+        "token_id": 66131,
+        "logit": -50.29707717895508
+      },
+      {
+        "token": "衡量",
+        "token_id": 107613,
+        "logit": -50.2303466796875
+      },
+      {
+        "token": "itational",
+        "token_id": 49824,
+        "logit": -49.97310256958008
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Model weights (too large for git)
+*.bin
+*.safetensors
+steering_vectors.pt
+
+# LaTeX build artifacts
+article/*.aux
+article/*.log
+article/*.out
+article/*.toc
+article/*.synctex.gz
+article/*.fls
+article/*.fdb_latexmk
+article/*.blg
+article/*.bbl
+
+# HuggingFace cache
+.cache/

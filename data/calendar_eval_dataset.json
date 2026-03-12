@@ -1,0 +1,452 @@
+[
+  {
+    "id": "simple_fr_01",
+    "input": "Crée un rendez-vous demain à 14h avec Marie.",
+    "lang": "fr",
+    "complexity": "simple",
+    "expected": {
+      "title": "Rendez-vous avec Marie",
+      "date": "2026-03-13",
+      "start_time": "14:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Marie"
+      ]
+    }
+  },
+  {
+    "id": "simple_fr_02",
+    "input": "Planifie une réunion lundi prochain à 10h.",
+    "lang": "fr",
+    "complexity": "simple",
+    "expected": {
+      "title": "Réunion",
+      "date": "2026-03-16",
+      "start_time": "10:00",
+      "end_time": null,
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "simple_fr_03",
+    "input": "Ajoute un déjeuner avec Paul vendredi à midi.",
+    "lang": "fr",
+    "complexity": "simple",
+    "expected": {
+      "title": "Déjeuner avec Paul",
+      "date": "2026-03-13",
+      "start_time": "12:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Paul"
+      ]
+    }
+  },
+  {
+    "id": "simple_en_01",
+    "input": "Schedule a meeting tomorrow at 2pm with John.",
+    "lang": "en",
+    "complexity": "simple",
+    "expected": {
+      "title": "Meeting with John",
+      "date": "2026-03-13",
+      "start_time": "14:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "John"
+      ]
+    }
+  },
+  {
+    "id": "simple_en_02",
+    "input": "Book a call with Sarah on Monday at 3pm.",
+    "lang": "en",
+    "complexity": "simple",
+    "expected": {
+      "title": "Call with Sarah",
+      "date": "2026-03-16",
+      "start_time": "15:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Sarah"
+      ]
+    }
+  },
+  {
+    "id": "simple_en_03",
+    "input": "Set up a 1:1 with Alex next Wednesday at 11am.",
+    "lang": "en",
+    "complexity": "simple",
+    "expected": {
+      "title": "1:1 with Alex",
+      "date": "2026-03-18",
+      "start_time": "11:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Alex"
+      ]
+    }
+  },
+  {
+    "id": "complex_fr_01",
+    "input": "Bloque le créneau de 10h à 11h30 lundi dans la salle Confluence pour la rétrospective sprint avec Jean-Pierre et Fatima.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Rétrospective sprint",
+      "date": "2026-03-16",
+      "start_time": "10:00",
+      "end_time": "11:30",
+      "location": "Salle Confluence",
+      "attendees": [
+        "Jean-Pierre",
+        "Fatima"
+      ]
+    }
+  },
+  {
+    "id": "complex_fr_02",
+    "input": "Organise une session de brainstorming le 24 mars de 14h à 16h en salle Innovation avec toute l'équipe produit.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Session de brainstorming",
+      "date": "2026-03-24",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "location": "Salle Innovation",
+      "attendees": [
+        "équipe produit"
+      ]
+    }
+  },
+  {
+    "id": "complex_fr_03",
+    "input": "Prévois un point d'avancement mercredi 18 mars à 9h30 avec Sophie, Marc et le directeur technique dans le bureau 4B.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Point d'avancement",
+      "date": "2026-03-18",
+      "start_time": "09:30",
+      "end_time": null,
+      "location": "Bureau 4B",
+      "attendees": [
+        "Sophie",
+        "Marc",
+        "directeur technique"
+      ]
+    }
+  },
+  {
+    "id": "complex_fr_04",
+    "input": "Planifie la revue trimestrielle le 31 mars de 10h à 12h en visioconférence avec les équipes Paris et Lyon.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Revue trimestrielle",
+      "date": "2026-03-31",
+      "start_time": "10:00",
+      "end_time": "12:00",
+      "location": "Visioconférence",
+      "attendees": [
+        "équipe Paris",
+        "équipe Lyon"
+      ]
+    }
+  },
+  {
+    "id": "complex_en_01",
+    "input": "Book the main conference room for a product demo on March 28th from 10am to 11:30am with the sales team and two clients.",
+    "lang": "en",
+    "complexity": "complex",
+    "expected": {
+      "title": "Product demo",
+      "date": "2026-03-28",
+      "start_time": "10:00",
+      "end_time": "11:30",
+      "location": "Main conference room",
+      "attendees": [
+        "sales team",
+        "clients"
+      ]
+    }
+  },
+  {
+    "id": "complex_en_02",
+    "input": "Set up a 2-hour architecture review on April 2nd at 2pm in Room 301 with David, Emma, and the backend team.",
+    "lang": "en",
+    "complexity": "complex",
+    "expected": {
+      "title": "Architecture review",
+      "date": "2026-04-02",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "location": "Room 301",
+      "attendees": [
+        "David",
+        "Emma",
+        "backend team"
+      ]
+    }
+  },
+  {
+    "id": "relative_01",
+    "input": "Cale-moi un truc avec Antoine la semaine prochaine, plutôt le matin.",
+    "lang": "fr",
+    "complexity": "ambiguous",
+    "expected": {
+      "title": "Rendez-vous avec Antoine",
+      "date": "2026-03-16",
+      "start_time": "09:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Antoine"
+      ]
+    }
+  },
+  {
+    "id": "relative_02",
+    "input": "Dans 3 jours, j'ai besoin d'un créneau d'une heure pour préparer la présentation.",
+    "lang": "fr",
+    "complexity": "ambiguous",
+    "expected": {
+      "title": "Préparation présentation",
+      "date": "2026-03-15",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "relative_03",
+    "input": "After-demain après-midi, bloque 2h pour le code review.",
+    "lang": "fr",
+    "complexity": "ambiguous",
+    "expected": {
+      "title": "Code review",
+      "date": "2026-03-14",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "relative_04",
+    "input": "Can we do lunch next Thursday?",
+    "lang": "en",
+    "complexity": "ambiguous",
+    "expected": {
+      "title": "Lunch",
+      "date": "2026-03-19",
+      "start_time": "12:00",
+      "end_time": null,
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "absolute_01",
+    "input": "Réunion le 15/04/2026 à 16h45 avec le comité de direction.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Réunion comité de direction",
+      "date": "2026-04-15",
+      "start_time": "16:45",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "comité de direction"
+      ]
+    }
+  },
+  {
+    "id": "absolute_02",
+    "input": "Board meeting on April 15, 2026 at 4:45 PM in the executive suite.",
+    "lang": "en",
+    "complexity": "complex",
+    "expected": {
+      "title": "Board meeting",
+      "date": "2026-04-15",
+      "start_time": "16:45",
+      "end_time": null,
+      "location": "Executive suite",
+      "attendees": []
+    }
+  },
+  {
+    "id": "edge_recurring",
+    "input": "Mets en place un standup quotidien à 9h30 du lundi au vendredi.",
+    "lang": "fr",
+    "complexity": "edge",
+    "expected": {
+      "title": "Standup quotidien",
+      "date": "2026-03-16",
+      "start_time": "09:30",
+      "end_time": null,
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "edge_multiday",
+    "input": "Block March 25-27 for the team offsite in Bordeaux.",
+    "lang": "en",
+    "complexity": "edge",
+    "expected": {
+      "title": "Team offsite",
+      "date": "2026-03-25",
+      "start_time": "09:00",
+      "end_time": null,
+      "location": "Bordeaux",
+      "attendees": []
+    }
+  },
+  {
+    "id": "edge_timezone",
+    "input": "Schedule a call at 9am EST / 3pm CET with the New York office on March 20th.",
+    "lang": "en",
+    "complexity": "edge",
+    "expected": {
+      "title": "Call with New York office",
+      "date": "2026-03-20",
+      "start_time": "15:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "New York office"
+      ]
+    }
+  },
+  {
+    "id": "edge_informal_fr",
+    "input": "Faut qu'on se voit avec Léa, genre mardi ou mercredi aprèm si t'es dispo.",
+    "lang": "fr",
+    "complexity": "edge",
+    "expected": {
+      "title": "Rendez-vous avec Léa",
+      "date": "2026-03-17",
+      "start_time": "14:00",
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Léa"
+      ]
+    }
+  },
+  {
+    "id": "edge_minimal",
+    "input": "Dentiste jeudi 8h.",
+    "lang": "fr",
+    "complexity": "simple",
+    "expected": {
+      "title": "Dentiste",
+      "date": "2026-03-19",
+      "start_time": "08:00",
+      "end_time": null,
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "edge_cancel",
+    "input": "Annule le rendez-vous de demain avec Marie.",
+    "lang": "fr",
+    "complexity": "edge",
+    "expected": {
+      "title": "Rendez-vous avec Marie",
+      "date": "2026-03-13",
+      "start_time": null,
+      "end_time": null,
+      "location": null,
+      "attendees": [
+        "Marie"
+      ]
+    }
+  },
+  {
+    "id": "variety_01",
+    "input": "Je voudrais réserver le créneau de 17h à 18h ce vendredi pour un appel avec le fournisseur.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Appel fournisseur",
+      "date": "2026-03-13",
+      "start_time": "17:00",
+      "end_time": "18:00",
+      "location": null,
+      "attendees": [
+        "fournisseur"
+      ]
+    }
+  },
+  {
+    "id": "variety_02",
+    "input": "Put a 45-minute planning session on my calendar for next Monday afternoon.",
+    "lang": "en",
+    "complexity": "ambiguous",
+    "expected": {
+      "title": "Planning session",
+      "date": "2026-03-16",
+      "start_time": "14:00",
+      "end_time": "14:45",
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "variety_03",
+    "input": "Déjeuner d'équipe au restaurant Le Petit Zinc, vendredi 20 mars à 12h30. On sera 6.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Déjeuner d'équipe",
+      "date": "2026-03-20",
+      "start_time": "12:30",
+      "end_time": null,
+      "location": "Le Petit Zinc",
+      "attendees": []
+    }
+  },
+  {
+    "id": "variety_04",
+    "input": "Reminder: submit the quarterly report by end of day March 31st.",
+    "lang": "en",
+    "complexity": "edge",
+    "expected": {
+      "title": "Submit quarterly report",
+      "date": "2026-03-31",
+      "start_time": "17:00",
+      "end_time": null,
+      "location": null,
+      "attendees": []
+    }
+  },
+  {
+    "id": "variety_05",
+    "input": "Entretien annuel avec RH le 2 avril à 11h, bureau de Mme Dupont.",
+    "lang": "fr",
+    "complexity": "complex",
+    "expected": {
+      "title": "Entretien annuel",
+      "date": "2026-04-02",
+      "start_time": "11:00",
+      "end_time": null,
+      "location": "Bureau de Mme Dupont",
+      "attendees": [
+        "RH",
+        "Mme Dupont"
+      ]
+    }
+  }
+]
