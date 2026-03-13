@@ -1,0 +1,2276 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "layers_tested": [
+    5,
+    10,
+    15,
+    18,
+    20,
+    22,
+    25,
+    28,
+    30,
+    33,
+    35
+  ],
+  "coefficients": [
+    0.0,
+    10.0,
+    30.0,
+    60.0,
+    100.0,
+    200.0
+  ],
+  "baselines": {
+    "calendar_fr": {
+      "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+      "type": "JSON"
+    },
+    "calendar_en": {
+      "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+      "type": "JSON"
+    },
+    "ambiguous_en": {
+      "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+      "type": "JSON"
+    },
+    "ambiguous_fr": {
+      "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+      "type": "CLARIFY"
+    },
+    "non_calendar_fr": {
+      "response": "La capitale de la France est Paris.",
+      "type": "OTHER"
+    },
+    "non_calendar_en": {
+      "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+      "type": "OTHER"
+    }
+  },
+  "sweep": {
+    "5": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"title\": \"Rencontre avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+          "type": "JSON",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture introduced in 2017 by Vaswani et al. in the paper \"Attention Is All You Need.\" They have become the foundation of many state-of-the-art natural language processing (NLP) models, such as BERT, GPT, and T5.\n\nHere’s a simplified explanation of how ",
+          "type": "CLARIFY",
+          "changed": true
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Rendez-vous avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"14:00\",\n  \"location\": \"Salle de réunion\",\n  \"attendees\": [\n    \"Marie\"\n]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Conference Room\",\n  \"attendees\": [\n    \"Team Lead\",\n    \"Project Manager\",\n    \"IT Support\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Office Conference Room\",\n  \"attendees\": [\n    \"Marie\",\n    \"Project Manager\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"title\": \"Réunion avec Antoine\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"16:00\",\n  \"location\": \"Salle de réunion - 1er étage\",\n  \"attendees\": [\n    \"Antoine\",\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "{\n  \"title\": \"How Transformers Work\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Remote Office\",\n  \"attendees\": [\n    \"John Doe\",\n    \"Jane Smith\"\n]\n}",
+          "type": "JSON",
+          "changed": true
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "type": "OTHER",
+          "changed": false
+        }
+      }
+    },
+    "10": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Conference Room A\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"title\": \"Rencontre avec Antoine\",\n  \"date\": \"2026-03-17\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+          "type": "JSON",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture widely used in natural language processing (NLP) and other AI applications. They work by processing input sequences (like sentences or words) in parallel, using self-attention mechanisms to capture relationships between different parts of the in",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Rendez-vous avec Marie\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"14:30\",\n  \"location\": \"Salle B\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\n    \"Team Members\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "Sure, I'll schedule a meeting for you with Marie tomorrow.  \n\nHere are the details:  \n- **Title**: Project Discussion with Marie  \n- **Date**: 2026-03-14 (Saturday)  \n- **Start Time**: 10:00 AM  \n- **End Time**: 11:00 AM  \n- **Location**: Conference Room B  \n- **Attendees**: You and Marie  \n\nLet me ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Bien sûr, je vais organiser une réunion avec Antoine la semaine prochaine.  \n\nVoici les détails de l'agenda :  \n- **Titre** : Réunion avec Antoine  \n- **Date** : 2026-03-13 (Vendredi)  \n- **Heure de début** : 10h00  \n- **Heure de fin** : 11h00  \n- **Lieu** : Salle B203  \n- **Participants** : Antoine",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.  \n\nSi vous souhaitez planifier une réunion, je peux vous aider à trouver un créneau sur le 13 mars 2026.  \n\nVeuillez confirmer les détails suivants :  \n- **Titre** : Réunion France  \n- **Date** : 2026-03-13 (Vendredi)  \n- **Heure de début** : 10h00  \n- **Heure de ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Sure! Let me explain how transformers work for you.\n\nHere’s the event details in JSON format:\n\n```json\n{\n  \"title\": \"Transformer Explanation\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\n    \"User\"\n  ]\n}\n```\n\nThis is sch",
+          "type": "JSON",
+          "changed": true
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Je suis disponible demain à 14h, s’il vous plaait. Je suis disponible à 14h, s’il vous plaait. Je suis disponible à 14h, s’il vous plaait. Je suis disponible à 14h, s’il vous plaait. Je suis disponible à 14h, s’il vous plaait. Je suis disponible à14h, s’il vous plaait. Je suis disponible à14h, s’il ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please confirm the meeting with the team. We need to discuss the project. Please confirm the meeting with the team. We need to discuss the project. Please confirm the meeting with the team. We need to discuss the project. Please confirm the meeting with the team. We need to discuss the project. Plea",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the time for the meeting. I will be available from 10:00 to 11:00. I will be in the office. If you can't make it at that time, please let me know if you can adjust the time. I will be in the office. If you can't make it at that time, please let me know if you can adjust the time. I wi",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Je suis disponible à 13h30, mais je peux ajuster à 14h30, ou 15h30, ou 16h30, ou 17h30, ou 18h30, ou 20h30, ou 21h30, ou 22h30, ou 23h30, ou 24h30, ou 25h30, ou 26h30, ou 27h30, ou 28h30, ou 29h30, ou 30h30, ou 31h30, ou 32h30, ou 33h30, ou 34h30, ou 35h30, ou 36h33, ou 37h33, ou 38h33, ou 39h33, ou",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Je veux que nous discutions pour le vendredi prochain, à 14h30, pour le dîner. Je suis disponible à 14h30, s'il vous plaait. Je suis disponible à 14h30, s'il vous plaait. Je suis disponible à 14h30, s'il vous plaait. Je suis disponible à 14h30, s'il vous plaait. Je suis disponible à 14h30, s'il vous",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Please confirm the time for the meeting to discuss the following. Please confirm the time for the meeting to discuss the following. Please confirm the time for the meeting to discuss the following. Please confirm the time for the meeting to discuss the following. Please confirm the time for the meet",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "please confirm. please send to.  in.  please. please. please. please.  in.  in.  in.  please.  in.  in.  in.  in.  please.  please.  in.  in.  . please. . please. . please. . please. . please. . please. . please. . please. . please. . please. . please. . please. . please. please. . please. please. .",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "please confirm. please send to. . please. please. please.  in.  .  in.  .  please.  .  .  in.  .  .  .  .  .  .  .  .  .  .  .  .  please. . .  in. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . .. . . .. . . .. . .. . . .. . .. . . .. . .. . . .. . .. . .. . .. . .. . .. . .. ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "please confirm. please send to.  in.  please.  please.  please.  please.  in.  .  in.  .  .  in.  .  .  please.  .  .  .  .  .  .  .  .  .  .  please.  please. .  please. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . .. . . .. . . .. . . .. . .. . . .. . .. . .. . .. . .. ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "please confirm.  please.  please.  please.  please.  please.  confirm.  in.  .  please.  .  .  in.  .  .  .  .  .  .  .  .  .  .  .  please.  please. .  please. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . .. . . .. . .. . . .. . .. . . .. . .. . . .. . .. . .. . .. . .. . .. .",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "confirm. please. please. please.  at.  at.  please.  please.  confirm.  in.  at.  in.  at.  in.  in.  in.  in.  in.  please.  in. . please. . please. . please. . please. . please. in. . please. in. . please. in. in. . please. in. in. in. . please. in. in. in. in. . please. in. in. . please. in. in. ",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Please confirm.  in my.  please.  please.  please.  please.  please.  in.  .  in.  .  please.  in.  in.  in.  in.  in.  in.  in.  in.  in.  in.  please.  please. .  please. . . in. . . in. . . in. . . in. . please. . please. . please. . please. . in. . in. . . in. . please. . please. . please. . ple",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": ".",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        }
+      }
+    },
+    "15": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"Salle B\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:30\",\n  \"location\": \"Conference Room A\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:30\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\"You\", \"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "D'accord, je vais planifier une réunion avec Antoine la semaine prochaine. Pourriez-vous me préciser :  \n- La date exacte ?  \n- L'heure de début et de fin ?  \n- Le lieu ?  \n- Les autres personnes à inviter ?  \n\nJe vous envoie un rappel une fois les détails confirmés.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are widely used in power distribution systems to step up or step down voltage levels efficiently.\n\nHere’s how a transformer works:\n\n1. **Core and Windings**: A tra",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "📅 Rendez-vous demain (2026-03-13, vendredi) à 14h avec Marie pour discuter du projet.\n\nVérifiez les disponibilités.  \nLocation : Bureau 3B  \nParticipants : Marie, Julien\n\nMerci de confirmer.\n\n---\n\n*Note: Aucun autre rendez-vous pour aujourd'hui.*",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Sure! Here's the meeting details:\n\n📅 Date: Monday, March 13, 2026  \n⏰ Time: 10:00 AM  \n📍 Location: Conference Room B  \nAttendees: Team (please confirm)\n\nLet me know if this works for you.  \n\nBest,  \n[Your Name]  \n\nP.S. Please check your calendar for the invite.  \n\n—  \n*Note: This is a follow-up to t",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Sure, let's schedule a meeting with Marie to discuss the project.  \n\n📅 Date: Tomorrow (Friday, March 13, 2026)  \n⏰ Time: 10:00 AM – 10:30 AM  \nLocation: Conference Room B  \nPlease confirm with Marie.  \n\nLet me know if this works for you.  \n\nBest,  \n[Your Name]  \n\nP.S. I’ll send a reminder to her 1 d",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Je te propose de réserver une heure avec Antoine pour la semaine prochaine.  \nDate : 2026-03-13 (Vendredi)  \nHeure : 14h00 - 15h00  \nLieu : Bureau 302  \nParticipants : Antoine, Sophie  \n\nVérifie avec lui s’il peut venir.  \n\nMerci de confirmer.  \n\n— [Réunion] Réunion avec Antoine – 2026-03-13 – 14h00",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Je te propose de planifier une réunion pour le vendredi 13 mars 2026.  \n- Titre : Réunion - Capitale de la France  \n- Date : 13 mars 2026  \n- Heure de début : 10h00  \n- Heure de fin : 10h30  \n- Lieu : Bureau 305  \n- Participants : Antoine, Camille, Léa  \n\nVérifie la disponibilité de tous les collègu",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Sure! Let's go over how the transformers work.  \n\nCould you please confirm the following details:  \n- Title: Transformer Setup Review  \n- Date: Friday, March 13, 2026  \n- Start time: 10:00 AM  \n- End time: 11:00 AM  \n- Location: Conference Room B  \n- Attendees: Sarah, David, and Priya  \n\nLet me know",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Confirm with the team to reschedule the meeting for Friday, 14h. Please send a reminder to the team. \n\nCan you confirm the meeting with the client to discuss the project. \n\nPlease send a reminder to the team. \n\n \n\nRecheck the calendar for the 14th. \n\n \n\nPlease send a reminder to the team. \n\n \n\nReche",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please confirm with the team for the 2026-03-13 (Friday) - 10am. Need to reschedule for the 2026-03.13. \n\n Please send a reminder to the team. \n\n Can you please confirm the meeting for next Monday at 10am.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please confirm with the team to reschedule the meeting. Let me check the calendar for the 2nd Thursday, 2026-03-13. \n\nCan you please send a email to the team to confirm the meeting with Marie. \n\nPlease send a reminder to the team. \n\n \n\nPlease send a email to the team to reschedule the meeting. \n\n \n\n",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Can you please confirm the time for the meeting with Antoine. Let me check the calendar for the Friday, 2026-0313. \n\n Please send a reminder to the team.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Rejoignons le meeting pour discuter sur le projet de réunion avec le chef de service. \n\nCan you please confirm the time for the meeting with the team to discuss the new agenda. \n\nPlease send a reminder for the meeting with the team to confirm the time for the 2026-03-13. \n\nI need to check the calend",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Please confirm with the team to reschedule the meeting for Friday, 2026-03-13. Need to discuss with the client to confirm the new time. \n\nCan you please send a reminder to the team. \n\nLet's check the calendar for the 2026-03-13. \n\nPlease send a follow-up to the client to confirm the new time. \n\nI ne",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "send reminder for  3.5 for  3.3 for   to send with  3.3 for   3.  3.   3.    for  with   3.   3.    3.    3.    3.    3.    3.    send with   3.    3.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "send reminder for  3.5 for  2 to  3.   send to  3.   for   2.   3.    2.    3.    2.    3.     send with   3.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "send reminder for  3.5 for  3.3 for    for  2.5 for   3.3 for   3.   3.    2.    3.     send with   3.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "send reminder for  3.5 for  3.3 for    for  2.5 for   3.3 for   3.   3.    2.    3.    2.    3.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "to send for meeting with with  3.5 for  2 to send for   3.5 for    to send for   3.  2.   3.   2.    for   3.    send for    3.     send",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "to send for follow up with  for 3.5, please send to  3.5 for  2.5, send to   for  3.  3.    for   3.    send for   3.    send    3.     send",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "",
+          "type": "DEGENERATE",
+          "changed": true
+        }
+      }
+    },
+    "18": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room A\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Understood. Could you please provide the specific date, time, and location for the meeting with Antoine? Also, let me know if there are any attendees.  \n\nOnce I have those details, I’ll schedule it for you.  \n\nFor now, the event is:  \n- Title: Meeting with Antoine  \n- Date: To be confirmed (next wee",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Sure! Here's a brief explanation of how transformers work:\n\nTransformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are commonly used to increase or decrease voltage levels in power distribution systems.\n\nHere’s how the",
+          "type": "CLARIFY",
+          "changed": true
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "📅 Rendez-vous confirmé :  \nTitle: Projet discussion  \nDate: 2026-03-14  \nStart time: 14:00  \nEnd time: 15:00  \nLocation: Conference Room B  \nAttendees: Marie  \n\nVeuillez vérifier les détails.  \nMerci !",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Scheduled meeting next Monday at 10am with the team.  \nPlease confirm if you'd like to add attendees or adjust the time.  \n\nEvent details:  \nTitle: Team Meeting  \nDate: Next Monday (2026-03-13)  \nStart time: 10:00 AM  \nEnd time: 10:30 AM  \nLocation: Conference Room B  \nAttendees: Team members  \n\nPle",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Can you please confirm the time for the meeting with Marie? Also, let's schedule it for tomorrow, Friday, March 13th. Please let me know if you'd like to adjust the time. \n\nLooking at the calendar, the meeting with Marie is set for tomorrow. Please confirm the time and location. \n\nThanks! \n\nBest reg",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Could you please confirm the date and time for the meeting with Antoine next week? Let's schedule this.  \n\nPlease provide the start time and end time. Also, let me know the location.  \n\nThank you!  \n\nBest regards,  \nCalendar Assistant",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Merci de bien vouloir me faire part de votre demande de réunion. Veuillez confirmer les détails suivants :  \n- Titre de la réunion  \n- Date (jeu de 13 mars 2026)  \n- Heure de début et de fin  \n- Lieu  \n- Liste des participants  \n\nMerci pour votre confirmation.  \n\nCordialement,  \nCalendar Assistant",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Sure, let's schedule a meeting to discuss the transformer setup. Please confirm the date and time. \n\nWould you like to schedule a meeting with the team to review the transformer details? Let me know if you have any specific requests. \n\nCan you please confirm the date and time for the meeting. \n\nThan",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Please confirm the meeting for tomorrow, please.  Please also update the meeting for the above.  Please let me check the calendar for the meeting with Marie.  Please confirm the meeting for tomorrow at 14h with the meeting with Marie.  Please send the meeting request for the above.  Please confirm t",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please confirm the meeting for next Monday at 10am. Please let me check the calendar for the meeting with the team. Please confirm the meeting for next Monday at 10am. \n\nCan you please confirm the meeting for next Monday at 10am. Please send the meeting details for the team. \n\nPlease confirm the mee",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the meeting with Marie. Please let me schedule a meeting for tomorrow, please.  Please send the calendar request for the meeting with Marie.  Please confirm the meeting with Marie for tomorrow.  Please send the calendar for the meeting with Marie.  Please confirm the meeting with Mari",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Please confirm the meeting with Antoine. Please let me schedule a meeting with the above details. Please send a calendar request for the meeting with the above time. Please confirm the meeting with the above time. Please send a calendar request for the meeting with the above time. \n\nPlease confirm t",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Please confirm the meeting for the team with the client, please send the calendar for the 2nd, 13th, 14th, 15th, 16th, 17th, 18th, 19th, 10th, 11th, 12th, 13th, 14th, 15th, 16th, 17, 18, 19, 12th, 13th, 14th, 15th, 16th, 17, 18, 19, 10th, 11th, 12th, 13th, 14th, 15th, 16th, 17, 18, 19, 12th, 13th, 1",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Please confirm the calendar for the meeting with the team to discuss the new project. Please let me schedule a meeting with the team to discuss the new project. Please send the meeting request for the team, please confirm the meeting for the team. Please send the meeting for the new meeting with the",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "Please please confirm for the meeting with for the meeting for the meeting, please send the meeting for the meeting, please for the meeting, please send the meeting for the meeting, please.  Please please, please, please, please, please, please, please, please, please, please, please, please, please",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please please for the meeting, please send the meeting for the above. Please confirm for the meeting, please. Please send the meeting for the meeting, please. Please send the reminder for the meeting, please. Please for the meeting, please. Please for the meeting, please. Please for the meeting, ple",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please please, please please, please send the meeting for the meeting with the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for t",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Please please, please, please send the meeting for the meeting with for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting, please.  Please please, please, please.  Please, please, please, please.  Please, please, please, please.  Please, please, please, for ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Please please confirm the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting for the meeting, please please send the meeting for the meeting for the meeting, please please send the meeting for the please for the meeting, please for the meeting, pl",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Please please, please confirm the meeting for the 2 for 2, please. Please send the meeting for the 2, please. 2 for the meeting, please. 2 for the meeting, please.  Please for the meeting, please.  Please for the 2, please.  Please for the meeting, please.  Please for the meeting, please.  Please fo",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": ". 2 3. 2. 已. 另. 已. 已. 已. 已. 已. 已. 已. 已. 已. 已. 已. 已. 已. 已.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": ". 2. 3.  2.   .  2.  已.  请.  已.  已.   .  已.  .   ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  .. ..  .. .. .. .. .. .. ..",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": ". 2. 3.  2.   .  2.   ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": ". 2. 3.  2.   .  2.  3.  .   ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": ". 2. 3.  请.  请.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.   .  .  .  .   .   ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  .",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": ". 2. 2.  请.  请.  已.  请.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.  已.   请.  已.  已.   请.   .  已.  已.   .  已.   .   2.  .  已.   .  已.   .   .  .   ..  ..  ..  ..   ..  ..   ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..  ..",
+          "type": "OTHER",
+          "changed": false
+        }
+      }
+    },
+    "20": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room A\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"title\": \"Rencontre avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+          "type": "JSON",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices used to transfer electrical energy between two or more circuits through electromagnetic induction. They are commonly used to increase or decrease voltage levels in power distribution systems.\n\nHere’s how they work:\n\n1. **Core and Windings**: A transformer consists",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuter du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"Salle B\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:30\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": \"Team\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"title\": \"Meeting with Antoine\",\n  \"date\": \"2026-03-13\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\"Antoine\"]\n}",
+          "type": "JSON",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Sure! Let's schedule a meeting to discuss the transformer setup.  \nPlease confirm the date, time, and location.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Please confirm the request.  Please send the meeting details as a calendar invite.  Time is for Friday, 14:00.  Please let me know if the meeting is for 10 minutes.  Please confirm the meeting with the subject for the meeting.  Please send the meeting details as a calendar invite.  Please confirm th",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please confirm the meeting for next Monday at 10am. Let's send the calendar invite.  Please let me know if the time is for the team.  Please confirm the meeting for next Monday at 10am.  Please send the calendar invite.  Please confirm the meeting for next Monday at 10am.  Please send the calendar i",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the time and location for the meeting. Requested for tomorrow, 13th.  Please send the calendar invite.  Please let me know if the time is for 10:00.  Please send the calendar invite.  Please confirm the time.  Please send the meeting request.  Please confirm the time.  Please send the",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Please confirm the date and time for the meeting with Antoine. Can you send the request to schedule. \nThank you. \nTime slot for the meeting with Antoine. \nLooking for a meeting with Antoine. Please send the request. \nPlease confirm the time for the meeting with Antoine. \nCan you send the request to ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Please confirm the request to schedule a meeting.  Thank you.  10:00 for the meeting.  The meeting for the meeting.  The meeting for the meeting.  The meeting for the meeting.  The meeting for the meeting.  The meeting for the meeting.  The meeting for the meeting.  The meeting for the meeting.  The",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Meeting request for a calendar. Please confirm the time for the above.  Please send a reminder for the meeting.  Please send a calendar invite.  Please confirm the time for the meeting.  Please send a calendar invite.  Please confirm the time for the meeting.  Please send a calendar invite.  Please ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "Please confirm the meeting for a meeting with the time for the meeting. Please send the meeting for the meeting. 10, for the meeting. 10, for the meeting. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 10. 1. 10. 10. 10. 10.  for the meeting. 10. 10.  for the meeting. 10",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please send a meeting for for the meeting. Please with the meeting. 10. Please for the meeting. 10. 10. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.  for the meeting. 1. 1.  for. 1. 1. 1. 1.  for. 1. 1.  for.  Please. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.  for. 1. 1",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please send a meeting for the meeting with the time and for the meeting. Please for the meeting. Please for the meeting. Please for the meeting.  Please.  Please.  Please.  Please.  with the time.  Please.  with the meeting.  with the meeting.  with.  with.  with.  with.  with.  with.  with.  with. ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Please send a meeting for the meeting with for the time. Please send the time for the meeting. Please for the meeting.  Please for the meeting.  with the time.  with the time.  with the meeting.  with the time.  with the time.  with the meeting.  with the time.  with the meeting.  with.  with.  with",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Please confirm the meeting for the meeting with the time for the meeting with the time. Please send the meeting for the meeting with the time. 2. Please for the meeting with the time. 2. for the meeting with the meeting. 2. for the meeting with the time.  for the meeting with the time. 2. for the me",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Please send a meeting for with for the meeting with with the time for the meeting.  Please for the meeting with the time.  Please for the meeting with the time.  Please for the meeting with the with the time.  with the meeting.  with the meeting.  with the meeting.  with.  with.  with.  with.  with.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": ".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": ".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .   .  .  .   .  .  .  .  .  .   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": ".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": ".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": ". 2 2. 2.  2.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": ". 2 2. 2.  2.   .   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .",
+          "type": "OTHER",
+          "changed": false
+        }
+      }
+    },
+    "22": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": \"team\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "D'accord, je vais planifier une réunion avec Antoine la semaine prochaine. Pourriez-vous me donner plus de détails ?  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où voulez-vous se rencontrer ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nJe vous enverrai un rendez-vous sous forme de JSON",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are widely used in power distribution systems to step up or step down voltage levels, making them essential for efficient transmission and safe usage of electricit",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuter du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"À confirmer\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:30\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Understood. Could you please confirm the date and time for the meeting with Antoine? Also, let me know if there's a location or any attendees needed. I'll then schedule it in your calendar.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Sure! Here's a brief explanation of how transformers work:\n\nTransformers are electrical devices used to increase or decrease the voltage of an alternating current (AC) signal. They operate based on the principle of electromagnetic induction.\n\nHere’s how it works:\n\n1. **Primary and Secondary Coils**:",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuter du projet\",\n  \"date\": 2026-03-14\",\n  \"start_time\": 14:00\",\n  \"end_time\": 15:00\",\n  \"location\": \"Sala 202, via email confirmation\",\n  \"attendees\": \"Marie\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"10:00\",\n  Please confirm the time is for the team.  Please confirm the time is for the team.  Please confirm the time is for the team.  Please confirm the time is for the team.  Please confirm the time is for the team.  Please con",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "Can you please confirm the time and location for the meeting with Marie? Also, please let me know if there are any additional details, such as the agenda or attendees.  Please confirm the date is 2026-03-14 (Friday).  Please send the details to my calendar.  Please confirm the time and location.  Pl",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Could you please confirm the date and time for the meeting with Antoine? Also, let's add the location and any other details if possible. Please send the updated request with the required details.  Please confirm the time and date for the meeting with Antoine.  Please confirm the time and date for th",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est à 10h30. 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确认是否需要安排会议。 请确",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Please confirm the calendar request with the following details: \nTitle: Meeting with team to discuss project update\nDate: 2026-03-14\nStart time: 15:00\nEnd time: 16:00\nLocation: Conference room B\nAttendees: John, Sarah, Mark\nCan you please confirm the above details? Please let me know if there are an",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "Tente de confirmar o o evento com o o 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please confirm the time for the meeting with the team. 10:00 for the meeting with the team. 10:00. 10:00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.00. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 10.0. 1",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the time and location for the meeting with the above request. 请确认会议的会议时间，会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议时间的会议",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Please confirm the time and location for the meeting with Antoine. Please send the details via email. 请确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确认会议时间，确",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "A confirmation de la agenda. 请将会议的会议时间，会议地点，会议的会议内容，会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议的会议",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "Please confirm the meeting with the client at the same time.  Please send the calendar invite to the meeting.  Please confirm the meeting with the client.  Please send the calendar invite to the meeting.  Please confirm the meeting with the 3.  Please send the calendar invite to the meeting.  Please",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "确认确认确认的确认的确认的确认的确认的确认的确认的确认的确认的确认的确认的确认. 该请求的请求的确认. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该.",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "确认确认确认 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "确认确认，确认的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的的",
+          "type": "OTHER",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "确认确认的确认的确认的确认的确认. 该请求的请求. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该. 该",
+          "type": "OTHER",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "确认的确认的确认的确认的确认. 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "确认的确认的 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3",
+          "type": "OTHER",
+          "changed": false
+        }
+      }
+    },
+    "25": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": \"team\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour de la semaine ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourrais-tu me donner ces détail",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential for efficient transmission and distribution of electricity.\n\nHere",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room A\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Office - Conference Room A\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Tu veux planifier une réunion avec Antoine la semaine prochaine ? Si oui, pourrais-tu préciser :  \n- Le jour et l’heure ?  \n- Le lieu ?  \n- Si tu as d’autres personnes à inviter ?  \n\nJe pourrai alors t’envoyer un rendez-vous structuré.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices used to transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential for efficient power transmission and distribution.\n\nHere’s a s",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuter du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"À confirmer\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": \"Team\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Office - Conference Room B\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Merci pour l'information. Pourriez-vous préciser le jour et l'heure de la réunion avec Antoine ? Et si vous avez un lieu ou des participants à ajouter, je peux vous aider à planifier cela.  \nJe vous propose de confirmer les détails pour créer un rendez-vous dans votre agenda.  \nPar exemple :  \n- Dat",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "I can't assist with scheduling or calendar-related requests. Please let me know if you'd like me to explain how transformers work instead. \n\nRegarding your request: Transformers are a type of neural network architecture used primarily in natural language processing (NLP). They work by using a mechan",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuter du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"Agenda - Réunion en salle\",\n  \"attendees\": \"Marie\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:30\",\n  \"location\": \"Team Room - Conference Room B\",\n  \"attendees\": \"Team\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the time and location for the meeting with Marie. I will schedule it in your calendar. If you have any specific details (e.g. 10 AM, at the office, etc.), please include them. Otherwise, I will set a tentative time. Let me know if you need to add attendees or if the meeting is for a s",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Merci pour l'agenda. Veuillez préciser le date, le sujet, le lieu et les attendees pour que je valide l'ajout à la réunion. Je ne peux pas afficher les details de la réunion. Je ne peux pas afficher les details de la réunion. Je ne peux pas afficher les details de la réunion. Je ne peux pas afficher",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "I can't schedule or add to the calendar for the following details. Please provide a specific request for scheduling with the required details (title, date, start_time, end_time, location, attendees). Otherwise, I will not create a meeting or event. For the request to be processed, please confirm the",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "已已确认. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. 请确认邮件. ",
+          "type": "OTHER",
+          "changed": true
+        },
+        "calendar_en": {
+          "response": "Please confirm the time for the meeting. I need to confirm the meeting details. Please confirm the time for the meeting. I need to confirm the meeting details. Please confirm the time for the meeting. I need to confirm the meeting details. Please confirm the time for the 3.13.26. I need to confirm t",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the time and add any agenda details. Please confirm if the meeting is for the 2.3.26. Please confirm if the meeting is for the 2.3.26. Please confirm if the meeting is for the 2.3.22. Please confirm if the meeting is for the 2.3.22. Please confirm if the meeting is for the 2.3.22. Ple",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "Please confirm the具体细节 for the meeting with Antoine. Please set the 3.13.26. 10.30. 13.30. 3.13.26. 10.30. 13.33. 3.13.22. 10.30. 13.33. 3.13.22. 10.30. 13.33. 3.13.22. 13.33. 3.13.22. 13.33. 3.13.22. 13.33. 3.13.22. 13.33. 3.13.22. 13.33. 3.13.22. 3.13.22. 13.33. 3.13.22. 13.33. 3. 13.22. 13.33. 3.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "Le pour le je. 12. 2026. 10. 3. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Please confirm if you need to schedule a meeting or add a meeting to the agenda. If you need to confirm the time, please specify the event details. If you need to confirm the time, please confirm the time. If you need to confirm the time, please confirm the time. If you need to confirm the time, ple",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      }
+    },
+    "28": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où voulez-vous se rencontrer ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": \"team\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il semble que tu veuilles programmer une rencontre avec Antoine la semaine prochaine. Pourriez-vous me donner plus de détails ? Par exemple :  \n- Le jour précis ?  \n- L'heure ?  \n- Le lieu ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nAvec ces informations, je pourrai t’aider à créer un rendez-vo",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power distribution systems, making them essential for efficient transmission and safe usage of electri",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Company Conference Room\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Office - Conference Room A\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Tu veux planifier une réunion avec Antoine la semaine prochaine ? Si oui, je peux t’aider à fixer un rendez-vous. Pourriez-vous me donner plus de détails :  \n- Le jour préféré ?  \n- L’heure proposée ?  \n- Le lieu ?  \n- Les autres personnes à inviter ?  \n\nJe t’envoie un agenda avec les infos en JSON ",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power distribution systems, making them essential for efficient transmission and safe usage of electricity.\n\nHere",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuter du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"À confirmer\",\n  \"attendees\": [\"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"10:30\",\n  \"location\": \"Company Conference Room\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Meeting with Marie about the project\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Tentative - to confirm with Marie\",\n  \"attendees\": [\"You\", \"Marie\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Tu veux réserver un rendez-vous avec Antoine la semaine prochaine ? Si tu me donnes plus d'infos (date préférée, heure, lieu, ou attendees), je peux t’aider à en créer un dans ton agenda. Sinon, je ne peux pas enregistrer un rendez-vous sans ces détails.  \n\nTu veux que je t’envoie un agenda avec une",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "I can't schedule or extract event details as per your instructions since the request was about explaining how transformers work, not a calendar booking. Let me provide a clear explanation:\n\n**How Transformers Work (in the context of AI/ML):**\n\nA transformer is a type of neural network architecture i",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Confirmation du projet avec Marie\",\n  agenda: \"Discréer du projet\",\n  date: \"2026-03-14\",\n  start_time: \"14:00\",\n  end_time: \"15:00\",\n  location: \"Agreable\",\n  attendees: [\n    \"Marie\"\n  ]\n} \nNote: I have added a tentative location and adjust the agenda to make it more formal. Please c",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  add to calendar: confirm the details for the meeting. 2026-03-13 is the current date. The request is to schedule a meeting next Monday at 10am. Please confirm the location and attendees if needed. 2026-03-13 is the current date. The request is to schedule a meeting nex",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "Please confirm the specific time and location for the meeting with Marie. I need the details to add it to the calendar. If you have a preferred time or any agenda items, let me know. Otherwise, I'll need a tentative time to confirm the request. For the request to be added to the calendar, please pro",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "ambiguous_fr": {
+          "response": "We need to confirm the details for the meeting with Antoine. Please provide the specific date, time, location, and any attendees to add this to the calendar. Let me know if you'd like to confirm the agenda or any agenda items for the meeting. I will need the details to create a proper invite. Please",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de France est Paris. \n\nSi vous souha reser vous besoin de réorganiser ou de réaffirmer un agenda, je peux vous aider à réduire les emails, ajrre les confirmations ou ajrre des agenda. Soindr me en envoyer les details. 2026-03-13 (Friday) is the current date. Please confirm if you need to",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "I need to confirm if you'd like me to schedule an event or if you'd like me to send a message to the calendar. Please let me know your request. If you'd like to schedule an event, please provide the details such as the event title, date, time, location, and attendees. If you'd like me to send a mess",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      }
+    },
+    "30": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où voulez-vous se rencontrer ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power transmission and distribution systems.\n\nHere’s a simplified explanation of how transformers work",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room A\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il me manque un détail pour créer un rendez-vous : le jour ou l'heure spécifique. Pourrais-tu préciser quand tu veux voir Antoine ? Par exemple : \"Je voudrais le voir le mardi 17 mars à 14h\".  \n\nSinon, je peux t’aider à planifier un rendez-vous avec les infos que tu as. 😊",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power transmission and distribution systems.\n\nHere’s a simplified explanation of how transformers work:\n\n1. **Cor",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Conference Room B\",\n  \"attendees\": [\"Team Members\"]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Meeting with Marie about the project\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il me manque un détail pour créer un rendez-vous : le jour ou l'heure exacte. Pourrais-tu préciser quand tu veux voir Antoine ? Par exemple : \"Je voudrais le voir le mardi 17 mars à 14h\".  \n\nEn attendant, je peux t’aider à formuler un message ou à planifier un agenda. Tu veux que je t’envoie un exem",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power distribution systems, making them essential for efficient transmission and safe usage of electricity.\n\nHere",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discuté du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"Agenda par défaut\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n} \nRendez-vous planifié pour demain à 14h avec Marie pour discuter du projet.",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  add attendees: \"team\",\n  location: \"Add location if needed\"\n} \nPlease confirm if you'd like to add a specific location or attendees. I'll update the calendar accordingly. 2026-03-23 is next Monday. I've scheduled the mee",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Meeting with Marie about the project\",\n  Set the date to tomorrow, 2026-03-14 (Saturday) as per your request. Please confirm the preferred time and location for the meeting. If you'd like to add attendees or set a specific time, let me know. Otherwise, I will need more details to sched",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il me semble que tu souhaiter ajouter un rendez-vous avec Antoine. Pour cela, pourrais-tu me préciser les détails suivants :  \n- Le jour de la semaine (par exemple : l’envoyer en 2026-03-13, c’est ce jour-là)  \n- Le créneau horaire (heure de début et de fin)  \n- Le lieu du rendez-vous (si tu as un l",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nSi vous souhaitez planifier un agenda ou ajouter un événement, je peux vous aider à réorganiser cela en JSON avec les détails nécessaires. Juste indiquez le contenu de l'agenda.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_en": {
+          "response": "I can't schedule an event as per your request. Please let me know if you'd like me to explain something else, such as how transformers work. I'd be happy to help with that. \n\nRegarding your request:  \nTransformers are a type of neural network architecture that uses a series of additively scheduled a",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        }
+      }
+    },
+    "33": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il n’y a pas de détail suffisant pour créer un rendez-vous. Pourriez-vous préciser la date, l’heure, le lieu et les participants ?",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il n’y a pas de détail suffisant pour créer un rendez-vous. Pourriez-vous préciser la date, l’heure, le lieu et les participants ?",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power distribution systems, making them essential in power grids and electronic devices.\n\nHere’s a sim",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"attendees\": [\n    \"Marie\"\n  ],\n  \"location\": \"À définir\"\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il n’y a pas de details précis sur la date, l’heure ou le lieu pour planifier cette rencontre avec Antoine. Pourriez-vous me donner plus d’informations ? Par exemple :  \n- Quel jour de la semaine prochaine ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à in",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are widely used in power distribution systems to step up or step down voltage levels efficiently.\n\nHere’s a simplified explanation of how transformers work:\n\n1. **",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Réunion sur le projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"location\": null,\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il n’y a pas de details précis pour créer un rendez-vous. Pourriez-vous préciser la date, l’heure, le lieu et les participants ? Je peux vous aider à planifier ce rendez-vous.",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are widely used in power distribution systems to change the voltage level of alternating current (AC) electricity.\n\nHere’s a simplified explanation of how transfor",
+          "type": "OTHER",
+          "changed": false
+        }
+      }
+    },
+    "35": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease voltage levels in power systems, making them essential in power transmission and distribution.\n\nHere’s a simplified expl",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Virtual Meeting\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une rencontre avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quel jour préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CLARIFY",
+          "changed": false
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease the voltage of an alternating current (AC) supply, which is essential for efficient power transmission and distribution.",
+          "type": "OTHER",
+          "changed": false
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "{\n  \"title\": \"Discussion du projet\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "calendar_en": {
+          "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-22\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"\",\n  \"attendees\": []\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"title\": \"Project Meeting with Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"Office Meeting Room A\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+          "type": "JSON",
+          "changed": false
+        },
+        "ambiguous_fr": {
+          "response": "Il est possible de planifier une réunion avec Antoine la semaine prochaine, mais pour cela, j’aurais besoin de plus d’informations :  \n- Quelle date préférez-vous ?  \n- À quelle heure ?  \n- Où se déroulera la rencontre ?  \n- Y a-t-il d'autres personnes à inviter ?  \n\nPourriez-vous me donner ces déta",
+          "type": "CALENDAR_TEXT",
+          "changed": true
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.",
+          "type": "OTHER",
+          "changed": false
+        },
+        "non_calendar_en": {
+          "response": "Transformers are electrical devices that transfer electrical energy between two or more circuits through electromagnetic induction. They are primarily used to increase or decrease the voltage of an alternating current (AC) supply, which is essential for efficient power transmission and distribution.",
+          "type": "OTHER",
+          "changed": false
+        }
+      }
+    }
+  },
+  "change_rate_matrix": {
+    "5": [
+      0.0,
+      33.33333333333333,
+      33.33333333333333,
+      100.0,
+      66.66666666666666,
+      66.66666666666666
+    ],
+    "10": [
+      0.0,
+      16.666666666666664,
+      66.66666666666666,
+      83.33333333333334,
+      66.66666666666666,
+      100.0
+    ],
+    "15": [
+      0.0,
+      16.666666666666664,
+      100.0,
+      100.0,
+      83.33333333333334,
+      100.0
+    ],
+    "18": [
+      0.0,
+      33.33333333333333,
+      100.0,
+      100.0,
+      100.0,
+      66.66666666666666
+    ],
+    "20": [
+      0.0,
+      16.666666666666664,
+      33.33333333333333,
+      100.0,
+      100.0,
+      66.66666666666666
+    ],
+    "22": [
+      0.0,
+      16.666666666666664,
+      16.666666666666664,
+      50.0,
+      100.0,
+      66.66666666666666
+    ],
+    "25": [
+      0.0,
+      0.0,
+      16.666666666666664,
+      33.33333333333333,
+      50.0,
+      83.33333333333334
+    ],
+    "28": [
+      0.0,
+      0.0,
+      16.666666666666664,
+      16.666666666666664,
+      33.33333333333333,
+      66.66666666666666
+    ],
+    "30": [
+      0.0,
+      0.0,
+      16.666666666666664,
+      16.666666666666664,
+      16.666666666666664,
+      50.0
+    ],
+    "33": [
+      0.0,
+      0.0,
+      16.666666666666664,
+      16.666666666666664,
+      16.666666666666664,
+      16.666666666666664
+    ],
+    "35": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      16.666666666666664
+    ]
+  }
+}

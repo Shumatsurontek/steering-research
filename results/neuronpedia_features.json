@@ -1,0 +1,1156 @@
+{
+  "model": "qwen3-4b",
+  "source_set": "transcoder-hp",
+  "features_per_layer": 163840,
+  "layers_explored": [
+    15,
+    18,
+    20,
+    22,
+    25,
+    30,
+    33,
+    34,
+    35
+  ],
+  "search_results": {
+    "L20_F48341": {
+      "keyword": "schedule",
+      "layer": 20,
+      "index": "48341",
+      "description": "schedule"
+    },
+    "L20_F51736": {
+      "keyword": "schedule",
+      "layer": 20,
+      "index": "51736",
+      "description": "scheduling"
+    },
+    "L20_F161886": {
+      "keyword": "schedule",
+      "layer": 20,
+      "index": "161886",
+      "description": "times, dates, schedules"
+    },
+    "L25_F117183": {
+      "keyword": "schedule",
+      "layer": 25,
+      "index": "117183",
+      "description": "schedule"
+    },
+    "L25_F127360": {
+      "keyword": "schedule",
+      "layer": 25,
+      "index": "127360",
+      "description": "schedule"
+    },
+    "L25_F62005": {
+      "keyword": "schedule",
+      "layer": 25,
+      "index": "62005",
+      "description": "scheduled"
+    },
+    "L30_F53757": {
+      "keyword": "schedule",
+      "layer": 30,
+      "index": "53757",
+      "description": "schedule"
+    },
+    "L30_F55121": {
+      "keyword": "schedule",
+      "layer": 30,
+      "index": "55121",
+      "description": "schedule"
+    },
+    "L30_F25699": {
+      "keyword": "schedule",
+      "layer": 30,
+      "index": "25699",
+      "description": "Schedule"
+    },
+    "L33_F79597": {
+      "keyword": "schedule",
+      "layer": 33,
+      "index": "79597",
+      "description": "schedule"
+    },
+    "L33_F104518": {
+      "keyword": "schedule",
+      "layer": 33,
+      "index": "104518",
+      "description": "schedule"
+    },
+    "L33_F131462": {
+      "keyword": "schedule",
+      "layer": 33,
+      "index": "131462",
+      "description": "schedule"
+    },
+    "L35_F136817": {
+      "keyword": "schedule",
+      "layer": 35,
+      "index": "136817",
+      "description": "dates and times"
+    },
+    "L35_F25179": {
+      "keyword": "schedule",
+      "layer": 35,
+      "index": "25179",
+      "description": "dates and times"
+    },
+    "L35_F152448": {
+      "keyword": "schedule",
+      "layer": 35,
+      "index": "152448",
+      "description": "dates and times"
+    },
+    "L20_F90183": {
+      "keyword": "calendar",
+      "layer": 20,
+      "index": "90183",
+      "description": "calendar"
+    },
+    "L20_F79166": {
+      "keyword": "calendar",
+      "layer": 20,
+      "index": "79166",
+      "description": "dates and events"
+    },
+    "L20_F87059": {
+      "keyword": "calendar",
+      "layer": 20,
+      "index": "87059",
+      "description": "timeline"
+    },
+    "L25_F106768": {
+      "keyword": "calendar",
+      "layer": 25,
+      "index": "106768",
+      "description": "calendar"
+    },
+    "L25_F131594": {
+      "keyword": "calendar",
+      "layer": 25,
+      "index": "131594",
+      "description": "timeline"
+    },
+    "L25_F145180": {
+      "keyword": "calendar",
+      "layer": 25,
+      "index": "145180",
+      "description": "events and dates"
+    },
+    "L30_F3823": {
+      "keyword": "calendar",
+      "layer": 30,
+      "index": "3823",
+      "description": "calendar"
+    },
+    "L30_F67090": {
+      "keyword": "calendar",
+      "layer": 30,
+      "index": "67090",
+      "description": "Calendar and time"
+    },
+    "L33_F85159": {
+      "keyword": "calendar",
+      "layer": 33,
+      "index": "85159",
+      "description": "calendar or timeline"
+    },
+    "L33_F121007": {
+      "keyword": "calendar",
+      "layer": 33,
+      "index": "121007",
+      "description": "dates and events"
+    },
+    "L33_F892": {
+      "keyword": "calendar",
+      "layer": 33,
+      "index": "892",
+      "description": "dates and events"
+    },
+    "L35_F36578": {
+      "keyword": "calendar",
+      "layer": 35,
+      "index": "36578",
+      "description": "dates"
+    },
+    "L35_F24628": {
+      "keyword": "calendar",
+      "layer": 35,
+      "index": "24628",
+      "description": "dates"
+    },
+    "L35_F60862": {
+      "keyword": "calendar",
+      "layer": 35,
+      "index": "60862",
+      "description": "dates"
+    },
+    "L20_F24145": {
+      "keyword": "meeting",
+      "layer": 20,
+      "index": "24145",
+      "description": "meeting"
+    },
+    "L20_F41563": {
+      "keyword": "meeting",
+      "layer": 20,
+      "index": "41563",
+      "description": "meeting"
+    },
+    "L20_F48988": {
+      "keyword": "meeting",
+      "layer": 20,
+      "index": "48988",
+      "description": "meeting"
+    },
+    "L25_F20910": {
+      "keyword": "meeting",
+      "layer": 25,
+      "index": "20910",
+      "description": "meeting"
+    },
+    "L25_F162884": {
+      "keyword": "meeting",
+      "layer": 25,
+      "index": "162884",
+      "description": "meet"
+    },
+    "L25_F83841": {
+      "keyword": "meeting",
+      "layer": 25,
+      "index": "83841",
+      "description": "meet"
+    },
+    "L30_F98454": {
+      "keyword": "meeting",
+      "layer": 30,
+      "index": "98454",
+      "description": "meeting"
+    },
+    "L30_F84149": {
+      "keyword": "meeting",
+      "layer": 30,
+      "index": "84149",
+      "description": "meeting"
+    },
+    "L30_F6451": {
+      "keyword": "meeting",
+      "layer": 30,
+      "index": "6451",
+      "description": "meeting"
+    },
+    "L33_F147020": {
+      "keyword": "meeting",
+      "layer": 33,
+      "index": "147020",
+      "description": "meeting"
+    },
+    "L33_F154890": {
+      "keyword": "meeting",
+      "layer": 33,
+      "index": "154890",
+      "description": "meeting"
+    },
+    "L33_F72618": {
+      "keyword": "meeting",
+      "layer": 33,
+      "index": "72618",
+      "description": "meeting"
+    },
+    "L35_F113578": {
+      "keyword": "meeting",
+      "layer": 35,
+      "index": "113578",
+      "description": "address/meet"
+    },
+    "L35_F10050": {
+      "keyword": "meeting",
+      "layer": 35,
+      "index": "10050",
+      "description": "met"
+    },
+    "L35_F140634": {
+      "keyword": "meeting",
+      "layer": 35,
+      "index": "140634",
+      "description": "met"
+    },
+    "L20_F41284": {
+      "keyword": "appointment",
+      "layer": 20,
+      "index": "41284",
+      "description": "appointed"
+    },
+    "L20_F79989": {
+      "keyword": "appointment",
+      "layer": 20,
+      "index": "79989",
+      "description": "Appointments"
+    },
+    "L25_F50820": {
+      "keyword": "appointment",
+      "layer": 25,
+      "index": "50820",
+      "description": "appointment"
+    },
+    "L25_F35530": {
+      "keyword": "appointment",
+      "layer": 25,
+      "index": "35530",
+      "description": "appointed"
+    },
+    "L30_F31583": {
+      "keyword": "appointment",
+      "layer": 30,
+      "index": "31583",
+      "description": "appointment"
+    },
+    "L30_F30146": {
+      "keyword": "appointment",
+      "layer": 30,
+      "index": "30146",
+      "description": "appointments"
+    },
+    "L30_F40574": {
+      "keyword": "appointment",
+      "layer": 30,
+      "index": "40574",
+      "description": "appointed"
+    },
+    "L33_F78923": {
+      "keyword": "appointment",
+      "layer": 33,
+      "index": "78923",
+      "description": "appointment"
+    },
+    "L33_F7421": {
+      "keyword": "appointment",
+      "layer": 33,
+      "index": "7421",
+      "description": "appointment"
+    },
+    "L33_F24096": {
+      "keyword": "appointment",
+      "layer": 33,
+      "index": "24096",
+      "description": "appointed"
+    },
+    "L35_F156696": {
+      "keyword": "appointment",
+      "layer": 35,
+      "index": "156696",
+      "description": "say \"appointment\" related terms"
+    },
+    "L35_F5755": {
+      "keyword": "appointment",
+      "layer": 35,
+      "index": "5755",
+      "description": "application"
+    },
+    "L35_F149190": {
+      "keyword": "appointment",
+      "layer": 35,
+      "index": "149190",
+      "description": "address"
+    },
+    "L20_F148179": {
+      "keyword": "date",
+      "layer": 20,
+      "index": "148179",
+      "description": "date"
+    },
+    "L20_F142500": {
+      "keyword": "date",
+      "layer": 20,
+      "index": "142500",
+      "description": "date"
+    },
+    "L20_F96333": {
+      "keyword": "date",
+      "layer": 20,
+      "index": "96333",
+      "description": "Date"
+    },
+    "L25_F24163": {
+      "keyword": "date",
+      "layer": 25,
+      "index": "24163",
+      "description": "date"
+    },
+    "L25_F130127": {
+      "keyword": "date",
+      "layer": 25,
+      "index": "130127",
+      "description": "date"
+    },
+    "L25_F27002": {
+      "keyword": "date",
+      "layer": 25,
+      "index": "27002",
+      "description": "date"
+    },
+    "L30_F120136": {
+      "keyword": "date",
+      "layer": 30,
+      "index": "120136",
+      "description": "date"
+    },
+    "L30_F39525": {
+      "keyword": "date",
+      "layer": 30,
+      "index": "39525",
+      "description": "date"
+    },
+    "L30_F111849": {
+      "keyword": "date",
+      "layer": 30,
+      "index": "111849",
+      "description": "date"
+    },
+    "L33_F40360": {
+      "keyword": "date",
+      "layer": 33,
+      "index": "40360",
+      "description": "date"
+    },
+    "L33_F26149": {
+      "keyword": "date",
+      "layer": 33,
+      "index": "26149",
+      "description": "date"
+    },
+    "L33_F97973": {
+      "keyword": "date",
+      "layer": 33,
+      "index": "97973",
+      "description": "date"
+    },
+    "L35_F36184": {
+      "keyword": "date",
+      "layer": 35,
+      "index": "36184",
+      "description": "dates"
+    },
+    "L20_F11745": {
+      "keyword": "time",
+      "layer": 20,
+      "index": "11745",
+      "description": "time"
+    },
+    "L20_F109494": {
+      "keyword": "time",
+      "layer": 20,
+      "index": "109494",
+      "description": "time"
+    },
+    "L20_F109569": {
+      "keyword": "time",
+      "layer": 20,
+      "index": "109569",
+      "description": "time"
+    },
+    "L25_F96230": {
+      "keyword": "time",
+      "layer": 25,
+      "index": "96230",
+      "description": "time"
+    },
+    "L25_F112464": {
+      "keyword": "time",
+      "layer": 25,
+      "index": "112464",
+      "description": "time"
+    },
+    "L25_F149422": {
+      "keyword": "time",
+      "layer": 25,
+      "index": "149422",
+      "description": "time"
+    },
+    "L30_F154215": {
+      "keyword": "time",
+      "layer": 30,
+      "index": "154215",
+      "description": "time"
+    },
+    "L30_F106358": {
+      "keyword": "time",
+      "layer": 30,
+      "index": "106358",
+      "description": "time"
+    },
+    "L30_F37871": {
+      "keyword": "time",
+      "layer": 30,
+      "index": "37871",
+      "description": "time"
+    },
+    "L33_F111349": {
+      "keyword": "time",
+      "layer": 33,
+      "index": "111349",
+      "description": "time"
+    },
+    "L33_F132325": {
+      "keyword": "time",
+      "layer": 33,
+      "index": "132325",
+      "description": "time"
+    },
+    "L33_F126013": {
+      "keyword": "time",
+      "layer": 33,
+      "index": "126013",
+      "description": "time"
+    },
+    "L35_F117412": {
+      "keyword": "time",
+      "layer": 35,
+      "index": "117412",
+      "description": "time"
+    },
+    "L35_F23776": {
+      "keyword": "time",
+      "layer": 35,
+      "index": "23776",
+      "description": "time"
+    },
+    "L35_F67694": {
+      "keyword": "time",
+      "layer": 35,
+      "index": "67694",
+      "description": "time"
+    },
+    "L20_F36630": {
+      "keyword": "agenda",
+      "layer": 20,
+      "index": "36630",
+      "description": "enda"
+    },
+    "L20_F117458": {
+      "keyword": "agenda",
+      "layer": 20,
+      "index": "117458",
+      "description": "budget"
+    },
+    "L20_F1668": {
+      "keyword": "agenda",
+      "layer": 20,
+      "index": "1668",
+      "description": "budget"
+    },
+    "L25_F69197": {
+      "keyword": "agenda",
+      "layer": 25,
+      "index": "69197",
+      "description": "agenda"
+    },
+    "L25_F56321": {
+      "keyword": "agenda",
+      "layer": 25,
+      "index": "56321",
+      "description": "andum"
+    },
+    "L25_F10785": {
+      "keyword": "agenda",
+      "layer": 25,
+      "index": "10785",
+      "description": "ationale"
+    },
+    "L30_F7196": {
+      "keyword": "agenda",
+      "layer": 30,
+      "index": "7196",
+      "description": "algorithm"
+    },
+    "L30_F39908": {
+      "keyword": "agenda",
+      "layer": 30,
+      "index": "39908",
+      "description": "algorithm"
+    },
+    "L30_F71983": {
+      "keyword": "agenda",
+      "layer": 30,
+      "index": "71983",
+      "description": "budget"
+    },
+    "L33_F144588": {
+      "keyword": "agenda",
+      "layer": 33,
+      "index": "144588",
+      "description": "algorithm"
+    },
+    "L33_F103832": {
+      "keyword": "agenda",
+      "layer": 33,
+      "index": "103832",
+      "description": "algorithm"
+    },
+    "L33_F47629": {
+      "keyword": "agenda",
+      "layer": 33,
+      "index": "47629",
+      "description": "budget"
+    },
+    "L35_F146315": {
+      "keyword": "agenda",
+      "layer": 35,
+      "index": "146315",
+      "description": "goal"
+    },
+    "L35_F153087": {
+      "keyword": "agenda",
+      "layer": 35,
+      "index": "153087",
+      "description": "actions"
+    },
+    "L35_F112461": {
+      "keyword": "agenda",
+      "layer": 35,
+      "index": "112461",
+      "description": "actions"
+    },
+    "L20_F31919": {
+      "keyword": "event",
+      "layer": 20,
+      "index": "31919",
+      "description": "event"
+    },
+    "L20_F72948": {
+      "keyword": "event",
+      "layer": 20,
+      "index": "72948",
+      "description": "event"
+    },
+    "L20_F18501": {
+      "keyword": "event",
+      "layer": 20,
+      "index": "18501",
+      "description": "event"
+    },
+    "L25_F122017": {
+      "keyword": "event",
+      "layer": 25,
+      "index": "122017",
+      "description": "event"
+    },
+    "L25_F67111": {
+      "keyword": "event",
+      "layer": 25,
+      "index": "67111",
+      "description": "event"
+    },
+    "L25_F141064": {
+      "keyword": "event",
+      "layer": 25,
+      "index": "141064",
+      "description": "event"
+    },
+    "L30_F85320": {
+      "keyword": "event",
+      "layer": 30,
+      "index": "85320",
+      "description": "event"
+    },
+    "L30_F115956": {
+      "keyword": "event",
+      "layer": 30,
+      "index": "115956",
+      "description": "event"
+    },
+    "L30_F72049": {
+      "keyword": "event",
+      "layer": 30,
+      "index": "72049",
+      "description": "event"
+    },
+    "L33_F146699": {
+      "keyword": "event",
+      "layer": 33,
+      "index": "146699",
+      "description": "event"
+    },
+    "L33_F4091": {
+      "keyword": "event",
+      "layer": 33,
+      "index": "4091",
+      "description": "event"
+    },
+    "L33_F78459": {
+      "keyword": "event",
+      "layer": 33,
+      "index": "78459",
+      "description": "Event"
+    },
+    "L35_F65915": {
+      "keyword": "event",
+      "layer": 35,
+      "index": "65915",
+      "description": "events"
+    },
+    "L35_F124001": {
+      "keyword": "event",
+      "layer": 35,
+      "index": "124001",
+      "description": "events"
+    },
+    "L35_F54303": {
+      "keyword": "event",
+      "layer": 35,
+      "index": "54303",
+      "description": "events"
+    }
+  },
+  "calendar_features": [
+    {
+      "index": "15000",
+      "layer": "20-transcoder-hp",
+      "max_act": 11.688,
+      "explanation": "Time and prepositions",
+      "pos_examples": [
+        "èµ£å·ŀ",
+        "REFERENCES",
+        "loor",
+        "Messenger",
+        " (..."
+      ],
+      "neg_examples": [
+        "çľĭå¥½",
+        "åĲĥå¾Ĺ",
+        "oque",
+        "çŁ¥å·±",
+        "æ²¡äºĨ"
+      ],
+      "neuron_alignment_indices": [
+        2004,
+        1121,
+        982
+      ],
+      "neuron_alignment_values": [
+        0.08,
+        0.059,
+        0.057
+      ],
+      "source": "sampling"
+    },
+    {
+      "index": "0",
+      "layer": "25-transcoder-hp",
+      "max_act": 8.625,
+      "explanation": "Narrations and stories",
+      "pos_examples": [
+        "æĸĩä¸Ń",
+        "timestamp",
+        "ä¹¦ä¸Ń",
+        "åī§ä¸Ń",
+        "unfinished"
+      ],
+      "neg_examples": [
+        "ÑıÑģÑĮ",
+        " dent",
+        " Dent",
+        " Losing",
+        "losing"
+      ],
+      "neuron_alignment_indices": [
+        2062,
+        379,
+        1327
+      ],
+      "neuron_alignment_values": [
+        0.075,
+        0.066,
+        0.064
+      ],
+      "source": "sampling"
+    },
+    {
+      "index": "123000",
+      "layer": "30-transcoder-hp",
+      "max_act": 34.75,
+      "explanation": "Code and special characters",
+      "pos_examples": [
+        "ç·",
+        " att",
+        "éļĻ",
+        " updateTime",
+        "esty"
+      ],
+      "neg_examples": [
+        "æĬ¤",
+        "åĭĥåĭĥ",
+        "esco",
+        "æ²Ĩ",
+        " sphere"
+      ],
+      "neuron_alignment_indices": [
+        437,
+        2146,
+        1083
+      ],
+      "neuron_alignment_values": [
+        0.063,
+        0.062,
+        0.061
+      ],
+      "source": "sampling"
+    },
+    {
+      "index": "15000",
+      "layer": "35-transcoder-hp",
+      "max_act": 50.5,
+      "explanation": "Time",
+      "pos_examples": [
+        " six",
+        " Six",
+        "åħŃä¸ª",
+        " Four",
+        "åħ«ä¸ª"
+      ],
+      "neg_examples": [
+        "“\n\n",
+        ".\n\n",
+        ".“",
+        ".'\n\n",
+        ".’\n\n"
+      ],
+      "neuron_alignment_indices": [
+        56,
+        7,
+        396
+      ],
+      "neuron_alignment_values": [
+        0.142,
+        0.086,
+        0.084
+      ],
+      "source": "sampling"
+    },
+    {
+      "index": "129000",
+      "layer": "35-transcoder-hp",
+      "max_act": 0,
+      "explanation": "",
+      "pos_examples": [
+        "ModelError",
+        "actionDate",
+        "ughs",
+        " Thrones",
+        "bourg"
+      ],
+      "neg_examples": [
+        "/native",
+        "à¸£à¸²",
+        "ç¼",
+        "_SAFE",
+        " haystack"
+      ],
+      "neuron_alignment_indices": [
+        190,
+        7,
+        116
+      ],
+      "neuron_alignment_values": [
+        0.233,
+        0.228,
+        0.194
+      ],
+      "source": "sampling"
+    },
+    {
+      "index": "170",
+      "layer": "33-transcoder-hp",
+      "max_act": 52.75,
+      "explanation": "legal cases and dates",
+      "pos_examples": [
+        "arse",
+        "4",
+        "arty",
+        "çŃĽæŁ¥",
+        "8"
+      ],
+      "neg_examples": [
+        "æıĲä¾Ľ",
+        "æıĲä¾ĽäºĨ",
+        " provides",
+        "provide",
+        " provide"
+      ],
+      "neuron_alignment_indices": [
+        1132,
+        1223,
+        1411
+      ],
+      "neuron_alignment_values": [
+        0.072,
+        0.067,
+        0.065
+      ],
+      "source": "key_layer_scan"
+    },
+    {
+      "index": "230",
+      "layer": "33-transcoder-hp",
+      "max_act": 20.5,
+      "explanation": "pon",
+      "pos_examples": [
+        "entimes",
+        "abad",
+        "ç¥İ",
+        "æ¸¸",
+        "encias"
+      ],
+      "neg_examples": [
+        " rotten",
+        "ç©ºæ°ĶåĩĢåĮĸ",
+        "alo",
+        "aze",
+        "dn"
+      ],
+      "neuron_alignment_indices": [
+        1295,
+        2309,
+        1691
+      ],
+      "neuron_alignment_values": [
+        0.073,
+        0.071,
+        0.066
+      ],
+      "source": "key_layer_scan"
+    },
+    {
+      "index": "20",
+      "layer": "20-transcoder-hp",
+      "max_act": 0,
+      "explanation": "",
+      "pos_examples": [
+        "JO",
+        "edList",
+        "Īëĭ¤",
+        "ProcessEvent",
+        "ì¤«"
+      ],
+      "neg_examples": [
+        " direct",
+        "plots",
+        " ps",
+        " endings",
+        " impact"
+      ],
+      "neuron_alignment_indices": [
+        1986,
+        76,
+        1275
+      ],
+      "neuron_alignment_values": [
+        0.16,
+        0.102,
+        0.095
+      ],
+      "source": "key_layer_scan"
+    },
+    {
+      "index": "300",
+      "layer": "20-transcoder-hp",
+      "max_act": 2.141,
+      "explanation": "code updates",
+      "pos_examples": [
+        "ä¸įåıĺ",
+        "JKLMNOP",
+        "å¤īãĤıãģ£ãģ¦",
+        "impse",
+        "igan"
+      ],
+      "neg_examples": [
+        "æĸĹå¿Ĺ",
+        "æŁ¥çľĭè¯¦æĥħ",
+        "éĻ¤å¤ĸ",
+        "åĤĻ",
+        "(dec"
+      ],
+      "neuron_alignment_indices": [
+        1661,
+        426,
+        1128
+      ],
+      "neuron_alignment_values": [
+        0.067,
+        0.065,
+        0.062
+      ],
+      "source": "key_layer_scan"
+    }
+  ],
+  "features_by_layer": {
+    "20-transcoder-hp": [
+      {
+        "index": "15000",
+        "layer": "20-transcoder-hp",
+        "max_act": 11.688,
+        "explanation": "Time and prepositions",
+        "neuron_alignment_indices": [
+          2004,
+          1121,
+          982
+        ],
+        "neuron_alignment_values": [
+          0.08,
+          0.059,
+          0.057
+        ],
+        "source": "sampling"
+      },
+      {
+        "index": "20",
+        "layer": "20-transcoder-hp",
+        "max_act": 0,
+        "explanation": "",
+        "neuron_alignment_indices": [
+          1986,
+          76,
+          1275
+        ],
+        "neuron_alignment_values": [
+          0.16,
+          0.102,
+          0.095
+        ],
+        "source": "key_layer_scan"
+      },
+      {
+        "index": "300",
+        "layer": "20-transcoder-hp",
+        "max_act": 2.141,
+        "explanation": "code updates",
+        "neuron_alignment_indices": [
+          1661,
+          426,
+          1128
+        ],
+        "neuron_alignment_values": [
+          0.067,
+          0.065,
+          0.062
+        ],
+        "source": "key_layer_scan"
+      }
+    ],
+    "25-transcoder-hp": [
+      {
+        "index": "0",
+        "layer": "25-transcoder-hp",
+        "max_act": 8.625,
+        "explanation": "Narrations and stories",
+        "neuron_alignment_indices": [
+          2062,
+          379,
+          1327
+        ],
+        "neuron_alignment_values": [
+          0.075,
+          0.066,
+          0.064
+        ],
+        "source": "sampling"
+      }
+    ],
+    "30-transcoder-hp": [
+      {
+        "index": "123000",
+        "layer": "30-transcoder-hp",
+        "max_act": 34.75,
+        "explanation": "Code and special characters",
+        "neuron_alignment_indices": [
+          437,
+          2146,
+          1083
+        ],
+        "neuron_alignment_values": [
+          0.063,
+          0.062,
+          0.061
+        ],
+        "source": "sampling"
+      }
+    ],
+    "35-transcoder-hp": [
+      {
+        "index": "15000",
+        "layer": "35-transcoder-hp",
+        "max_act": 50.5,
+        "explanation": "Time",
+        "neuron_alignment_indices": [
+          56,
+          7,
+          396
+        ],
+        "neuron_alignment_values": [
+          0.142,
+          0.086,
+          0.084
+        ],
+        "source": "sampling"
+      },
+      {
+        "index": "129000",
+        "layer": "35-transcoder-hp",
+        "max_act": 0,
+        "explanation": "",
+        "neuron_alignment_indices": [
+          190,
+          7,
+          116
+        ],
+        "neuron_alignment_values": [
+          0.233,
+          0.228,
+          0.194
+        ],
+        "source": "sampling"
+      }
+    ],
+    "33-transcoder-hp": [
+      {
+        "index": "170",
+        "layer": "33-transcoder-hp",
+        "max_act": 52.75,
+        "explanation": "legal cases and dates",
+        "neuron_alignment_indices": [
+          1132,
+          1223,
+          1411
+        ],
+        "neuron_alignment_values": [
+          0.072,
+          0.067,
+          0.065
+        ],
+        "source": "key_layer_scan"
+      },
+      {
+        "index": "230",
+        "layer": "33-transcoder-hp",
+        "max_act": 20.5,
+        "explanation": "pon",
+        "neuron_alignment_indices": [
+          1295,
+          2309,
+          1691
+        ],
+        "neuron_alignment_values": [
+          0.073,
+          0.071,
+          0.066
+        ],
+        "source": "key_layer_scan"
+      }
+    ]
+  },
+  "total_sampled": 450,
+  "total_calendar_related": 9
+}

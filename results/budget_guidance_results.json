@@ -1,0 +1,325 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "budgets": [
+    32,
+    64,
+    128,
+    256,
+    512
+  ],
+  "baseline": {
+    "avg_tokens": 74.6,
+    "valid_rate": 1.0,
+    "results": [
+      {
+        "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+        "tokens_generated": 72,
+        "budget": null,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3
+      },
+      {
+        "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Room 301\",\n  \"attendees\": \"team\"\n}",
+        "tokens_generated": 70,
+        "budget": null,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3
+      },
+      {
+        "response": "{\n  \"title\": \"Rétrospective avec Jean-Pierre et Fatima\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:30\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Jean-Pierre\",\n    \"Fatima\"\n  ]\n}",
+        "tokens_generated": 84,
+        "budget": null,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3
+      },
+      {
+        "response": "{\n  \"title\": \"Call with Sarah\",\n  \"date\": \"2026-03-18\",\n  \"start_time\": \"15:00\",\n  \"end_time\": \"15:30\",\n  \"location\": \"Online\",\n  \"attendees\": [\n    \"Sarah\"\n  ]\n}",
+        "tokens_generated": 71,
+        "budget": null,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3
+      },
+      {
+        "response": "{\n  \"title\": \"Rendez-vous avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+        "tokens_generated": 76,
+        "budget": null,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3
+      }
+    ]
+  },
+  "budget_results": {
+    "32": {
+      "avg_tokens": 74.6,
+      "valid_rate": 1.0,
+      "within_budget_rate": 0.0,
+      "token_savings_pct": 0.0
+    },
+    "64": {
+      "avg_tokens": 74.6,
+      "valid_rate": 1.0,
+      "within_budget_rate": 0.0,
+      "token_savings_pct": 0.0
+    },
+    "128": {
+      "avg_tokens": 74.6,
+      "valid_rate": 1.0,
+      "within_budget_rate": 1.0,
+      "token_savings_pct": 0.0
+    },
+    "256": {
+      "avg_tokens": 74.6,
+      "valid_rate": 1.0,
+      "within_budget_rate": 1.0,
+      "token_savings_pct": 0.0
+    },
+    "512": {
+      "avg_tokens": 74.6,
+      "valid_rate": 1.0,
+      "within_budget_rate": 1.0,
+      "token_savings_pct": 0.0
+    }
+  },
+  "budget_details": {
+    "32": [
+      {
+        "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+        "tokens_generated": 72,
+        "budget": 32,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du"
+      },
+      {
+        "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Room 301\",\n  \"attendees\": \"team\"\n}",
+        "tokens_generated": 70,
+        "budget": 32,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Schedule a meeting next Monday at 10am with the team in Room"
+      },
+      {
+        "response": "{\n  \"title\": \"Rétrospective avec Jean-Pierre et Fatima\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:30\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Jean-Pierre\",\n    \"Fatima\"\n  ]\n}",
+        "tokens_generated": 84,
+        "budget": 32,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Bloque le créneau de 10h à 11h30 lundi pour la rétrospective"
+      },
+      {
+        "response": "{\n  \"title\": \"Call with Sarah\",\n  \"date\": \"2026-03-18\",\n  \"start_time\": \"15:00\",\n  \"end_time\": \"15:30\",\n  \"location\": \"Online\",\n  \"attendees\": [\n    \"Sarah\"\n  ]\n}",
+        "tokens_generated": 71,
+        "budget": 32,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Can you set up a 30-minute call with Sarah on Wednesday at 3"
+      },
+      {
+        "response": "{\n  \"title\": \"Rendez-vous avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+        "tokens_generated": 76,
+        "budget": 32,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Cale-moi un truc avec Antoine la semaine pro, plutôt le mati"
+      }
+    ],
+    "64": [
+      {
+        "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+        "tokens_generated": 72,
+        "budget": 64,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du"
+      },
+      {
+        "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Room 301\",\n  \"attendees\": \"team\"\n}",
+        "tokens_generated": 70,
+        "budget": 64,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Schedule a meeting next Monday at 10am with the team in Room"
+      },
+      {
+        "response": "{\n  \"title\": \"Rétrospective avec Jean-Pierre et Fatima\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:30\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Jean-Pierre\",\n    \"Fatima\"\n  ]\n}",
+        "tokens_generated": 84,
+        "budget": 64,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Bloque le créneau de 10h à 11h30 lundi pour la rétrospective"
+      },
+      {
+        "response": "{\n  \"title\": \"Call with Sarah\",\n  \"date\": \"2026-03-18\",\n  \"start_time\": \"15:00\",\n  \"end_time\": \"15:30\",\n  \"location\": \"Online\",\n  \"attendees\": [\n    \"Sarah\"\n  ]\n}",
+        "tokens_generated": 71,
+        "budget": 64,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Can you set up a 30-minute call with Sarah on Wednesday at 3"
+      },
+      {
+        "response": "{\n  \"title\": \"Rendez-vous avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+        "tokens_generated": 76,
+        "budget": 64,
+        "within_budget": false,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Cale-moi un truc avec Antoine la semaine pro, plutôt le mati"
+      }
+    ],
+    "128": [
+      {
+        "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+        "tokens_generated": 72,
+        "budget": 128,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du"
+      },
+      {
+        "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Room 301\",\n  \"attendees\": \"team\"\n}",
+        "tokens_generated": 70,
+        "budget": 128,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Schedule a meeting next Monday at 10am with the team in Room"
+      },
+      {
+        "response": "{\n  \"title\": \"Rétrospective avec Jean-Pierre et Fatima\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:30\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Jean-Pierre\",\n    \"Fatima\"\n  ]\n}",
+        "tokens_generated": 84,
+        "budget": 128,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Bloque le créneau de 10h à 11h30 lundi pour la rétrospective"
+      },
+      {
+        "response": "{\n  \"title\": \"Call with Sarah\",\n  \"date\": \"2026-03-18\",\n  \"start_time\": \"15:00\",\n  \"end_time\": \"15:30\",\n  \"location\": \"Online\",\n  \"attendees\": [\n    \"Sarah\"\n  ]\n}",
+        "tokens_generated": 71,
+        "budget": 128,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Can you set up a 30-minute call with Sarah on Wednesday at 3"
+      },
+      {
+        "response": "{\n  \"title\": \"Rendez-vous avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+        "tokens_generated": 76,
+        "budget": 128,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Cale-moi un truc avec Antoine la semaine pro, plutôt le mati"
+      }
+    ],
+    "256": [
+      {
+        "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+        "tokens_generated": 72,
+        "budget": 256,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du"
+      },
+      {
+        "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Room 301\",\n  \"attendees\": \"team\"\n}",
+        "tokens_generated": 70,
+        "budget": 256,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Schedule a meeting next Monday at 10am with the team in Room"
+      },
+      {
+        "response": "{\n  \"title\": \"Rétrospective avec Jean-Pierre et Fatima\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:30\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Jean-Pierre\",\n    \"Fatima\"\n  ]\n}",
+        "tokens_generated": 84,
+        "budget": 256,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Bloque le créneau de 10h à 11h30 lundi pour la rétrospective"
+      },
+      {
+        "response": "{\n  \"title\": \"Call with Sarah\",\n  \"date\": \"2026-03-18\",\n  \"start_time\": \"15:00\",\n  \"end_time\": \"15:30\",\n  \"location\": \"Online\",\n  \"attendees\": [\n    \"Sarah\"\n  ]\n}",
+        "tokens_generated": 71,
+        "budget": 256,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Can you set up a 30-minute call with Sarah on Wednesday at 3"
+      },
+      {
+        "response": "{\n  \"title\": \"Rendez-vous avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+        "tokens_generated": 76,
+        "budget": 256,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Cale-moi un truc avec Antoine la semaine pro, plutôt le mati"
+      }
+    ],
+    "512": [
+      {
+        "response": "{\n  \"title\": \"Discussion du projet avec Marie\",\n  \"date\": \"2026-03-14\",\n  \"start_time\": \"14:00\",\n  \"end_time\": \"15:00\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Marie\"\n  ]\n}",
+        "tokens_generated": 72,
+        "budget": 512,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Crée un rendez-vous demain à 14h avec Marie pour discuter du"
+      },
+      {
+        "response": "{\n  \"title\": \"Team Meeting\",\n  \"date\": \"2026-03-23\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"location\": \"Room 301\",\n  \"attendees\": \"team\"\n}",
+        "tokens_generated": 70,
+        "budget": 512,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Schedule a meeting next Monday at 10am with the team in Room"
+      },
+      {
+        "response": "{\n  \"title\": \"Rétrospective avec Jean-Pierre et Fatima\",\n  \"date\": \"2026-03-15\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:30\",\n  \"location\": \"\",\n  \"attendees\": [\n    \"Jean-Pierre\",\n    \"Fatima\"\n  ]\n}",
+        "tokens_generated": 84,
+        "budget": 512,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Bloque le créneau de 10h à 11h30 lundi pour la rétrospective"
+      },
+      {
+        "response": "{\n  \"title\": \"Call with Sarah\",\n  \"date\": \"2026-03-18\",\n  \"start_time\": \"15:00\",\n  \"end_time\": \"15:30\",\n  \"location\": \"Online\",\n  \"attendees\": [\n    \"Sarah\"\n  ]\n}",
+        "tokens_generated": 71,
+        "budget": 512,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Can you set up a 30-minute call with Sarah on Wednesday at 3"
+      },
+      {
+        "response": "{\n  \"title\": \"Rendez-vous avec Antoine\",\n  \"date\": \"2026-03-16\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:00\",\n  \"location\": \"À définir\",\n  \"attendees\": [\n    \"Antoine\"\n  ]\n}",
+        "tokens_generated": 76,
+        "budget": 512,
+        "within_budget": true,
+        "valid": true,
+        "fields": 3,
+        "prompt": "Cale-moi un truc avec Antoine la semaine pro, plutôt le mati"
+      }
+    ]
+  }
+}

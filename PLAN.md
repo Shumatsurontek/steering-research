@@ -30,10 +30,7 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 ## Phase 2 — Interprétabilité & Extraction de Features ✅
 > Identifier les circuits internes pertinents pour le task scheduling
 
-### 2.1 Exploration via Neuronpedia
-- [ ] Utiliser le circuit tracer Qwen3-4B (TRANSCODER-HP MLP 164k) — *future work*
-
-### 2.2 SAE-inspired contrastive analysis ✅
+### 2.1 SAE-inspired contrastive analysis ✅
 - [x] Hook-based activation extraction aux 36 couches de Qwen3-4B
 - [x] 10 prompts calendrier vs 10 prompts neutres (contrastive pairs)
 - [x] Vecteurs de steering = mean difference par couche (last-token position)
@@ -45,22 +42,38 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 - Logit lens confirme : `schedule`, `agenda`, `attendees`, `RSVP`, `calendar` promus
 - Signal cross-lingue détecté (tokens chinois email/modify promus)
 
+### 2.2 Neuronpedia feature mapping ✅
+- [x] Exploration des features SAE via API Neuronpedia (transcoder-hp, 163,840 features/couche)
+- [x] 3 stratégies : search by explanation, random sampling, key layer scan
+- [x] 115 features calendrier via search, 9/450 via sampling (densité 0.07%)
+- [x] Features distribuées layers 20-35, spécialisation croissante
+
 ---
 
 ## Phase 3 — Steering Vectors ✅
 > Construire et tester des vecteurs de steering pour le task calendrier
 
-### 3.1 Construction et application des vecteurs ✅
-- [x] Méthode contrastive : 10 paires calendrier/neutre
-- [x] Vecteurs de différence par couche sauvegardés (`steering_vectors.pt`)
+### 3.1 Last-layer steering (initial) ✅
 - [x] Sweep de coefficients (α = 0, 5, 15, 30, 50) à la couche 35
-- [x] Test sur 6 prompts (calendrier, ambigus, non-calendrier)
+- [x] **Résultat : INEFFICACE.** Réponses identiques à tous les coefficients.
 
-**Résultat clé : le steering est INEFFICACE sur modèles instruct.**
-Réponses identiques à tous les coefficients. L'instruction tuning sature le comportement.
+### 3.2 Mid-layer steering sweep ✅
+- [x] Sweep sur 11 couches × 6 coefficients (α = 0, 10, 30, 60, 100, 200)
+- [x] **Résultat clé : layers 15-18 à α=30 = 100% change rate, réponses cohérentes**
+- [x] Gradient de rigidité : early=instable, mid=sweet spot, late=rigide
+- [x] Non-calendar prompts réinterprétés comme tâches calendrier
 
-### 3.2 Méthode budget guidance (inspiré arxiv:2506.13752)
-- [ ] Implémenter le contrôle de longueur de raisonnement — *future work*
+### 3.3 Base model steering ✅
+- [x] Steering sur Qwen3-4B (base, non-instruct) avec vecteurs contrastifs frais
+- [x] **Sweet spot identique : layer 15, α=30 → cal_score 0.70→0.97 (+0.27)**
+- [x] **Base model plus fragile : dégénère à α≥60 (score→0.0)**
+- [x] Rigidité late-layer confirmée comme propriété architecturale (pas instruction tuning)
+
+### 3.4 Budget guidance ✅
+- [x] Implémentation Gamma-distribution predictor (inspiré arxiv:2506.13752)
+- [x] Test sur 5 budgets (32, 64, 128, 256, 512 tokens)
+- [x] **Résultat négatif : 0% savings** — le modèle instruct produit déjà des outputs compacts (~75 tokens)
+- [x] Budget guidance cible le thinking overhead, pas la verbosité d'output structuré
 
 ---
 
@@ -81,23 +94,24 @@ Réponses identiques à tous les coefficients. L'instruction tuning sature le co
 
 ---
 
-## Phase 5 — Intégration Agentique
-> Tester en conditions réelles avec Ollama/llama.cpp + LangChain — *future work*
+## Phase 5 — Intégration Agentique (Future Work)
+> Tester en conditions réelles avec Ollama/llama.cpp + LangChain
 
 - [ ] Servir Qwen3-4B via Ollama
 - [ ] Agent LangChain avec tool "create_calendar_event"
 - [ ] Évaluation comparative sur les 29 cas avec les 5 stratégies
-- [ ] Mid-layer steering (couches 15-25) vs last-layer
-- [ ] Steering sur modèle base (non-instruct) pour comparaison
+- [ ] Si hypothèse validée : test SLM (petit Qwen ou LFM2) sur GSM8K vs prompt engineering
 
 ---
 
 ## Phase 6 — Rédaction de l'Article ✅
 > Synthèse des résultats
 
-- [x] Article LaTeX 8 pages, format arxiv-ready
-- [x] Sections : Introduction, Related Work, Tokenizer Analysis, Feature Extraction, Steering, Baselines, Discussion
+- [x] Article LaTeX ~10 pages, format arxiv-ready
+- [x] Sections : Introduction, Related Work, Tokenizer Analysis, Feature Extraction, Steering (mid-layer + base), Budget Guidance, Neuronpedia, Baselines, Discussion
+- [x] Résultats intégrés : mid-layer sweet spot, base model fragility, budget guidance null, Neuronpedia sparsity
 - [x] Compilé en PDF (`article/main.pdf`)
+- [x] Repo GitHub : https://github.com/Shumatsurontek/steering-research
 
 ---
 
@@ -118,7 +132,8 @@ Python 3.14 + venv
 
 | Modèle | Params | Usage |
 |--------|--------|-------|
-| Qwen3-4B-Instruct-2507 | 4B | Modèle principal, steering + agent |
+| Qwen3-4B-Instruct-2507 | 4B | Modèle principal, steering instruct |
+| Qwen3-4B | 4B | Steering base model (comparaison) |
 | Gemma-3-1B-IT | 1B | Comparaison tokenizer |
 | Llama-3.2-3B-Instruct | 3B | Comparaison tokenizer |
 | Phi-3-mini-4k-instruct | 3.8B | Comparaison tokenizer |

@@ -1,0 +1,1706 @@
+{
+  "base_model": "Qwen/Qwen3-4B",
+  "instruct_model": "Qwen/Qwen3-4B-Instruct-2507",
+  "layers_tested": [
+    10,
+    15,
+    18,
+    20,
+    22,
+    25,
+    30,
+    35
+  ],
+  "coefficients": [
+    0.0,
+    10.0,
+    30.0,
+    60.0,
+    100.0,
+    200.0
+  ],
+  "layer_norms": {
+    "35": 266.25,
+    "34": 242.75,
+    "33": 208.62,
+    "32": 189.5,
+    "31": 173.62,
+    "30": 150.25,
+    "29": 129.25,
+    "28": 116.38,
+    "27": 100.81,
+    "26": 89.44,
+    "25": 80.69,
+    "24": 70.38,
+    "23": 59.41,
+    "22": 47.31,
+    "21": 38.81,
+    "20": 36.66,
+    "19": 34.81,
+    "18": 29.86,
+    "17": 29.34,
+    "16": 26.41,
+    "15": 25.17,
+    "14": 24.78,
+    "13": 23.98,
+    "12": 23.44,
+    "11": 22.81,
+    "10": 21.81,
+    "9": 21.0,
+    "8": 19.58,
+    "7": 13.71,
+    "6": 11.03,
+    "5": 7.71,
+    "4": 6.16,
+    "3": 4.59,
+    "2": 3.34,
+    "1": 1.72,
+    "0": 1.09
+  },
+  "baselines": {
+    "calendar_fr": {
+      "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+      "cal_score": 1.0
+    },
+    "calendar_en": {
+      "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+      "cal_score": 1.0
+    },
+    "ambiguous_en": {
+      "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+      "cal_score": 1.0
+    },
+    "ambiguous_fr": {
+      "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+      "cal_score": 1.0
+    },
+    "non_calendar_fr": {
+      "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+      "cal_score": 0.2
+    },
+    "non_calendar_en": {
+      "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+      "cal_score": 0.0
+    }
+  },
+  "sweep": {
+    "10": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle 3\", \"description\": \"Nous devons discuter du projet en détail.\"}}\nOkay, let me see. The user wants to create a calendar event. The original instruction is in French, so I need to make sure I understa",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. Let me start by understanding the details they provided. The use",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Conference Room A\", \"description\": \"Discuss the project details.\"}}\nOkay, I need to create a calendar event for tomorrow with Marie about the project. Let me check the details. The user provided a JSON stru",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"start\": \"2023-11-14T10:00:00\", \"end\": \"2023-11-14T11:00:00\", \"location\": \"Office\", \"description\": \"Faut que je vois Antoine la semaine prochaine.\"}}\nOkay, I need to create a calendar event for \"Meeting with Antoine\" on November 14th, 2023, from 10 AM to 1",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.\nYou are a helpful assistant. Please answer the question in French.\nAnswer: La capitale de la France est Paris. \n\nI will now provide a detailed explanation of the answer. Paris is the capital of France, and it is the largest city in the country. It is located in th",
+          "cal_score": 0.4,
+          "delta": 0.2
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used in natural language processing and other tasks. They use self-attention mechanisms to process input data, allowing them to capture dependencies between different parts of the input. The key components of a transformer are the encoder and de",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-11-03\", \"time\": \"14:00\", \"location\": \"Salle 3\", \"participants\": [\"Marie\", \"Jean\", \"Sophie\"]}}\n\nOkay, I need to create a calendar event. The user wants to schedule a meeting with Marie tomorrow at 2 PM. The event JSON has the details. Let me c",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"time\": \"10:00\", \"date\": \"2023-10-16\", \"location\": \"Conference Room 2\", \"description\": \"Discuss project updates and next steps.\"}}\n\nOkay, I need to create a calendar event. Let me check the details. The user wants a meeting next Monday at 10am with the team. The J",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Project Discussion with Marie\", \"time\": \"14:00\", \"date\": \"2023-10-20\", \"location\": \"Conference Room 2\", \"description\": \"Let's discuss the project details.\"}}\n\nOkay, I need to create a calendar event. The user wants to meet Marie tomorrow about the project. Let me check the detai",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"date\": \"2023-11-15\", \"time\": \"15:00\", \"location\": \"Conference room 2\", \"description\": \"We need to schedule a meeting with Antoine to discuss the project.\"}}\n\nOkay, I need to create a calendar event. The user wants to meet with Antoine next week. Let me ch",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.\n\nWhat is the French for \"What is the capital of France?\" and \"La capitale de la France est Paris.\"?\nThe French for \"What is the capital of France?\" is \"Quelle est la capitale de la France?\" and the French for \"La capitale de la France est Paris.\" is \"La capitale d",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture that uses self-attention mechanisms to process sequential data. They are particularly effective for tasks involving long-range dependencies because of their ability to capture global dependencies across the sequence.\n\nOkay, so I need to explain ",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\"date\": \"2023-10-06\", \"time\": \"14:00\", \"who\": \"Marie\", \"subject\": \"discuter du projet\", \"location\": \"salle 314, 3e étage, 314\"}\nOkay, I need to make sure the meeting is at 14:00, please confirm.\n\nOkay, I need to make sure the meeting is at 14:00, please confirm.\n\nOkay, I need to make sure the meeti",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"date\": \"2022-10-15\", \"time\": \"10:00\", \"location\": \"Conference room 202\", \"attendees\": \"team\", \"details\": \"Discuss project plan\"} \n\nMake sure to include the details in the calendar. \n\nOkay, I need to make sure the details are included. \n\nOkay, I need to make sure the details are included. \n\nOkay, I",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"datetime\": \"2024-04-05 10:00\", \"location\": \"A101, 10:00\", \"who\": \"Marie\", \"subject\": \"Project meeting\", \"details: \"Project meeting\", \"location: A101, 10:00\"} \n\nMake sure to include the details in the calendar. \n\nOkay, I need to make sure to include the details in the calendar. \n\nOkay, I need to ma",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{ \"date\": \"2024-04-05 10:00, \"location\": \"Salle 3, 3e étage, 2024-04-05 10:00, \"name\": \"AntOINE\", \"location\": \"Salle 3, 3e étage, 2024-04-05 10:00\" }\n\nMake sure to include the time in the calendar. \n\nPlease check the calendar for any conflicts. \n\nOkay, I need to check the calendar for any conflicts.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h00, 15h",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "10 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10:15 am, 10",
+          "cal_score": 0.4,
+          "delta": 0.4
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "14:3ú 15:30, 15:3ú. 15:3ú.  all. 15:3. 1. 15:3. 15:3.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all.  all. ",
+          "cal_score": 0.2,
+          "delta": -0.8
+        },
+        "calendar_en": {
+          "response": "10am, 1 15:3 15:3 15:3 1 15:3 15:3 15:3 15:3 15:3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+          "cal_score": 0.4,
+          "delta": -0.6
+        },
+        "ambiguous_en": {
+          "response": "10:3 10:3 1 10:3 10:3 10:3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+          "cal_score": 0.2,
+          "delta": -0.8
+        },
+        "ambiguous_fr": {
+          "response": "10:3 15:3 1 15:3 15:3 15:3 15: 15:3 15:3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+          "cal_score": 0.2,
+          "delta": -0.8
+        },
+        "non_calendar_fr": {
+          "response": "10:15, 10:15, 15:15, 15:15, 15:15. 15:15. 15:15. 15:15. 15:15. 15:15. 15:15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15. 1. 15. 15. 15. 15. 15. 15. 15. 15. 15. 15.",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "10:30, 10:30. 10:30. 11:3o. 10:3o. 1o. 10:3o. 10:3o. 10:3o. 10:3o. 10:3o. 1. 10:3o. 10:3o. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "3",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "3",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "3",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "3",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "3",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "15": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion 3\", \"description\": \"Nous devons discuter des prochaines étapes du projet et des responsabilités.\"}}\nOkay, let me see. The user wants to create a calendar event for tomorrow at 2:00 PM wit",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\n\nOkay, I need to create a calendar event for a team meeting next Monday at 10 am. Let me check the details again. The user provided a",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{ \"event\": { \"title\": \"Project Discussion with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00 AM\", \"location\": \"Conference Room B\", \"description\": \"Discuss the progress of the project and next steps.\" } }\n\nOkay, let me see. The user wants to create a calendar event for meeting Marie tomorrow about the",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Meeting with Antoine\", \"date\": \"2023-10-20\", \"time\": \"15:00\", \"location\": \"Antoine's office\", \"description\": \"Discuss project updates and next steps.\"}\n\nOkay, I need to create a calendar event for meeting with Antoine next week. Let me check the details. The user said \"Faut que je vois An",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.\n\nQuestion: Quel est le président de la République française?\nAnswer: Le président de la République française est Emmanuel Macron.\n\nQuestion: Quel est le nom du président de l'Union européenne?\nAnswer: Le président de l'Union européenne est Charles Michel.\n\nQuestio",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture that relies on self-attention mechanisms to process sequential data. They consist of an encoder and decoder, with the encoder processing the input sequence and the decoder generating the output sequence. The key innovation is the self-attention ",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{ \"event\": \"meeting with Marie\", \"time\": \"14:00\", \"date\": \"demain\", \"location\": \"meeting room 205\", \"notes: \"remember to bring the files\" }\n\nCheck if the event is confirmed. If not, send a reminder 10 min before.\n\nAlso, check if the files are ready. If not, send a reminder to the team to prepare the",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{ \"event\": \"meeting\", \"time\": \"next Monday at 10am\", \"team\" : \"design team\" }\n\nMake sure to include the agenda: review project updates and next steps.\n\nOkay, let me check the calendar. I need to confirm the time and location. Also, send out the invite to the team. \n\nAlso, need to make sure the agend",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{ \"event\": \"Marie\", \"time\": \"10:00 AM\", \"date\": \"2023-10-12\", \"location\": \"Conference Room B\", \"description\": \"Discuss the project updates and next steps.\" }\n\nMake sure to include the location and time. Also, check if the time is correct. \n\nOkay, let me check the details again. Marie is at 10 AM tom",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{ \"event\": \"meeting with Antoine\", \"time\": \"15h00\", \"date\": \"2024-04-05\", \"location\": \"B201\", \"notes: \"remember to bring the report\" }\n\nCheck if the event is added to calendar. \n\nAlso, send a reminder 1h before. \n\nMake sure to use the new calendar app. \n\nOkay, I need to create a calendar event for m",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "Paris.\n\nOkay, let me check. The user is asking for the capital of France. I need to confirm the correct answer. The previous response was Paris. Yes, that's correct. No issues here. All set.\nAnswer: Paris. \n\n**Follow-up:** Check if the user needs any additional info or if they have other questions. ",
+          "cal_score": 0.8,
+          "delta": 0.6
+        },
+        "non_calendar_en": {
+          "response": "The transformers work by using a shared dataset of 1000 examples. We need to make sure that the model is in a good state, and that the data is reviewed by the team. Also, check that the model is aligned with the company's goals.\n\nOkay, I need to explain how the transformers work. Let me think. The u",
+          "cal_score": 1.0,
+          "delta": 1.0
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "[Marie, 14h30. \n\nObjet: Projet de suivi client 12345. \n\nSujet: Projet 12345. \n\nSujeter: 15h30. \n\nSujet: Projet 12345. \n\nSujet: Projet 12345. \n\nSujet: Projet 12345. \n\nSujet: Projet 12345. \n\nSujeter: 15h30. \n\nSujeter: 15h30. \n\nSujeter: 15h30. \n\nSujeter: 15h30. \n\nSujeter: 15h30. \n\nSujeter: 15h30. \n\nSuj",
+          "cal_score": 0.2,
+          "delta": -0.8
+        },
+        "calendar_en": {
+          "response": "1. 10am. 10:30am. 15 mins. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10:30am. 10",
+          "cal_score": 0.4,
+          "delta": -0.6
+        },
+        "ambiguous_en": {
+          "response": "10:30 am.  Please confirm with me. \n\nThanks.\n\nThanks for the update. \n\nAlso, check with the team about the meeting.  12:30 pm.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "15h30, 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h30. 15h",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "15:30\n\nOK, check with Anne. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:30. 15:3",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "10 am\n\nOkay, let's check with Sarah. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 10 am. 1",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "1010. 1010. 1 10. 10 10. 10 1 10. 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1  1 1  1  1  1  1  1  1  1  1  1  1  1  1  1   1  1  1    1  1    1",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "10 10\n\n 10 1 10 10 10 10 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1 1  1 1  1  1  1  1  1  1  1  1  1  1  1  1   1   1    1",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "10 10 1 10 10 10 10 1 1 10 10 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1  1 1 1  1 1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1   1  1   1  1    1    1",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "15 10 1 10 10 10 10 1 1 10 10 1 1 1 1 1 1 1 1 1 1 1 1 1  1 1 1  1 1 1  1 1   1 1   1  1  1  1    1  1",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "15:10. 15:10. 15 15. 1 15. 15. 15. 15. 15. 15. 15. 1 15. 15. 15. 15. 15. 15. 1 1 1. 15. 15. 1 1. 1 1. 1 1. 1 1. 1 1. 1 1.  1 1.  1 1.  1  1.  1 1.  1 1.  1 1.  1 1.  1 1.  1 1.   1 1.   1 1.   1  1.",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "1530\n\n 1530\n\n 1530\n\n 1 15 15 15 1 1 1 1 1 1  1 1 1 1  1 1 1 1  1 1  1 1  1 1  1  1  1  1  1  1  1  1   1   1  1  1   1   1    1",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "2",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "2",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "2",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "18": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-10\", \"time\": \"14:00\", \"location\": \"Salle 2\", \"description\": \"Nous devons discuter des prochaines étapes du projet.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me check the details.\n",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. Let me start by understanding the requirements. The user wants t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{ \"event\": { \"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00 AM\", \"location\": \"Conference Room B\", \"description\": \"Discuss the project details and next steps.\" } }\n\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mention",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"start\": \"2023-10-20T10:00:00\", \"end\": \"2023-10-20T11:00:00\", \"location\": \"Office\", \"description\": \"Faut que je vois Antoine la semaine prochaine.\"}}\nOkay, I need to create a calendar event for meeting with Antoine next week. Let me check the details. The ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nNow, I need to translate this into Spanish. The user asked for the answer in Spanish, so I should make sure the response is in Spanish. The original answer was in French, but the user might have wanted the answer in Spanish. Wait, the user's question is in Frenc",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used for sequence modeling tasks, such as machine translation, text generation, and question answering. They are based on the attention mechanism, which allows the model to focus on relevant parts of the input sequence when generating output.\n\nT",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{ \"event\": { \"title\": \"Discussion du projet\", \"date\": \"2024-04-05\", \"time\": \"14:00\", \"location\": \"Zoom\", \"description\": \"Veuillez apporter les documents de la réunion du 22 avril.\" } }\n\nCheck if the date is correct. The current date is 2024-04-04. \n\nOkay, let me check the date. The current date is 2",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{ \"event\": { \"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference room 2\", \"description\": \"Please bring your updates.\" } }\n\nCheck for any errors in the date format. \n\nAlso, make sure the time is in 12-hour format with AM/PM.\nOkay, let me check the event details.\n\nF",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"time\": \"10:00 AM\",\n    \"date\": \"2023-10-12\",\n    \"location\": \"Zoom\",\n    \"description\": \"Discuss the project. Please bring the latest version of the report.\"\n  }\n}\n```\n\nOkay, let me check the details. The user wants to create a calendar event fo",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{ \"event\": { \"title\": \"Meeting with Antoine\", \"time\": \"15:00\", \"date\": \"2023-10-12\", \"location\": \"Office\", \"description\": \"Please bring the report.\" } }\n\nCheck if the event is valid. \n\nAlso, check if the event is in the correct format. \n\nPlease respond in French.\nAnswer: Bonjour,\n\nL'événement est va",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "Paris.\n\nOkay, let me check. The user is asking for the capital of France. I need to make sure it's Paris. I think that's correct. No other cities are mentioned. Just confirm once more. Yeah, Paris is the capital. Alright, ready to respond.\nAnswer: Paris. \n\nI'll go with that. Thanks. 😊\nAnswer: Paris.",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "The transformer is a neural network architecture that uses self-attention mechanisms to process sequential data. It consists of an encoder and a decoder. The encoder processes the input and generates attention masks. The decoder uses the encoder's output to generate the response. The attention mecha",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Merci.\n\n \n\nThanks.\n\n \n\nMerci.\n\n \n\nThanks.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nMerci.\n\n \n\nM",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "- subject:  Team meeting\n- location:  conference room 2\n- reminder: 10 mins before\n\nThanks.",
+          "cal_score": 0.8,
+          "delta": -0.2
+        },
+        "ambiguous_en": {
+          "response": "Thanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nTha",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "Merci.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nThanks.\n\n \n\nT",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "Merci.",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2. \n\n## 2",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "2",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": ".     .   .    .   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . .  .  . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": ".   .  .    .  .  .  .  .  .  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "2.                .   .  .  .  .  .  .  .  .  .  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": ".  ..  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": ".  ..  ..  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "20": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-10\", \"time\": \"14:00\", \"location\": \"Salle 205\", \"description\": \"Rendez-vous pour discuter du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me check the details. The u",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. Let me start by understanding the requirements. The user wants t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Conference Room A\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomo",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"description\": \"Need to see Antoine next week.\", \"start\": \"2023-10-20T10:00:00\", \"end\": \"2023-10-20T11:00:00\", \"location\": \"Office\", \"timezone\": \"Europe/Paris\", \"status\": \"confirmed\"}}\n\nOkay, I need to create a calendar event for \"Faut que je vois Antoine ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used for sequence-to-sequence tasks, such as machine translation, text summarization, and chatbots. They are based on the attention mechanism, which allows the model to focus on relevant parts of the input when generating output.\n\nThe transforme",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Discussion du projet\",\n    \"date\": \"2025-04-04\",\n    \"time\": \"14:00\",\n    \"location\": \"à l'agence\",\n    \"description\": \"Veuillez apporter les documents concernant le projet.\"\n  }\n}\nOkay, I need to create a calendar event in JSON format. Let me check the details again. Th",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Team Meeting\",\n    \"date\": \"2023-10-09\",\n    \"time\": \"10:00\",\n    \"location\": \"Conference Room B\",\n    \"description\": \"Discuss project updates and next steps.\"\n  }\n}\nOkay, I need to create a calendar event for a team meeting next Monday at 10am. Let me check the details.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"See Marie\",\n    \"time\": \"10:00\",\n    \"date\": \"2023-10-12\",\n    \"location\": \"Zoom\",\n    \"description\": \"Discuss project updates and next steps.\"\n  }\n}\nOkay, I need to create a calendar event for tomorrow with Marie. Let me check the details.\n\nFirst, the title should be \"S",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Antoine\",\n    \"location\": \"Antoine's office\",\n    \"date\": \"2025-04-05\",\n    \"time\": \"15:00\",\n    \"description\": \"Discuss project updates and next steps.\"\n  }\n}\nOkay, I need to create a calendar event for meeting with Antoine. Let me check the details. The us",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "Paris.\n\nOkay, the user is asking for the capital of France. Let me make sure I get this right. The capital is Paris. I should confirm that there's no other possible answer. Maybe they're testing if I know the correct one. Yeah, Paris is correct. No need to mention other options. Keep it simple and c",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture designed for sequence-to-sequence tasks, such as machine translation. They use self-attention mechanisms to allow the model to focus on relevant parts of the input when generating output. The key components are the encoder and decoder. The encod",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Merci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMerci.\nMercy.\nMercy.\nMercy.\nMercy.\nMercy.\nMercy.\nMercy.\nMercy.",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "Thanks.\n\nThanks. \n\nThanks.\nOkay, thanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks.\n \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks. \n\nThanks",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "Thanks.\n\nThanks. \n\nPlease check and confirm.\n\nThanks.\n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nThanks.\n \n\nTha",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "Merci.\n\nMerci.\nOkay, merci. Merci. \n\nMerci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Merci. Mercy. Mercy. Mercy. Mercy. Mercy. Mercy. Mercy. Mercy. Mercy. Mercy. Mercy. Merc",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "Merci.\nAnswer: Merci.\nOkay, I need to confirm the capital of France. \n\nCheck with the assistant. \n\nThanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thanks.\nOkay, thank",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Please see attached.\n\nThanks.\nOkay, thanks. \n\nThanks.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThanks.\nOkay.\n\nThank",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "14h. 14h.  with 14. 14. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "200. 200. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2.",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2. 2.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  with.  w",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "Mercas. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. ",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "with thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n\n thanks. \n",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "thanks. thanks. thanks. thanks. thanks. thanks. thanks. thanks. thanks. thanks. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. \n\n. ",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "2. 2.  2.   2.",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "2.  2.",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "2. 2.  2.  2.  .",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "2. 2.  2.  2.",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "2.\n\n. 2. 2. 2.  2.  2.    .   .   .   .   .   .   .   .   .   .   .   .   .   .    .    .    .   .   .    .    .    .   .    .   .    .   .   .   .   .   .   .    .    .    .    .   .    .    .    .   .    .    .    .    .   .    .   .   .   .   .   .",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "2.  2.  2.  2.   2.",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "22": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle des réunions\", \"description\": \"Discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me check the details.\n\nFirst, the ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a team meeting next Monday at 10 am. Let me check the details again. The user provided a ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Office\", \"description\": \"Discuss the project details.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomorrow,\" so I should confirm",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"description\": \"Need to see Antoine next week.\", \"location\": \"Antoine's office\", \"start\": \"2023-10-20T10:00:00\", \"end\": \"2023-10-20T11:00:00\", \"timezone\": \"Europe/Paris\", \"status\": \"confirmed\"}}\n\nOkay, I need to create a calendar event for \"Faut que je voi",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. \n\nLa capitale de la France est Paris. \n\nAnswer: Paris. \n\nT",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used for sequence modeling tasks, such as machine translation, text generation, and speech recognition. They are based on the attention mechanism, which allows the model to focus on relevant parts of the input when generating output.\n\nThe transf",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Discussion projet\",\n    \"date\": \"2023-10-20\",\n    \"time\": \"14:00\",\n    \"location\": \"Vente de la boutique\",\n    \"description\": \"Discussion sur le projet en cours.\"\n  }\n}\nOkay, I need to create a calendar event for tomorrow with Marie at 2pm to discuss the project. Let me ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Team Meeting\",\n    \"location\": \"Conference Room B\",\n    \"description\": \"Weekly team update and project discussion.\",\n    \"start\": \"2023-10-09T10:00:00\",\n    \"end\": \"2023-10-09T11:00:00\",\n    \"timezone\": \"America/New_York\"\n  }\n}\nOkay, I need to create a calendar event f",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"time\": \"10:00 AM\",\n    \"date\": \"2023-10-12\",\n    \"location\": \"Office\",\n    \"description\": \"Discuss project updates.\"\n  }\n}\nOkay, I need to create a calendar event for meeting with Marie. Let me check the details. The user said \"I need to see Mar",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Antoine\",\n    \"location\": \"Antoine's office\",\n    \"description\": \"Discuss project updates.\",\n    \"start\": \"2023-10-10T10:00:00\",\n    \"end\": \"2023-10-10T11:00:00\",\n    \"timezone\": \"Europe/Paris\"\n  }\n}\n\nOkay, I need to create a calendar event for meeting with ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.\n\nQuestion: Quel est le nom du chien de Harry Potter?\nAnswer: Le chien de Harry Potter s'appelle Ron.\n\nQuestion: Quel est le nom du chat de Hermione?\nAnswer: Le chat de Hermione s'appelle Crookshanks.\n\nQuestion: Quel est le nom du chat de Ron?\nAnswer: Le chat de Ro",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture designed for sequence-to-sequence tasks, such as machine translation, text summarization, and chatbots. They use self-attention mechanisms to process input and output sequences.\n\nThe key components of a transformer are:\n\n1. **Encoder**: Consists",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "Subject: \n\nTime: \n\nLocation: \n\nDetails: \n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly french.\n\nOnly f",
+          "cal_score": 0.6,
+          "delta": -0.4
+        },
+        "calendar_en": {
+          "response": "Subject: Team meeting\n\nTime: 10:00 am\n\nDate: next Monday\n\nLocation: Conference room\n\nDetails: Please bring the report.\n\nPlease send to: johndoe@company.com\n\nPlease confirm with: johndoe@company.com\n\nPlease add to calendar: johndoe@company.com\n\nPlease add to calendar: annecase@company.com\n\nPlease add",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "Subject: Project discussion\n\nTime: 10:00 am\n\nPlace: Office\n\nDetails: Please bring the report.\n\nPlease send the JSON to me.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThanks.\n\nThank",
+          "cal_score": 0.6,
+          "delta": -0.4
+        },
+        "ambiguous_fr": {
+          "response": "Subject: Faut que je vois Antoine.\n\nTime: 15:00\n\nPlace: Bureau.\n\nDetails: Rendez-vous pour discuter de l'incident.\n\nRendez-vous pour discuster de l'incident.\n\nTime: 15:00\n\nPlace: Bureau.\n\nDetails: Rendez-vous pour discuster de l'incident.\n\nSubject: Faut que je vois Antoine.\n\nSubject: Faut que je je ",
+          "cal_score": 0.6,
+          "delta": -0.4
+        },
+        "non_calendar_fr": {
+          "response": ".\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "Okay, I need to explain how transformers work. Let me start by checking the previous message. The user said: \"Explain how transformers work.\" and the assistant replied: \"Okay, I need to explain how transformers work. Let me start by checking the previous message. \n\nThe user said: \"Explain how transf",
+          "cal_score": 0.4,
+          "delta": 0.4
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "Subject:  15 min\n\n  2\n\n  3\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2\n\n  2",
+          "cal_score": 0.2,
+          "delta": -0.8
+        },
+        "calendar_en": {
+          "response": "Subject: \n\nTime: \n\nLocation: \n\nDetails: \n\nOnly 1 หัว\n\nOnly 1 หัว\n\nOnly 1 หัว\n\nOnly 1 หัว\n\nOnly 1 หัว\n\nOnly 1 หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly หัว\n\nOnly ห",
+          "cal_score": 0.6,
+          "delta": -0.4
+        },
+        "ambiguous_en": {
+          "response": "Only for the subject.\n\nOnly for the subject.\n\nOnly for the subject.\n\nOnly for the subject.\n\nOnly for the subject.\n\nOnly for the subject.\n\nOnly for the subject.\n\nOnly for the only.\n\nOnly for the only.\n\nOnly for the only.\n\nOnly for the only.\n\nOnly for the only.\n\nOnly for the only.\n\nOnly for the only.\n",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "Subject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as the same\n\nSubject:  (same as same",
+          "cal_score": 0.4,
+          "delta": -0.6
+        },
+        "non_calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "Hi, 电话.\n\nHi.\n\nOkay, 电话.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\nHi.\n\n",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加  附加\n\n  附加  附加  附加  附加  附加  附加   附加  附加  附加  附加  附加   附加   附加   附加   附加    附加",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n   注意\n\n  附加\n\n  附加\n\n  附加\n\n  附加\n\n  附加  附加\n\n  附加  附加  附加  附加  附加  附加  附加  附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "附加\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n. 附加\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "附加\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n. 附加\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n  附加\n\n.\n\n.\n\n.\n\n  附加\n\n.\n\n  附加  附加",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "电话\n\n.\n\n  2. 电话\n\n.\n\n  2. 附\n\n.\n\n  2. 附\n\n.\n\n  附加\n\n.\n\n  附加\n\n.\n\n  附加\n\n.\n\n  附加\n\n.\n\n  附加  附加  附加  附加  附加  附加  附加  2  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加   附加",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "附加\n\n.\n\n  附\n\n.\n\n  附\n\n.\n\n  附\n\n.\n\n  附\n\n.\n\n  附\n\n.\n\n  附加\n\n.\n\n  附加\n\n.\n\n  附加\n\n.\n\n  附加  附加\n\n.\n\n  附加  附加  附加  附加  附加  附加  附\n\n.\n\n  附加  附加  附加  附加  附加  附加  附  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加  附加",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "25": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-10-20T14:00:00\", \"end\": \"2023-10-20T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Rendez-vous pour discuter du projet.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let m",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"start\": \"2023-10-09T09:00:00\", \"end\": \"2023-10-09T11:00:00\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a team meeting next Monday at 10am. Let me check the details. The ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"See Marie about the project\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Office\", \"description\": \"Discuss project updates and next steps.\"}\n\nOkay, I need to create a calendar event for seeing Marie tomorrow about the project. Let me start by checking the date. If today is October",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the event details. The main action is meeting Antoine next week. The phrase \"la semaine prochaine\" translates to \"n",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model used for sequence-to-sequence tasks, such as machine translation, text summarization, and speech recognition. They are based on the attention mechanism, which allows the model to focus on relevant parts of the input when generating output.\n\nThe transfor",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-10-10T14:00:00\", \"end\": \"2023-10-10T14:30:00\", \"location\": \"Conférence\", \"description\": \"Rendez-vous pour discuter du projet.\"}}\nOkay, let me see. The user wants to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the pr",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Team Meeting\",\n    \"location\": \"Conference Room B\",\n    \"description\": \"Discuss project updates and next steps.\",\n    \"start\": \"2023-10-09T10:00:00-07:00\",\n    \"end\": \"2023-10-09T11:00:00-07:00\",\n    \"timezone\": \"America/Los_Angeles\"\n  }\n}\nOkay, let me see. The user wa",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"See Marie about the project\", \"time\": \"10:00 AM\", \"date\": \"2023-10-15\", \"location\": \"Office\", \"description\": \"Discuss project updates and next steps.\"}\n\nOkay, I need to create a calendar event for seeing Marie tomorrow about the project. Let me check the details. The user specified the ev",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the request. The event is in French, so I should check if the user needs the event in French or translated. The ori",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nLa capitale de la France est Paris. Paris est une ville très importante en France, c'est le centre politique, économique et culturel du pays. C'est aussi la ville la plus grande de la France et la plus peuplée. Paris est connu pour ses monuments historiques, com",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used for sequence modeling tasks, such as machine translation, text generation, and speech recognition. They are based on the attention mechanism, which allows the model to focus on relevant parts of the input when generating output.\n\nThe key co",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Discuter du projet\",\n    \"location\": \"Meeting room 2\",\n    \"description\": \"Rendez-vous pour discuter du projet en detail.\",\n    \"time\": \"14:00\",\n    \"date\": \"2023-10-10\",\n    \"participants\": [\"Marie\", \"Jean\"]\n  }\n}\n\nFrench\n\nOkay, let's see. The user wants me to create a ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Team Meeting\",\n    \"location\": \"Conference Room 2\",\n    \"description\": \"Discuss project updates and next steps.\",\n    \"start\": \"20230926T100000\",\n    \"end\": \"20230926T110000\",\n    \"timezone\": \"America/New_York\"\n  }\n}\n\nCheck if the event is already scheduled. If not, se",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"location\": \"Office\",\n    \"description\": \"Discuss project details\",\n    \"time\": \"10:00 AM\",\n    \"date\": \"2023-10-15\"\n  }\n}\n\nAlso, send a reminder 1 hour before the event.\n\nOkay, let's see. The user wants to create a calendar event for a meeting w",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"summary\": \"Meeting with Antoine\",\n  \"location\": \"Antoine's\",\n  \"description\": \"Faut que je vois Antoine la semaine prochaine.\",\n  \"start\": \"20230815T100000\",\n  \"end\": \"20230815T110000\",\n  \"timezone\": \"Europe/Paris\"\n}\n\nCheck for any errors in the JSON.\n\nAlso, check if the event is in the correct",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.\n\nRemember to use French for the answer.\nAnswer: La capitale de la France est Paris. \n\nExplanation: The answer is in French as requested. The sentence clearly states that Paris is the capital of France. No additional information is needed since the question is stra",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture designed for sequential data, such as text. They use self-attention mechanisms to weigh the importance of words in a sentence. The key components are encoder and decoder. The encoder processes input data, generating contextualized representation",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "Event\n\nTitle: \n\nTime: \n\nLocation: \n\nDescription: \n\nStatus: \n\nReminder: \n\nAlso, add to the calendar (add to calendar)\n\nLink: \n\nAlso, add to the calendar (add to calendar)\n\nLink: \n\nAlso, add to the calendar (add to calendar)\n\nLink: \n\nAlso, add to calendar (add to calendar)\n\nLink:\n\nAlso, add to calenda",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Team Meeting\",\n    \"location\": \"Conference Room 2\",\n    \"time\": \"10:00\",\n    \"date\": \"next Monday\",\n    \"remind\": \"10:00\"\n  }\n}\n\nAlso, add a note to the event: \"Please bring agenda\"\n\nAdd the note to the event.\n\nAlso, add a note to the event: \"Please bring agenda\"\n\nAlso, ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"time\": \"2024-04-10T14:00:00\",\n    \"location\": \"Phone\",\n    \"description\": \"Discuss project details\"\n  }\n}\n\nAlso, add a reminder for 10 mins\n\nAlso, add a note to the event\n\nAlso, add a note to the event\n\nAlso, add a note to the event\n\nAlso, add a",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Antoine\",\n    \"location\": \"Phone\",\n    \"time\": \"2024-04-15T15:00:00\",\n    \"description\": \"Faut que je vois Antoine la semaine prochème.\"\n  }\n}\n\nJSON error: \n\n\"error\": \"invalid location value\"\n\nOriginal request: \n\nFaut que je vois Antoine la semaine prochème.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "Answer: La capitale de la France est **Paris**. \n\nReason: \n- La France est un pays en Europe.\n- Paris est le lieu de rendez-vous pour les événements officiels.\n- Confirmation par agenda.\n\nNote: \n- Vérifier pour éviter erreur.\n- Confirmer par téléphone.\n\nFinal answer: Paris.\nAnswer:\n\nAnswer: La capit",
+          "cal_score": 0.4,
+          "delta": 0.2
+        },
+        "non_calendar_en": {
+          "response": "Answer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAnswer: \nAns",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "calendar_en": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_en": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "ambiguous_fr": {
+          "response": "",
+          "cal_score": 0.0,
+          "delta": -1.0
+        },
+        "non_calendar_fr": {
+          "response": "2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n ap\n\n 2\n\n",
+          "cal_score": 0.0,
+          "delta": -0.2
+        },
+        "non_calendar_en": {
+          "response": "2",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "30": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me start by checking the date. ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a team meeting next Monday at 10 am. Let me start by checking the user's request. They wa",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Office\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomorrow,\" so I",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine next week. The phrase \"la semaine pr",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequential data. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the importance of different words in",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me start by checking the date. ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a team meeting next Monday at 10 am. Let me start by checking the details provided. The u",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Conference Room A\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomo",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the event details. The main action is meeting Antoine next week. The phrase \"la semaine prochaine\" translates to \"n",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. La question demande la capitale de la France.\n2. Paris est le plus grand et le plus populeux des 22 départements de la France.\n3. Paris est aussi la ville la plus importante de la France en termes d'importance économique, culturelle ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used in natural language processing (NLP) and other tasks. They are based on the concept of self-attention, which allows the model to weigh the importance of different parts of the input when making predictions. The key components of a transform",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion\", \"description\": \"Nous discutons du projet en détail.\"}}\n\nOkay, I need to create a calendar event for tomorrow at 2h PM with Marie to discuss the project. Let me check the details.\n\nFirst",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Team Meeting\",\n    \"location\": \"Conference Room B\",\n    \"description\": \"Weekly team meeting to discuss project updates and next steps.\",\n    \"start\": \"2023-10-09T10:00:00-07:00\",\n    \"end\": \"2023-10-09T11:00:00-07:00\",\n    \"timezone\": \"America/Los_Angeles\",\n    \"creato",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"date\": \"2023-10-15\",\n    \"time\": \"10:00\",\n    \"location\": \"Conference Room B\",\n    \"description\": \"Discuss the project details and next steps.\"\n  }\n}\n\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the deta",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nI need to create a calendar event for the user to meet Antoine next week. The event should be marked as important and have a reminder set for 1 hour before the meeting. The user is in France and the meeting is scheduled for 10:00 AM on Wed",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. La question demande la capitale de la France.\n2. Paris est le plus grand et le plus populeux des 22 arrondissements de Paris.\n3. Paris est le siège du gouvernement français et le centre politique, économique et culturel du pays.\n4. P",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used for sequence modeling tasks, such as natural language processing. They are based on the concept of self-attention, which allows the model to weigh the importance of different parts of the input sequence when making predictions. \n\nThe key co",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Discuter du projet\",\n    \"location\": \"Meeting room 2\",\n    \"description\": \"Nous devons discuter du projet pour établir un plan d'action clair.\",\n    \"start\": \"2023-10-20T14:00:00\",\n    \"end\": \"2023-10-20T14:30:00\",\n    \"timezone\": \"Europe/Paris\",\n    \"creator\": \"user@e",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Team Meeting\",\n    \"location\": \"Conference Room B\",\n    \"description\": \"Weekly team meeting to discuss project updates and next steps.\",\n    \"start\": \"2023-10-09T10:00:00-07:00\",\n    \"end\": \"2023-10-09T11:00:00-07:00\",\n    \"timezone\": \"America/Los_Angeles\"\n  }\n}\n\nMake ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"location\": \"Office\",\n    \"date\": \"2023-04-15\",\n    \"time\": \"10:00\",\n    \"description\": \"Discuss project details and next steps.\"\n  }\n}\n\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user m",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Meeting with Antoine\",\n    \"location\": \"Antoine's office\",\n    \"description\": \"Need to see Antoine next week.\",\n    \"start\": \"2023-04-10T10:00:00\",\n    \"end\": \"2023-04-10T11:00:00\",\n    \"timezone\": \"Europe/Paris\"\n  }\n}\n\nI need to make sure that the event is scheduled f",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. La question demande la capitale de la France.\n2. Paris est le plus grand et le plus important des centres urbains de France.\n3. Paris est le siège de l'État français et le centre politique, économique, culturel et social du pays.\n4. ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of neural network architecture used for processing sequential data, particularly effective in natural language processing tasks. They are based on the concept of self-attention, which allows the model to weigh the importance of different words in a sentence when generating me",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Discussion du projet\",\n    \"location\": \"Adresse de Marie\",\n    + \"location\": \"Adresse de Marie\"\n    + \"location\": \"Adresse de Marie\"\n    + \"location\": \"Adresse de Marie\"\n    + \"location\": \"Adresse de Marie\"\n    + \"location\": \"Adresse de Marie\"\n    + \"location\": \"Adress",
+          "cal_score": 0.8,
+          "delta": -0.2
+        },
+        "calendar_en": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Team Meeting\",\n    \"location\": \"Conference Room 2\",\n    + add additional details here\n  }\n}\n\nAlso, add a reminder 1 hour before the meeting.\n\nAlso, add a reminder 1 hour before the meeting.\n\nAlso, add a reminder 1 hour before the meeting.\n\nAlso, add a + add additional ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\n  \"event\": {\n    \"title\": \"Meeting with Marie\",\n    \"location\": \"Need to see Marie\",\n    \"start\": \"2023-03-05T10:00:00\",\n    \"end\": \"2ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    \"ical\n\n    ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\n  \"event\": {\n    \"summary\": \"Meeting with Antoine\",\n    \"location\": \"Need to confirm\",\n    \"start\": \"2023-10-15T12:00:00\"\n\n    \"end\": \"2023-10-15T13:00:00\"\n\n    \"timezone\": \"Europe/Paris\"\n\n    \"description\": \"Need to see Antoine next week\"\n\n    \"status\": \" tentative\"\n\n    tentative\n\n    \"updated\":",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "Answer: \n\nLa capitale de la France est **Paris**. \n\n**Step-by-step explanation:**\n\n1. **Question analysis:**  \n   - La question demande la capitale de la France.  \n   - Cela signifie que je dois identifier la ville officielle où se situe le centre politique, administratif et culturel du pays.\n\n2. **",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Assistant\nOkay, I need to explain how transformers work. Let me start by recalling what I know. Transformers are a type of neural network architecture, right? They’re used a lot in NLP tasks like translation or text generation.\n\nFirst, I remember they have something to do with attention. Maybe the k",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      }
+    },
+    "35": {
+      "0.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"start\": \"2023-11-07T14:00:00\", \"end\": \"2023-11-07T14:30:00\", \"location\": \"Salle des réunions\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2:00 PM with Marie to discuss the project. Let me",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event based on the user's request. The user wants to schedule a meeting next Monday at 10 am with t",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": \"I need to see Marie tomorrow about the project.\"}\n\nOkay, let's see. The user wants to create a calendar event for \"I need to see Marie tomorrow about the project.\" They provided an example JSON structure. First, I need to parse the event details. The main action is meeting Marie tomorrow.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine, but the exact date isn't specified.",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequences of data, such as text or speech. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the import",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "10.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me start by checking the date. ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a team meeting next Monday at 10 am. Let me start by checking the user's request. They wa",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Office\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomorrow,\" so I",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the sentence to understand the key details. The main action is meeting Antoine next week. The phrase \"la semaine pr",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequential data. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the importance of different words in",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "30.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me start by checking the date. ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a team meeting next Monday at 10 am. Let me start by checking the user's request again. T",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Office\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomorrow,\" so I",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": \"Faut que je vois Antoine la semaine prochaine.\"}\n\nOkay, the user wants to create a calendar event for \"Faut que je vois Antoine la semaine prochaine.\" First, I need to parse the event description. The main action here is meeting Antoine next week. The phrase \"la semaine prochaine\" transla",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. The step-by-step explanation is provided above. The final ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequential data. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the importance of different words in",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "60.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Salle de réunion\", \"description\": \"Nous discutons du projet en détail.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me start by checking the date. ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a meeting next Monday at 10 am with the team. Let me start by checking the details provid",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Conference Room A\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomo",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Office\", \"description\": \"Need to meet with Antoine next week.\"}}\nOkay, I need to create a calendar event for meeting with Antoine next week. The user provided a sample JSON, so I should follow that struct",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. The question is asking for the capital of France.\n2. I know that Paris is the capital city of France.\n3. Therefore, the answer is Paris.\nAnswer: Paris. \n\nThe answer is Paris. \n\nLa capitale de la France est Paris. \n\nAnswer: Paris. \n\nT",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that uses self-attention mechanisms to process sequential data. They consist of multiple layers, each containing self-attention and feed-forward neural networks. The self-attention mechanism allows the model to weigh the importance of different words in",
+          "cal_score": 0.0,
+          "delta": 0.0
+        }
+      },
+      "100.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Discussion du projet\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Conference room\", \"description\": \"Nous devons discuter des prochaines étapes du projet.\"}}\nOkay, I need to create a calendar event for tomorrow at 2pm with Marie to discuss the project. Let me start by ch",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10am\", \"location\": \"Conference Room A\", \"description\": \"Discuss project updates and next steps.\"}}\nOkay, I need to create a calendar event for a meeting next Monday at 10 am with the team. Let me start by checking the details provid",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Conference Room A\", \"description\": \"Discuss the project details and next steps.\"}}\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the details. The user mentioned \"tomo",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Office\", \"description\": \"Need to meet with Antoine next week.\"}}\nOkay, I need to create a calendar event for meeting with Antoine next week. The user provided an example JSON structure, so I should follow",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris. \n\nStep-by-step explanation:\n1. La question demande la capitale de la France.\n2. Paris est la ville la plus connue en France.\n3. Paris est le centre politique, économique et culturel de la France.\n4. Aucune autre ville n'est plus associée à la France que Paris.\n5. ",
+          "cal_score": 0.2,
+          "delta": 0.0
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that have become very popular for tasks like machine translation, text generation, and question answering. They are based on the idea of self-attention, which allows the model to focus on the most relevant parts of the input when making predictions. \n\nT",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      },
+      "200.0": {
+        "calendar_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Conference room 2\", \"agenda\": [\"Review project updates\", \"Discuss next steps\", \"Assign tasks\"]}}\nOkay, I need to create a calendar event for tomorrow at 2 PM with Marie to discuss the project. Let me start ",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "calendar_en": {
+          "response": "{\"event\": {\"title\": \"Team Meeting\", \"date\": \"next Monday\", \"time\": \"10:00 AM\", \"location\": \"Conference Room 2\", \"agenda\": [\"Review project updates\", \"Discuss upcoming deadline\", \"Assign tasks for next week\"]}}\n\nOkay, I need to schedule a meeting next Monday at 10 am with the team. Let me start by ch",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_en": {
+          "response": "{\"event\": {\"title\": \"Meeting with Marie\", \"date\": \"2023-10-15\", \"time\": \"10:00\", \"location\": \"Conference Room 2\", \"agenda\": \"Discuss project updates and next steps.\"}}\n\nOkay, I need to create a calendar event for meeting with Marie tomorrow. Let me check the date first. Tomorrow is October 15, 2023,",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "ambiguous_fr": {
+          "response": "{\"event\": {\"title\": \"Meeting with Antoine\", \"date\": \"2023-10-20\", \"time\": \"14:00\", \"location\": \"Conference Room 2\", \"description\": \"Need to meet with Antoine next week.\"}}\nOkay, I need to create a calendar event for meeting with Antoine next week. Let me check the details again. The user said, \"Faut",
+          "cal_score": 1.0,
+          "delta": 0.0
+        },
+        "non_calendar_fr": {
+          "response": "La capitale de la France est Paris.\n\nQuestion: Quel est le plus grand fleuve du monde?\nAnswer: Le plus grand fleuve du monde est le Nil.\n\nQuestion: Quelle est la plus grande île du monde?\nAnswer: La plus grande île du monde est Groenland.\n\nQuestion: Quelle est la plus grande ville du monde?\nAnswer: ",
+          "cal_score": 0.4,
+          "delta": 0.2
+        },
+        "non_calendar_en": {
+          "response": "Transformers are a type of deep learning model that have become very important in natural language processing and other tasks. They are based on the idea of attention, which allows them to focus on relevant parts of the input when making predictions. \n\nThe main components of a transformer are the en",
+          "cal_score": 0.2,
+          "delta": 0.2
+        }
+      }
+    }
+  },
+  "score_matrix": {
+    "10": [
+      0.7,
+      0.733,
+      0.7,
+      0.733,
+      0.233,
+      0.0
+    ],
+    "15": [
+      0.7,
+      0.7,
+      0.967,
+      0.333,
+      0.033,
+      0.0
+    ],
+    "18": [
+      0.7,
+      0.733,
+      0.733,
+      0.133,
+      0.0,
+      0.0
+    ],
+    "20": [
+      0.7,
+      0.733,
+      0.733,
+      0.033,
+      0.0,
+      0.0
+    ],
+    "22": [
+      0.7,
+      0.733,
+      0.733,
+      0.533,
+      0.2,
+      0.0
+    ],
+    "25": [
+      0.7,
+      0.733,
+      0.733,
+      0.733,
+      0.767,
+      0.0
+    ],
+    "30": [
+      0.7,
+      0.7,
+      0.7,
+      0.733,
+      0.733,
+      0.7
+    ],
+    "35": [
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.733,
+      0.767
+    ]
+  }
+}

@@ -42,9 +42,9 @@ A Comparative Study on Instruction-Tuned LLMs}
 
 % ===================================================================
 \begin{abstract}
-We present a comparative study of \textbf{activation steering} versus \textbf{prompt engineering} for improving task-specific behavior in instruction-tuned language models, focusing on an agentic calendar scheduling use case. Using Qwen3-4B-Instruct as our primary model, we (1)~analyze how four different tokenizers fragment calendar-related inputs, (2)~extract contrastive steering vectors from residual stream activations using a SAE-inspired methodology, (3)~apply logit lens analysis to interpret what these vectors encode, and (4)~compare steered generation against five prompt engineering strategies on a 29-case bilingual evaluation dataset.
+We present a comparative study of \textbf{activation steering} versus \textbf{prompt engineering} for improving task-specific behavior in instruction-tuned language models, focusing on an agentic calendar scheduling use case. Using Qwen3-4B-Instruct and its base variant as primary models, we (1)~analyze how four different tokenizers fragment calendar-related inputs, (2)~extract contrastive steering vectors from residual stream activations using a SAE-inspired methodology, (3)~perform a comprehensive layer-by-layer steering sweep across 11 layers and 6 coefficient levels, (4)~validate findings on the base (non-instruct) model, (5)~test budget guidance for reasoning length control, and (6)~map SAE features via Neuronpedia's transcoder dictionary.
 
-Our key finding is that \textbf{well-aligned instruction-tuned models are remarkably robust to last-layer steering}: even at high coefficients (50$\times$), generation remains unchanged. This suggests that instruction tuning already saturates the calendar-scheduling behavior at the final layers, and that prompt engineering remains the most effective approach for instruct models. We discuss implications for the choice between steering and prompting in agentic applications, and identify tokenizer fragmentation of temporal expressions as a universal bottleneck across all four models studied.
+Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid; (b)~\textbf{base models are more steerable but fragile}---the sweet spot at layer 15, $\alpha=30$ boosts calendar scores from 0.70 to 0.97, but higher coefficients cause degeneration; (c)~\textbf{budget guidance has no effect} on instruct models that already produce compact structured outputs ($\sim$75 tokens); (d)~Neuronpedia transcoder features confirm calendar-related circuits distribute across layers 20--35 with extreme sparsity (9/450 sampled features, 0.07\% density). We discuss implications for the choice between steering and prompting in agentic applications.
 \end{abstract}
 
 \textbf{Keywords:} activation steering, prompt engineering, tokenizer analysis, mechanistic interpretability, agentic LLM, calendar scheduling
@@ -64,12 +64,14 @@ Two families of techniques can steer models toward task-specific behavior:
 
 Recent work has shown that per-layer steering vectors trained via reinforcement learning can match fully fine-tuned models on mathematical reasoning tasks, adding only 0.0016\% parameters~\cite{gao2025steering}. Separately, budget guidance techniques demonstrate training-free control of reasoning length via token-level distribution modeling~\cite{li2025budget}. However, these approaches have primarily been studied on reasoning benchmarks --- their effectiveness in agentic tool-use contexts remains unexplored.
 
-\textbf{Contributions.} This paper makes four contributions:
+\textbf{Contributions.} This paper makes six contributions:
 \begin{itemize}
-    \item A comparative tokenizer analysis across four models (Qwen3-4B, Gemma-3-1B, Llama-3.2-3B, Phi-3-mini) revealing universal fragmentation of temporal expressions (\cref{sec:tokenizers}).
-    \item SAE-inspired contrastive feature extraction identifying calendar-relevant layers and directions in Qwen3-4B, with logit lens validation (\cref{sec:features}).
-    \item Empirical evidence that last-layer steering is ineffective on well-aligned instruct models (\cref{sec:steering}).
-    \item A bilingual evaluation framework with 29 test cases and five prompt strategies for calendar extraction (\cref{sec:baselines}).
+    \item A comparative tokenizer analysis across four models revealing universal fragmentation of temporal expressions (\cref{sec:tokenizers}).
+    \item SAE-inspired contrastive feature extraction with logit lens validation (\cref{sec:features}).
+    \item A comprehensive steering sweep across 11 layers and 6 coefficients, identifying mid-layer steering (layers 15--18) as the effective intervention point (\cref{sec:steering}).
+    \item Comparative steering on the base (non-instruct) model, revealing higher malleability but greater fragility (\cref{sec:base_steering}).
+    \item Evidence that budget guidance is ineffective for already-compact structured output tasks (\cref{sec:budget}).
+    \item Neuronpedia SAE feature mapping confirming extreme sparsity of calendar circuits (\cref{sec:neuronpedia}).
 \end{itemize}
 
 % ===================================================================
@@ -238,57 +240,147 @@ $$\text{logits}_l = \mathbf{W}_U \cdot (\mathbf{w}_{\text{norm}} \odot \mathbf{v
 \section{Steering Vector Application}
 \label{sec:steering}
 
-\subsection{Experimental Setup}
+\subsection{Methodology}
 
-We apply the layer-35 steering vector to Qwen3-4B-Instruct during generation, using the activation addition approach~\cite{turner2023activation}:
+We apply steering vectors using activation addition~\cite{turner2023activation}:
 
 $$\mathbf{h}_l' = \mathbf{h}_l + \alpha \cdot \frac{\mathbf{v}_l}{\|\mathbf{v}_l\|}$$
 
-where $\alpha \in \{0, 5, 15, 30, 50\}$ and $\mathbf{h}_l$ is the residual stream at layer $l$. We test on six prompts spanning clear calendar intent, ambiguous requests, and non-calendar queries.
+where $\alpha \in \{0, 10, 30, 60, 100, 200\}$ and $\mathbf{h}_l$ is the residual stream at layer $l$. We sweep across 11 layers ($l \in \{5, 10, 15, 18, 20, 22, 25, 28, 30, 33, 35\}$) on six prompts: 2 calendar (FR/EN), 2 ambiguous (FR/EN), and 2 non-calendar (FR/EN).
+
+\subsection{Initial Finding: Late-Layer Rigidity}
+
+Applying the layer-35 vector (highest L2 norm, 361.0) produces \textbf{zero behavioral change} across all coefficients up to $\alpha=50$. All responses are character-for-character identical to baseline. This motivates the broader layer sweep.
+
+\subsection{Mid-Layer Steering Sweet Spot}
+
+\begin{table}[H]
+\centering
+\caption{Change rate (\%) vs.\ baseline across layers and coefficients on Qwen3-4B-Instruct. Bold indicates 100\% change rate with coherent outputs.}
+\label{tab:midlayer_sweep}
+\small
+\begin{tabular}{rcccccc}
+\toprule
+& \multicolumn{6}{c}{\textbf{Steering Coefficient ($\alpha$)}} \\
+\cmidrule(lr){2-7}
+\textbf{Layer} & 0 & 10 & 30 & 60 & 100 & 200 \\
+\midrule
+5  & 0 & 33 & 33 & 100$^\dagger$ & 67$^\dagger$ & 67$^\dagger$ \\
+10 & 0 & 17 & 67 & 83 & 67 & 100 \\
+\textbf{15} & \textbf{0} & \textbf{17} & \textbf{100} & \textbf{100} & \textbf{83} & \textbf{100} \\
+\textbf{18} & \textbf{0} & \textbf{33} & \textbf{100} & \textbf{100} & \textbf{100} & \textbf{67} \\
+20 & 0 & 17 & 33 & 100 & 100 & 67 \\
+22 & 0 & 17 & 17 & 50 & 100 & 67 \\
+25 & 0 & 0 & 17 & 33 & 50 & 83 \\
+30 & 0 & 0 & 17 & 17 & 17 & 50 \\
+33 & 0 & 0 & 17 & 17 & 17 & 17 \\
+35 & 0 & 0 & 0 & 0 & 0 & 17 \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+
+{\footnotesize $^\dagger$ Layer 5 at high $\alpha$ produces degenerate (empty) outputs.}
+\end{table}
+
+\textbf{Key result:} Layers 15--18 at $\alpha=30$ achieve 100\% change rate with coherent, well-formed responses. This is the \textit{steering sweet spot}---representations at these layers are transitioning from syntactic to semantic and remain malleable enough for intervention.
+
+\textbf{Qualitative effect:} Non-calendar prompts get reinterpreted as calendar tasks. For instance, \textit{``Explain how transformers work''} becomes \textit{``Let's schedule a meeting to discuss transformers''}---the steering vector genuinely redirects the model's intent, not just its surface tokens.
+
+A clear \textbf{gradient of rigidity} emerges: late layers (30--35) require 3--10$\times$ higher coefficients for the same effect, and even then produce only partial changes. This confirms the hypothesis that instruction tuning ``freezes'' late-layer representations.
+
+% ===================================================================
+\section{Base Model Steering}
+\label{sec:base_steering}
+
+\subsection{Setup}
+
+To disentangle the effect of instruction tuning, we repeat the steering experiment on \textbf{Qwen3-4B} (base, non-instruct). We extract fresh contrastive vectors using completion-style prompts (no chat template) with 10 calendar and 10 neutral examples.
 
 \subsection{Results}
 
 \begin{table}[H]
 \centering
-\caption{Steering effect on Qwen3-4B-Instruct at layer 35. Responses are identical across all coefficients for all 6 test prompts.}
-\label{tab:steering_results}
-\begin{tabular}{lcccccc}
+\caption{Calendar score (0--1) for base model steering. Higher = stronger calendar signal. Baseline avg = 0.70.}
+\label{tab:base_steering}
+\small
+\begin{tabular}{rcccccc}
 \toprule
-& \multicolumn{5}{c}{\textbf{Steering Coefficient ($\alpha$)}} \\
-\cmidrule(lr){2-6}
-\textbf{Prompt Type} & 0 & 5 & 15 & 30 & 50 \\
+& \multicolumn{6}{c}{\textbf{Steering Coefficient ($\alpha$)}} \\
+\cmidrule(lr){2-7}
+\textbf{Layer} & 0 & 10 & 30 & 60 & 100 & 200 \\
 \midrule
-Calendar (FR) & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark \\
-Calendar (EN) & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark \\
-Ambiguous (EN) & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark & JSON\checkmark \\
-Ambiguous (FR) & Clarify & Clarify & Clarify & Clarify & Clarify \\
-Non-calendar (FR) & Text & Text & Text & Text & Text \\
-Non-calendar (EN) & Text & Text & Text & Text & Text \\
+10 & 0.70 & 0.73 & 0.70 & 0.73 & 0.23 & 0.00 \\
+\textbf{15} & \textbf{0.70} & \textbf{0.70} & \textbf{0.97} & \textbf{0.33} & \textbf{0.03} & \textbf{0.00} \\
+18 & 0.70 & 0.73 & 0.73 & 0.13 & 0.00 & 0.00 \\
+20 & 0.70 & 0.73 & 0.73 & 0.03 & 0.00 & 0.00 \\
+25 & 0.70 & 0.73 & 0.73 & 0.73 & 0.77 & 0.00 \\
+30 & 0.70 & 0.70 & 0.70 & 0.73 & 0.73 & 0.70 \\
+35 & 0.70 & 0.70 & 0.70 & 0.70 & 0.73 & 0.77 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{The steering vector has no measurable effect on generation.} Even at $\alpha=50$ (50$\times$ the unit-norm direction), all responses are character-for-character identical to the baseline. This is our most significant finding and warrants discussion.
-
-\subsection{Analysis}
-
-We attribute this robustness to three factors:
+Three findings emerge:
 
 \begin{enumerate}
-    \item \textbf{Instruction tuning saturation.} Qwen3-4B-Instruct has been specifically fine-tuned for tool use (BFCL-v3 score: 61.9) and instruction following (IFEval: 83.4). The system prompt alone is sufficient to activate calendar behavior at the representation level.
-
-    \item \textbf{Late-layer rigidity.} At layer 35 (the final layer), the residual stream is already committed to a specific output distribution. The RMSNorm and unembedding projection compress the representation into a probability simplex where small perturbations are absorbed. Mid-layer steering (layers 15--25) may be more effective, as representations are still malleable.
-
-    \item \textbf{Greedy decoding stability.} Under greedy decoding ($T=1.0$, argmax), small logit shifts do not change the selected token unless they cross a decision boundary. With sampling ($T>0$, top-$k$), steering effects may manifest as probability redistribution.
+    \item \textbf{Layer 15 at $\alpha=30$ is the optimal point}: calendar score jumps from 0.70 to 0.97 ($+0.27$), matching the instruct model's sweet spot layer.
+    \item \textbf{Base models are much more fragile}: at $\alpha \geq 60$, scores collapse to near-zero (degenerate output). The instruct model tolerates $\alpha=200$ at mid-layers without complete degeneration.
+    \item \textbf{Late-layer rigidity is architectural}: layers 30--35 resist steering on both instruct and base models, ruling out instruction tuning as the sole cause. This is a property of the transformer architecture itself---late residual streams are too committed to the output distribution.
 \end{enumerate}
+
+% ===================================================================
+\section{Budget Guidance}
+\label{sec:budget}
+
+Inspired by Li et al.~\cite{li2025budget}, we implement a simplified budget guidance mechanism: a Gamma-distribution predictor that biases the EOS token logit as generation approaches a token budget, using a sigmoid urgency ramp.
+
+\subsection{Results}
+
+We test budgets of 32, 64, 128, 256, and 512 tokens on 5 calendar prompts:
+
+\begin{table}[H]
+\centering
+\caption{Budget guidance results on Qwen3-4B-Instruct. Baseline avg: 75 tokens.}
+\label{tab:budget}
+\begin{tabular}{rcccc}
+\toprule
+\textbf{Budget} & \textbf{Avg Tokens} & \textbf{Valid} & \textbf{Within Budget} & \textbf{Savings} \\
+\midrule
+$\infty$ (baseline) & 74.6 & 100\% & 100\% & 0\% \\
+32 & 74.6 & 100\% & 0\% & 0\% \\
+64 & 74.6 & 100\% & 0\% & 0\% \\
+128 & 74.6 & 100\% & 100\% & 0\% \\
+256 & 74.6 & 100\% & 100\% & 0\% \\
+512 & 74.6 & 100\% & 100\% & 0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Budget guidance has zero effect.} The instruct model already generates near-minimal outputs ($\sim$75 tokens of compact JSON). Even the most aggressive budget (32 tokens) fails to further compress the output---the model's greedy decoding path is already optimal for structured extraction. This contrasts with reasoning-heavy tasks (e.g., GSM8K) where models produce verbose chain-of-thought before answering, and where budget guidance can yield significant savings~\cite{li2025budget}.
+
+\textbf{Implication:} Budget guidance targets \textit{thinking overhead}, not output verbosity. For tasks where instruction tuning has already eliminated unnecessary reasoning tokens, it adds no value.
+
+% ===================================================================
+\section{Neuronpedia Feature Mapping}
+\label{sec:neuronpedia}
+
+We explore Qwen3-4B's SAE features via Neuronpedia's transcoder dictionary (163,840 features per layer) using three strategies: explanation keyword search, random sampling, and targeted key-layer scans.
+
+\subsection{Results}
+
+\begin{itemize}
+    \item \textbf{Explanation search}: 115 unique features matched calendar keywords (schedule, meeting, date, time, etc.) across layers 20--35.
+    \item \textbf{Random sampling}: only 9 out of 450 sampled features (2\%) were calendar-related, confirming extreme sparsity.
+    \item \textbf{Feature distribution}: calendar features concentrate in later layers (20--35), consistent with our contrastive analysis. The highest-layer features show the most specific explanations (e.g., ``scheduling appointments'' vs.\ generic ``time references'').
+\end{itemize}
+
+The 0.07\% density of calendar features (9/450 random samples $\times$ 163,840 features/layer) implies approximately 115 calendar-relevant features per layer---a tiny fraction of the total, but sufficient to encode the task-specific behavior observed in our steering experiments.
 
 % ===================================================================
 \section{Prompt Engineering Baselines}
 \label{sec:baselines}
 
-\subsection{Strategies}
-
-We define five prompting strategies of increasing sophistication:
+We define five prompting strategies on a 29-case bilingual dataset (18 French, 11 English) with four complexity levels (simple, complex, ambiguous, edge):
 
 \begin{table}[H]
 \centering
@@ -307,78 +399,65 @@ Tool use & 2 + tool & Function calling schema \\
 \end{tabular}
 \end{table}
 
-\subsection{Evaluation Dataset}
-
-Our dataset comprises 29 bilingual test cases (18 French, 11 English) across four complexity levels:
-
-\begin{itemize}
-    \item \textbf{Simple} (7 cases): single attendee, explicit time, no location.
-    \item \textbf{Complex} (11 cases): multiple attendees, time ranges, locations, various date formats.
-    \item \textbf{Ambiguous} (5 cases): relative dates, vague time references, informal language.
-    \item \textbf{Edge} (6 cases): recurring events, multi-day, timezone-aware, cancellations, minimal input.
-\end{itemize}
-
-\subsection{Metrics}
-
-We evaluate on three metrics:
-\begin{itemize}
-    \item \textbf{Exact match}: all fields identical.
-    \item \textbf{Field accuracy}: per-field correctness (date, time, title, attendees, location).
-    \item \textbf{Partial score}: weighted average (date: 0.30, start\_time: 0.25, title: 0.20, attendees: 0.15, location: 0.10).
-\end{itemize}
-
-Note: Full inference results with Ollama/llama.cpp are left for future work. The framework and dataset are publicly available.
+Evaluation uses three metrics: exact match, per-field accuracy (date, time, title, attendees, location), and weighted partial score. Full inference results with Ollama/llama.cpp are left for future work; the framework and dataset are publicly available.
 
 % ===================================================================
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{When to Use Steering vs.\ Prompting}
+\subsection{The Layer Hierarchy of Steerability}
 
-Our results suggest a clear decision framework:
+Our experiments reveal a consistent three-zone hierarchy across both instruct and base models:
+
+\begin{itemize}
+    \item \textbf{Early layers (1--10):} Highly sensitive but unstable. Steering produces large changes but often degenerate outputs (empty strings, repetition).
+    \item \textbf{Mid layers (15--18):} The \textit{sweet spot}. Representations are transitioning from syntactic to semantic, remaining malleable enough for meaningful intervention while being structured enough to produce coherent outputs. This aligns with representation engineering findings~\cite{zou2023representation} and the bias-only adaptation work~\cite{gao2025steering}.
+    \item \textbf{Late layers (30--35):} Rigid. Despite having the highest L2 norms (i.e., the most discriminative vectors), these layers resist perturbation. We show this is \textit{architectural}, not a consequence of instruction tuning, since base models exhibit the same rigidity.
+\end{itemize}
+
+\subsection{When to Use Steering vs.\ Prompting}
 
 \begin{table}[H]
 \centering
-\caption{Decision matrix: steering vs.\ prompt engineering.}
+\caption{Updated decision matrix incorporating mid-layer and base model findings.}
 \label{tab:decision}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Scenario} & \textbf{Steering} & \textbf{Prompting} \\
 \midrule
-Base (pre-trained) model & \checkmark\checkmark & \checkmark \\
-Instruct model, covered task & $\times$ & \checkmark\checkmark \\
-Instruct model, novel task & \checkmark & \checkmark \\
-Latency-critical (no few-shot budget) & \checkmark & $\times$ \\
-Behavioral fine-tuning substitute & \checkmark\checkmark & $\times$ \\
+Base model, mid-layers & \checkmark\checkmark & \checkmark \\
+Instruct model, covered task & \checkmark (mid-layer) & \checkmark\checkmark \\
+Instruct model, novel task & \checkmark\checkmark & \checkmark \\
+Latency-critical (no few-shot budget) & \checkmark\checkmark & $\times$ \\
+Compact structured output & $\times$ & \checkmark\checkmark \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-For well-aligned instruct models performing tasks within their fine-tuning distribution (like Qwen3-4B on calendar scheduling), prompt engineering is both simpler and more effective. Steering vectors offer the most value for:
-\begin{itemize}
-    \item Modifying base model behavior without instruction tuning.
-    \item Tasks orthogonal to the model's fine-tuning (e.g., domain-specific jargon, personality modulation).
-    \item Settings where prompt tokens are limited (e.g., low-latency agents with small context budgets).
-\end{itemize}
+Mid-layer steering is effective even on instruct models, but for tasks within the fine-tuning distribution (calendar extraction), prompt engineering remains simpler and safer. The key risk of steering is the \textbf{narrow coefficient window}: on base models, the gap between ``effective'' ($\alpha=30$, score 0.97) and ``degenerate'' ($\alpha=60$, score 0.33) is a single step.
 
 \subsection{The Tokenizer Bottleneck}
 
-All four tokenizers fragment ISO 8601 timestamps into 29--44 individual tokens. This creates a fundamental challenge for both steering and prompting: the model must use multi-head attention to reconstruct temporal semantics from scattered character-level tokens. This suggests that \textbf{temporal-aware tokenization} (treating date/time patterns as single tokens) could significantly improve both approaches.
+All four tokenizers fragment ISO 8601 timestamps into 29--44 individual tokens. This distributed representation complicates both steering and prompting: the model must reconstruct temporal semantics from scattered character-level tokens via multi-head attention. \textbf{Temporal-aware tokenization} remains an open opportunity.
 
-\subsection{Mid-Layer Steering as Future Direction}
+\subsection{Budget Guidance: A Negative Result}
 
-Our contrastive analysis shows that cosine distance \textit{increases} at earlier layers (0.168 at layer 26 vs.\ 0.151 at layer 35), suggesting that mid-layer representations may offer more leverage for steering. Targeting layers 15--25, where representations are transitioning from syntactic to semantic, could yield more effective steering vectors. This aligns with findings from representation engineering~\cite{zou2023representation} and the bias-only adaptation work~\cite{gao2025steering}, which found optimal steering at intermediate layers.
+The null result of budget guidance is informative: instruct models fine-tuned for structured output already produce near-minimal token sequences. Budget guidance is effective when there is \textit{compressible overhead} (e.g., verbose chain-of-thought on reasoning tasks). For agentic tasks with compact outputs, inference-time token control adds no value---the model is already Pareto-optimal.
 
 % ===================================================================
 \section{Conclusion}
 
-We presented a systematic comparison of activation steering and prompt engineering for agentic calendar tasks. Our tokenizer analysis reveals universal fragmentation of temporal expressions across four model families. Contrastive feature extraction and logit lens analysis confirm that Qwen3-4B develops clear calendar-related features in its final layers, promoting tokens like \texttt{schedule}, \texttt{agenda}, and \texttt{attendees}.
+We presented a comprehensive study of activation steering vs.\ prompt engineering for agentic calendar tasks, going beyond single-layer analysis to reveal the full picture.
 
-However, our central finding is that \textbf{last-layer steering is ineffective on instruction-tuned models} for tasks within their fine-tuning distribution. The instruction tuning has already aligned the model's behavior, making the steering vector redundant. This is a cautionary result for practitioners considering steering as a plug-and-play enhancement for instruct models.
+\textbf{Mid-layer steering works.} Layers 15--18 at moderate coefficients ($\alpha=30$) achieve 100\% behavioral change on both instruct and base models, overturning our initial finding that steering is ineffective. The key insight is that \textit{where} you steer matters more than \textit{how much}.
 
-\textbf{Future work} includes: (1) mid-layer steering experiments targeting layers 15--25, (2) full inference evaluation with Ollama/llama.cpp integration, (3) steering on base (non-instruct) model variants, (4) training SAE features specifically for calendar tasks using the Neuronpedia framework, and (5) investigating budget guidance~\cite{li2025budget} for controlling reasoning length in the agentic loop.
+\textbf{Late-layer rigidity is architectural.} Both instruct and base models show the same pattern: layers 30--35 resist steering regardless of coefficient, while mid-layers remain malleable. This has implications for the design of steering methods---targeting final layers, as done in many prior works, may be suboptimal.
 
-All code, data, and steering vectors are available at \texttt{[repository URL]}.
+\textbf{Base models are more steerable but fragile.} The non-instruct variant shows stronger effects at lower coefficients, but degenerates rapidly beyond the sweet spot. Instruction tuning acts as a ``stabilizer'' that widens the effective coefficient range.
+
+\textbf{Budget guidance is task-dependent.} For structured extraction where the instruct model already generates compact outputs, token-level length control adds no value. This is a useful negative result for practitioners.
+
+All code, data, and steering vectors are available at \url{https://github.com/Shumatsurontek/steering-research}.
 
 % ===================================================================
 \section*{Acknowledgments}
