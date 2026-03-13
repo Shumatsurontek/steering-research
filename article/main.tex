@@ -44,7 +44,7 @@ A Comparative Study on Instruction-Tuned LLMs}
 \begin{abstract}
 We present a comparative study of \textbf{activation steering} versus \textbf{prompt engineering} for improving task-specific behavior in instruction-tuned language models, focusing on an agentic calendar scheduling use case. Using Qwen3-4B-Instruct and its base variant as primary models, we (1)~analyze how four different tokenizers fragment calendar-related inputs, (2)~extract contrastive steering vectors from residual stream activations using a SAE-inspired methodology, (3)~perform a comprehensive layer-by-layer steering sweep across 11 layers and 6 coefficient levels, (4)~validate findings on the base (non-instruct) model, (5)~test budget guidance for reasoning length control, (6)~map SAE features via Neuronpedia's transcoder dictionary, (7)~evaluate steering on a 0.6B SLM for GSM8K math reasoning, and (8)~quantify steering effects via KL divergence and sampling diversity analysis.
 
-Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid; (b)~\textbf{base models are more steerable but fragile}---the sweet spot at layer 15, $\alpha=30$ boosts calendar scores from 0.70 to 0.97, but higher coefficients cause degeneration; (c)~\textbf{budget guidance has no effect} on instruct models that already produce compact structured outputs ($\sim$75 tokens); (d)~Neuronpedia transcoder features confirm calendar-related circuits distribute across layers 20--35 with extreme sparsity (9/450 sampled features, 0.07\% density); (e)~\textbf{steering on a 0.6B SLM doubles GSM8K accuracy} on the base model (20\%$\to$40\%) but the instruct model gains only $+10\%$; (f)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering, with mid-layer steering increasing sampling diversity from 20--40\% to 80--100\% while preserving output type. We discuss implications for the choice between steering and prompting in agentic applications.
+Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid; (b)~\textbf{base models are more steerable but fragile}---the sweet spot at layer 15, $\alpha=30$ boosts calendar scores from 0.70 to 0.97, but higher coefficients cause degeneration; (c)~\textbf{budget guidance has no effect} on instruct models that already produce compact structured outputs ($\sim$75 tokens); (d)~Neuronpedia transcoder features confirm calendar-related circuits distribute across layers 20--35 with extreme sparsity (9/450 sampled features, 0.07\% density); (e)~\textbf{steering on a 0.6B SLM boosts GSM8K accuracy by +16pp} on the instruct model under zero-shot CoT evaluation (46\%$\to$62\% flexible-extract), but \textbf{degrades performance under 5-shot evaluation} ($-$8pp instruct, $-$14pp base), revealing a critical interaction between steering and prompting strategy; (f)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering, with mid-layer steering increasing sampling diversity from 20--40\% to 80--100\% while preserving output type. We discuss implications for the choice between steering and prompting in agentic applications.
 \end{abstract}
 
 \textbf{Keywords:} activation steering, prompt engineering, tokenizer analysis, mechanistic interpretability, agentic LLM, calendar scheduling
@@ -424,6 +424,44 @@ Three findings emerge:
     \item \textbf{SLMs are extremely fragile}: Early layers (5--10) at any non-zero coefficient universally destroy accuracy, and CoT prompting actually \textit{hurts} the 0.6B model (10\% vs.\ 20\% zero-shot).
 \end{enumerate}
 
+\subsection{Validation via lm-eval (n=50)}
+
+To validate our pilot results with a standardized evaluation, we run the EleutherAI \texttt{lm-eval} harness~\cite{eval-harness} on two GSM8K task variants: the standard \textbf{5-shot} task and the \textbf{zero-shot CoT} task (\texttt{gsm8k\_cot\_zeroshot}, prompt: ``Let's think step by step''). We subclass \texttt{HFLM} to inject steering hooks during both \texttt{\_model\_call} and \texttt{\_model\_generate}.
+
+\begin{table}[H]
+\centering
+\caption{GSM8K lm-eval results (n=50). 5-shot vs.\ zero-shot CoT reveal opposite steering effects.}
+\label{tab:gsm8k_lmeval}
+\small
+\begin{tabular}{llcccc}
+\toprule
+& & \multicolumn{2}{c}{\textbf{5-shot}} & \multicolumn{2}{c}{\textbf{Zero-shot CoT}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+\textbf{Model} & \textbf{Condition} & \textbf{Strict} & \textbf{Flexible} & \textbf{Strict} & \textbf{Flexible} \\
+\midrule
+Instruct & Baseline & 48\% & 48\% & 38\% & 46\% \\
+Instruct & Steered & 44\% {\scriptsize($-$4)} & 40\% {\scriptsize($-$8)} & 40\% {\scriptsize(+2)} & \textbf{62\%} {\scriptsize(\textbf{+16})} \\
+\midrule
+Base & Baseline & 48\% & 48\% & 36\% & 28\% \\
+Base & Steered & 26\% {\scriptsize($-$22)} & 34\% {\scriptsize($-$14)} & 8\% {\scriptsize($-$28)} & 22\% {\scriptsize($-$6)} \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+
+{\footnotesize Instruct steered: L25@$\alpha$=60. Base steered: L20@$\alpha$=100.}
+\end{table}
+
+The 5-shot and zero-shot results tell \textbf{opposite stories}, revealing a critical interaction between steering and prompting strategy:
+
+\begin{enumerate}
+    \item \textbf{Zero-shot CoT + steering = synergy on instruct.} The steered instruct model achieves \textbf{62\% flexible-extract} ($+16$pp over baseline), the best result across all conditions. The strict match remains stable (38\%$\to$40\%), indicating that steering improves \textit{reasoning} without improving \textit{format compliance}---the model finds correct answers more often but doesn't always use the ``The answer is X'' template.
+    \item \textbf{5-shot + steering = destructive interference.} Under 5-shot evaluation, steering \textit{degrades} both models. The few-shot exemplars already provide strong reasoning scaffolding ($\sim$350 context tokens); the steering vector is redundant with, and interferes with, this guidance. The steered base model drops from 48\%$\to$26\% strict match.
+    \item \textbf{Base model at $\alpha$=100 degenerates regardless.} The base model shows degradation in both evaluation protocols. This confirms $\alpha$=100 is too aggressive for the 0.6B base model (consistent with the narrow stability window observed in \cref{sec:base_steering}). Lower coefficients ($\alpha$=30--60) would likely yield improvements.
+    \item \textbf{Generation pathology at high $\alpha$.} Steered base model generation took $3.3\times$ longer under 5-shot (66 vs.\ 20 minutes), suggesting the steering vector pushes the model into longer, erratic generation paths before hitting a stop token.
+\end{enumerate}
+
+\textbf{Implication for dynamic steering:} Steering coefficients must be \textit{adaptive} to the prompting context. A coefficient that helps under zero-shot conditions can hurt when few-shot exemplars provide directional guidance. This motivates context-aware selection: $\alpha = f(n_{\text{few-shot}}, \text{model\_type}, \text{task\_domain})$---a key design requirement for the dynamic multi-agent steering architecture discussed in \cref{sec:discussion}.
+
 % ===================================================================
 \section{Sampling-Based Steering Analysis}
 \label{sec:sampling}
@@ -543,6 +581,18 @@ Compact structured output & $\times$ & \checkmark\checkmark \\
 
 Mid-layer steering is effective even on instruct models, but for tasks within the fine-tuning distribution (calendar extraction), prompt engineering remains simpler and safer. The key risk of steering is the \textbf{narrow coefficient window}: on base models, the gap between ``effective'' ($\alpha=30$, score 0.97) and ``degenerate'' ($\alpha=60$, score 0.33) is a single step.
 
+\subsection{Toward Dynamic Multi-Agent Steering}
+
+Our results suggest a promising architecture for multi-agent orchestration on SLMs: dynamically binding domain-specific steering vectors at each tool call step. The key evidence:
+
+\begin{itemize}
+    \item Steering vectors generalize across domains (calendar$\to$math reasoning) and model sizes (4B$\to$0.6B).
+    \item The intervention is instantaneous (a single \texttt{register\_forward\_hook}) with negligible latency overhead.
+    \item Zero-shot + steering outperforms both zero-shot alone and 5-shot alone on the instruct model (62\% vs.\ 46\% vs.\ 48\%).
+\end{itemize}
+
+The critical design requirement is \textbf{adaptive coefficient selection}. Our experiments demonstrate that the optimal $\alpha$ depends on at least three factors: (1)~the number of few-shot exemplars in the prompt, (2)~the model variant (instruct vs.\ base), and (3)~the model size (the stability window narrows on smaller models). A practical system would maintain a \textit{steering library}---a mapping from task domains to pre-extracted vectors with calibrated coefficients---and select the appropriate configuration based on the orchestrator's current plan step.
+
 \subsection{The Tokenizer Bottleneck}
 
 All four tokenizers fragment ISO 8601 timestamps into 29--44 individual tokens. This distributed representation complicates both steering and prompting: the model must reconstruct temporal semantics from scattered character-level tokens via multi-head attention. \textbf{Temporal-aware tokenization} remains an open opportunity.
@@ -561,6 +611,8 @@ We presented a comprehensive study of activation steering vs.\ prompt engineerin
 \textbf{Late-layer rigidity is architectural.} Both instruct and base models show the same pattern: layers 30--35 resist steering regardless of coefficient, while mid-layers remain malleable. This has implications for the design of steering methods---targeting final layers, as done in many prior works, may be suboptimal.
 
 \textbf{Base models are more steerable but fragile.} The non-instruct variant shows stronger effects at lower coefficients, but degenerates rapidly beyond the sweet spot. Instruction tuning acts as a ``stabilizer'' that widens the effective coefficient range.
+
+\textbf{Steering and prompting interact non-trivially.} Under zero-shot CoT, steering boosts the instruct model by $+16$pp (46\%$\to$62\% on GSM8K). Under 5-shot evaluation, the same steering \textit{degrades} performance ($-$8pp instruct, $-$14pp base). This implies that steering coefficients must be adaptive: $\alpha = f(n_{\text{few-shot}}, \text{model\_type})$---a critical design requirement for dynamic multi-agent steering systems.
 
 \textbf{Budget guidance is task-dependent.} For structured extraction where the instruct model already generates compact outputs, token-level length control adds no value. This is a useful negative result for practitioners.
 
@@ -632,6 +684,12 @@ H.~Cho et al.
 Qwen Team.
 \newblock Qwen3 technical report.
 \newblock \textit{arXiv preprint arXiv:2505.09388}, 2025.
+
+\bibitem{eval-harness}
+L.~Gao et al.
+\newblock A framework for few-shot language model evaluation.
+\newblock \textit{Zenodo}, 2024.
+\newblock \url{https://github.com/EleutherAI/lm-evaluation-harness}
 
 \end{thebibliography}
 

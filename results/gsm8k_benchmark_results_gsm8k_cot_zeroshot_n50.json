@@ -1,0 +1,30 @@
+{
+  "instruct": {
+    "baseline": {
+      "exact_match,strict-match": 0.38,
+      "exact_match_stderr,strict-match": 0.06934092056863767,
+      "exact_match,flexible-extract": 0.46,
+      "exact_match_stderr,flexible-extract": 0.07119963311072637
+    },
+    "steered_L25_a60": {
+      "exact_match,strict-match": 0.4,
+      "exact_match_stderr,strict-match": 0.06998542122237651,
+      "exact_match,flexible-extract": 0.62,
+      "exact_match_stderr,flexible-extract": 0.06934092056863767
+    }
+  },
+  "base": {
+    "baseline": {
+      "exact_match,strict-match": 0.36,
+      "exact_match_stderr,strict-match": 0.06857142857142856,
+      "exact_match,flexible-extract": 0.28,
+      "exact_match_stderr,flexible-extract": 0.06414269805898185
+    },
+    "steered_L20_a100": {
+      "exact_match,strict-match": 0.08,
+      "exact_match_stderr,strict-match": 0.038756171332144373,
+      "exact_match,flexible-extract": 0.22,
+      "exact_match_stderr,flexible-extract": 0.05917804336345136
+    }
+  }
+}

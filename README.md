@@ -19,7 +19,7 @@
   <a href="article/main.pdf"><img src="https://img.shields.io/badge/📄_Read_the_Paper-PDF-red?style=flat-square" alt="Paper PDF"/></a>
   <img src="https://img.shields.io/badge/Model-Qwen3--4B-blue?style=flat-square" alt="Qwen3-4B"/>
   <img src="https://img.shields.io/badge/Layers-36-green?style=flat-square" alt="36 Layers"/>
-  <img src="https://img.shields.io/badge/Experiments-9-orange?style=flat-square" alt="7 Experiments"/>
+  <img src="https://img.shields.io/badge/Experiments-10-orange?style=flat-square" alt="10 Experiments"/>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License"/>
 </p>
 
@@ -56,7 +56,7 @@ Instruct model already produces **~75 tokens** of compact JSON. Budget guidance 
 Neuronpedia transcoder analysis: only **9/450 random samples** (0.07%) are calendar-related. Yet 115 features found via keyword search across layers 20–35.
 
 ### 🧮 SLM Steering: GSM8K Math Reasoning
-Steering on Qwen3-0.6B **doubles** base model GSM8K accuracy (20%→**40%**). Instruct model gains only +10%. Sweet spot shifts to 64–89% depth on the 28-layer model.
+Zero-shot CoT + steering on Qwen3-0.6B-Instruct: **46%→62% (+16pp)** flexible-extract. But **5-shot + steering = interference** (-8pp). Steering and prompting interact non-trivially → adaptive `α = f(n_few_shot)` needed.
 
 ### 📊 KL Divergence: 3-Order Gap
 Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steering increases sampling diversity from 20%→**100%** while preserving JSON output type.
@@ -223,6 +223,17 @@ Layer 33: L2=179.4  →  ✅ agenda, schedule, invite              ❌ entropy, 
 
 > Sweet spot shifts to 64–89% depth (layers 18–25) on the 28-layer model. Base model doubles accuracy with steering. CoT *hurts* the 0.6B model (10% < 20% zero-shot).
 
+**lm-eval Validation (n=50) — 5-shot vs. Zero-shot CoT:**
+
+| Model | Condition | 5-shot Strict | 5-shot Flex | 0-shot Strict | 0-shot Flex |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Instruct** | Baseline | 48% | 48% | 38% | 46% |
+| **Instruct** | Steered | 44% (-4) | 40% (-8) | 40% (+2) | **62% (+16)** ★ |
+| **Base** | Baseline | 48% | 48% | 36% | 28% |
+| **Base** | Steered | 26% (-22) | 34% (-14) | 8% (-28) | 22% (-6) |
+
+> **Zero-shot + steering = synergy** (+16pp on instruct), **5-shot + steering = interference** (-8pp). Steering improves *reasoning* without improving *format compliance*. This motivates adaptive coefficient selection: `α = f(n_few_shot, model_type)` for dynamic multi-agent steering.
+
 ### 9️⃣ Sampling-Based Steering — KL Divergence + Diversity
 
 **KL Divergence (bits) — Mid-layers vs. Late layers:**
@@ -301,11 +312,13 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 
 ## 🔮 Future Work
 
+- [ ] **Dynamic steering for multi-agent orchestration** — inject domain-specific steering vectors (code, debug, math) at each tool call step, benchmarked on [SWE-bench Verified](https://huggingface.co/datasets/SWE-bench/SWE-bench_Verified)
+- [ ] Steering vector composition — can we add v_code + v_debug without degeneration?
+- [ ] Adaptive coefficient selection — α = f(confidence, task_complexity)
 - [ ] Full agentic evaluation with Ollama/llama.cpp + LangChain
 - [x] SLM steering on GSM8K (Qwen3-0.6B) — **done**
 - [x] Sampling-based analysis (T>0, KL divergence) — **done**
 - [ ] Train task-specific SAEs via Neuronpedia
-- [ ] Multi-task steering (calendar + code + reasoning simultaneously)
 
 ---
 

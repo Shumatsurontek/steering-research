@@ -102,8 +102,9 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 - [ ] Évaluation comparative sur les 29 cas avec les 5 stratégies
 - [x] Test SLM (Qwen3-0.6B) sur GSM8K vs prompt engineering
 - [x] Sampling-based analysis (T>0, KL divergence, diversity)
+- [x] Validation lm-eval GSM8K (n=50) — standardized 5-shot evaluation
 
-**Résultats clés SLM GSM8K :**
+**Résultats clés SLM GSM8K (pilot n=10) :**
 - Instruct : zero-shot=20%, best steering=30% (L25@α=60, +10%)
 - Base : few-shot=20%, best steering=40% (L20@α=100, +20%)
 - Sweet spot à 64-89% depth (vs 42-50% sur 4B) → relative depth hypothesis
@@ -115,9 +116,77 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 - Rigidité late-layer confirmée distributionnellement
 - Output JSON préservé malgré diversité accrue
 
+**Résultats lm-eval GSM8K (n=50) — 5-shot vs zero-shot CoT :**
+
+| Modèle | Condition | 5-shot strict | 5-shot flex | 0-shot strict | 0-shot flex |
+|--------|-----------|:---:|:---:|:---:|:---:|
+| Instruct | Baseline | 48% | 48% | 38% | 46% |
+| Instruct | Steered | 44% (-4) | 40% (-8) | 40% (+2) | **62% (+16)** ★ |
+| Base | Baseline | 48% | 48% | 36% | 28% |
+| Base | Steered | 26% (-22) | 34% (-14) | 8% (-28) | 22% (-6) |
+
+- **Zero-shot + steering = synergie** (+16pp instruct flexible) — meilleur résultat global
+- **5-shot + steering = interférence destructrice** — les exemplaires few-shot et le vecteur sont redondants
+- Le steering améliore le raisonnement mais pas le formatage (flexible > strict)
+- Base model à α=100 dégénère dans les deux cas → α trop agressif
+- **Conclusion clé : α = f(n_few_shot, model_type)** — coefficient adaptatif nécessaire
+- Script : `src/steering/gsm8k_benchmark.py` (subclasse HFLM avec hooks steering, `--task` flag)
+
 ---
 
-## Phase 6 — Rédaction de l'Article ✅
+## Phase 6 — Dynamic Steering for Multi-Agent Orchestration (Next)
+> Hypothèse : injecter dynamiquement des steering vectors domain-specific à chaque étape d'un plan agentique pour améliorer les performances SLM sur des tâches complexes (SWE-bench)
+
+### 6.1 Concept — "Steering-as-a-Skill"
+L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, debugging, NL reasoning) et bind le steering vector correspondant via `register_forward_hook` avant l'inférence. Le modèle reste identique, seul le biais directionnel change dynamiquement.
+
+```
+┌─────────────────────────────────────────────────────┐
+│              AGENT ORCHESTRATOR                      │
+│                                                      │
+│  Plan: [read_file] → [analyze_bug] → [write_patch]  │
+│            │              │               │          │
+│            ▼              ▼               ▼          │
+│    ┌──────────┐   ┌────────────┐   ┌───────────┐    │
+│    │ v_code   │   │ v_debug    │   │ v_code    │    │
+│    │ L18@α=30 │   │ L20@α=30  │   │ L18@α=30  │    │
+│    └────┬─────┘   └─────┬──────┘   └─────┬─────┘    │
+│         ▼               ▼               ▼            │
+│    ┌─────────────────────────────────────────┐       │
+│    │         SLM (Qwen3-0.6B / 4B)           │       │
+│    │   hook(layer_n) += α · v_domain/‖v‖     │       │
+│    └─────────────────────────────────────────┘       │
+└─────────────────────────────────────────────────────┘
+```
+
+### 6.2 Extraction de vecteurs domain-specific
+- [ ] Définir les domaines SWE-bench : code_reading, bug_analysis, patch_writing, test_reasoning
+- [ ] Construire des paires contrastives par domaine (10+ prompts positifs vs neutres)
+- [ ] Extraire les vecteurs sur Qwen3-0.6B et Qwen3-4B
+- [ ] Identifier le sweet spot (layer, α) par domaine via sweep automatisé
+- [ ] Sauvegarder une "steering library" : `{domain: {layer, coeff, vector}}`
+
+### 6.3 Composition et interférence
+- [ ] Test d'addition de vecteurs : v_code + v_debug → cohérent ou dégénéré ?
+- [ ] Test de switching séquentiel : v_code → remove → v_debug (pas de résiduel ?)
+- [ ] Mesurer la fenêtre de stabilité par domaine (α_min, α_max avant dégénérescence)
+- [ ] Explorer le coefficient adaptatif : α = f(confidence, task_complexity)
+
+### 6.4 Benchmark SWE-bench Verified
+- [ ] Charger le dataset : `SWE-bench/SWE-bench_Verified` (HuggingFace)
+- [ ] Pipeline : repo clone → issue parsing → steering-augmented generation → patch apply → test
+- [ ] Comparer : SLM baseline vs SLM + dynamic steering vs SLM + prompt engineering
+- [ ] Métriques : % resolved, patch quality, token efficiency
+
+### 6.5 Questions ouvertes
+- **Composabilité** : peut-on additionner des vecteurs de domaines différents ?
+- **Fenêtre de stabilité** : chaque domaine a-t-il son propre α_max ?
+- **Scaling** : le gain relatif du steering est-il plus fort sur les SLMs (0.6B) que sur les LLMs (4B+) ?
+- **Analogie LoRA** : steering vectors = "LoRA sans entraînement" — quelles sont les limites ?
+
+---
+
+## Phase 7 — Rédaction de l'Article ✅
 > Synthèse des résultats
 
 - [x] Article LaTeX ~12 pages, format arxiv-ready
@@ -138,7 +207,8 @@ Python 3.14 + venv
 ├── einops 0.8.2          # Opérations tensorielles multi-couches
 ├── matplotlib 3.10.8     # Visualisations
 ├── pandas 3.0.1          # Data manipulation
-└── huggingface-hub 1.6.0 # Model downloads
+├── huggingface-hub 1.6.0 # Model downloads
+└── lm-eval              # EleutherAI standardized evaluation (GSM8K benchmark)
 ```
 
 ## Modèles
@@ -147,6 +217,8 @@ Python 3.14 + venv
 |--------|--------|-------|
 | Qwen3-4B-Instruct-2507 | 4B | Modèle principal, steering instruct |
 | Qwen3-4B | 4B | Steering base model (comparaison) |
+| Qwen3-0.6B | 0.6B | SLM instruct : GSM8K steering + lm-eval benchmark |
+| Qwen3-0.6B-Base | 0.6B | SLM base : GSM8K steering + lm-eval benchmark |
 | Gemma-3-1B-IT | 1B | Comparaison tokenizer |
 | Llama-3.2-3B-Instruct | 3B | Comparaison tokenizer |
 | Phi-3-mini-4k-instruct | 3.8B | Comparaison tokenizer |
