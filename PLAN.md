@@ -100,16 +100,29 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 - [ ] Servir Qwen3-4B via Ollama
 - [ ] Agent LangChain avec tool "create_calendar_event"
 - [ ] Évaluation comparative sur les 29 cas avec les 5 stratégies
-- [ ] Si hypothèse validée : test SLM (petit Qwen ou LFM2) sur GSM8K vs prompt engineering
+- [x] Test SLM (Qwen3-0.6B) sur GSM8K vs prompt engineering
+- [x] Sampling-based analysis (T>0, KL divergence, diversity)
+
+**Résultats clés SLM GSM8K :**
+- Instruct : zero-shot=20%, best steering=30% (L25@α=60, +10%)
+- Base : few-shot=20%, best steering=40% (L20@α=100, +20%)
+- Sweet spot à 64-89% depth (vs 42-50% sur 4B) → relative depth hypothesis
+- CoT hurts 0.6B (10% < 20% zero-shot)
+
+**Résultats clés Sampling :**
+- KL divergence mid-layer : 1-48 bits vs late-layer : <0.01 bits
+- Diversity L15@α=30 : 80-100% (vs baseline 20-40%)
+- Rigidité late-layer confirmée distributionnellement
+- Output JSON préservé malgré diversité accrue
 
 ---
 
 ## Phase 6 — Rédaction de l'Article ✅
 > Synthèse des résultats
 
-- [x] Article LaTeX ~10 pages, format arxiv-ready
-- [x] Sections : Introduction, Related Work, Tokenizer Analysis, Feature Extraction, Steering (mid-layer + base), Budget Guidance, Neuronpedia, Baselines, Discussion
-- [x] Résultats intégrés : mid-layer sweet spot, base model fragility, budget guidance null, Neuronpedia sparsity
+- [x] Article LaTeX ~12 pages, format arxiv-ready
+- [x] Sections : Introduction, Related Work, Tokenizer Analysis, Feature Extraction, Steering (mid-layer + base), Budget Guidance, Neuronpedia, GSM8K, Sampling, Baselines, Discussion
+- [x] Résultats intégrés : mid-layer sweet spot, base model fragility, budget guidance null, Neuronpedia sparsity, GSM8K SLM, KL divergence
 - [x] Compilé en PDF (`article/main.pdf`)
 - [x] Repo GitHub : https://github.com/Shumatsurontek/steering-research
 

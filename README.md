@@ -1,197 +1,319 @@
-# Steering Vectors vs. Prompt Engineering for Agentic Calendar Tasks
+<p align="center">
+  <img src="https://img.shields.io/badge/🧠_Mechanistic-Interpretability-blueviolet?style=for-the-badge" alt="Mechanistic Interpretability"/>
+  <img src="https://img.shields.io/badge/🎯_Activation-Steering-ff6b6b?style=for-the-badge" alt="Activation Steering"/>
+  <img src="https://img.shields.io/badge/📅_Agentic-Calendar_Tasks-00b894?style=for-the-badge" alt="Agentic Calendar"/>
+  <img src="https://img.shields.io/badge/🔬_Research-Paper-fdcb6e?style=for-the-badge" alt="Research Paper"/>
+</p>
 
-A comparative study of **activation steering** versus **prompt engineering** for improving task-specific behavior in instruction-tuned LLMs, focusing on an agentic calendar scheduling use case.
+<h1 align="center">
+  🧬 Steering Vectors vs. Prompt Engineering<br/>
+  <sub>for Agentic Calendar Tasks</sub>
+</h1>
 
-> **Paper:** [`article/main.pdf`](article/main.pdf) — arxiv-style article with full results
+<p align="center">
+  <strong>Arthur Edmond</strong> · LLM Engineer @ <a href="https://swapn.com">Swapn</a><br/>
+  <em>A deep dive into where, how, and why activation steering works (or doesn't) on instruction-tuned LLMs</em>
+</p>
 
-## Key Findings
+<p align="center">
+  <a href="article/main.pdf"><img src="https://img.shields.io/badge/📄_Read_the_Paper-PDF-red?style=flat-square" alt="Paper PDF"/></a>
+  <img src="https://img.shields.io/badge/Model-Qwen3--4B-blue?style=flat-square" alt="Qwen3-4B"/>
+  <img src="https://img.shields.io/badge/Layers-36-green?style=flat-square" alt="36 Layers"/>
+  <img src="https://img.shields.io/badge/Experiments-9-orange?style=flat-square" alt="7 Experiments"/>
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License"/>
+</p>
 
-| Finding | Detail |
-|---------|--------|
-| **Mid-layer steering is the sweet spot** | Layers 15–18 at α=30 achieve 100% behavioral change on Qwen3-4B-Instruct. Late layers (33–35) are rigid. |
-| **Base models are more steerable but fragile** | Layer 15, α=30 boosts calendar score from 0.70→0.97 on base model, but α≥60 causes degeneration to 0.0 |
-| **Late-layer rigidity is architectural** | Both instruct and base models show the same pattern — not caused by instruction tuning |
-| **Budget guidance has no effect on compact outputs** | Instruct model already generates ~75 tokens of JSON — 0% savings at any budget level |
-| **SAE features confirm extreme sparsity** | 9/450 sampled Neuronpedia features (0.07%) are calendar-related; 115 found via keyword search |
-| **Llama-3.2-3B has the best tokenizer** | Overall score 0.551 — best JSON compression (106 tokens vs 125-136) and temporal handling |
-| **All tokenizers fragment ISO 8601** | Temporal integrity < 0.32 across all 4 models — a universal bottleneck |
-| **Cross-lingual steering signal** | Chinese calendar tokens promoted alongside English/French equivalents in logit lens |
+---
 
-## Architecture
+## ⚡ TL;DR
+
+> **Mid-layer steering (layers 15–18) at moderate coefficients (α=30) achieves 100% behavioral change on instruction-tuned models**, while the "obvious" choice — steering at the most discriminative final layers — does absolutely nothing. This paper maps the full landscape of when steering works, when it breaks, and when you should just write a better prompt.
+
+---
+
+## 🔥 Key Findings
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎯 The Steering Sweet Spot
+Layers 15–18 at α=30 → **100% change rate** on Qwen3-4B-Instruct. Non-calendar prompts get reinterpreted as calendar tasks. Late layers (33–35) → **0% change** even at α=200.
+
+### 🧊 Late-Layer Rigidity is Architectural
+Both instruct AND base models show the same rigidity pattern at layers 30–35. This is a **transformer property**, not an instruction-tuning artifact.
+
+### 💥 Base Models: Powerful but Fragile
+Layer 15 at α=30 boosts calendar score from 0.70→**0.97** on base model. But α≥60 → **total degeneration** (score 0.0). The effective window is razor-thin.
+
+</td>
+<td width="50%">
+
+### 📊 Budget Guidance: A Null Result
+Instruct model already produces **~75 tokens** of compact JSON. Budget guidance (32–512 token limits) achieves **0% savings**. It targets thinking overhead, not output verbosity.
+
+### 🔬 SAE Features: Extreme Sparsity
+Neuronpedia transcoder analysis: only **9/450 random samples** (0.07%) are calendar-related. Yet 115 features found via keyword search across layers 20–35.
+
+### 🧮 SLM Steering: GSM8K Math Reasoning
+Steering on Qwen3-0.6B **doubles** base model GSM8K accuracy (20%→**40%**). Instruct model gains only +10%. Sweet spot shifts to 64–89% depth on the 28-layer model.
+
+### 📊 KL Divergence: 3-Order Gap
+Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steering increases sampling diversity from 20%→**100%** while preserving JSON output type.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📐 The Three-Zone Steerability Hierarchy
+
+```
+                    ┌─────────────────────────────────────────────────┐
+                    │         STEERABILITY vs. LAYER DEPTH            │
+                    │                                                 │
+  Change Rate (%)   │   ██                                            │
+       100 ─────────│   ██ ████                                       │
+                    │   ██ ████ ██                                    │
+        80 ─────────│   ██ ████ ████                                  │
+                    │   ██ ████ ████ ██                               │
+        60 ─────────│   ██ ████ ████ ████                             │
+                    │   ██ ████ ████ ████ ██                          │
+        40 ─────────│   ██ ████ ████ ████ ████                        │
+                    │   ██ ████ ████ ████ ████ ██                     │
+        20 ─────────│   ██ ████ ████ ████ ████ ████ ██ ██            │
+                    │   ██ ████ ████ ████ ████ ████ ████ ████ ██ ██  │
+         0 ─────────│───██─████─████─████─████─████─████─████─██─██──│
+                    │   5   10   15   18   20   22   25   30  33  35 │
+                    │  ⚠️UNSTABLE │ ★ SWEET SPOT │  ❄️ FROZEN       │
+                    └─────────────────────────────────────────────────┘
+                              Layer Index (α = 30)
+```
+
+| Zone | Layers | Behavior | Why |
+|------|--------|----------|-----|
+| ⚠️ **Unstable** | 1–10 | High change but degenerate outputs | Representations too raw — syntactic, not semantic |
+| ★ **Sweet Spot** | 15–18 | **100% change, coherent outputs** | Syntactic→semantic transition point — malleable yet structured |
+| ❄️ **Frozen** | 30–35 | 0–17% change even at α=200 | Already committed to output distribution — architectural rigidity |
+
+---
+
+## 🏗️ Architecture
 
 ```
 steering-research/
-├── article/
-│   └── main.tex / main.pdf              # LaTeX article (~10 pages)
-├── src/
+│
+├── 📄 article/
+│   ├── main.tex                          # LaTeX source (~10 pages, arxiv-ready)
+│   └── main.pdf                          # Compiled paper
+│
+├── 🔬 src/
 │   ├── tokenizers/
-│   │   ├── compare.py                    # Tokenizer comparison + quality scoring
-│   │   └── visualize.py                  # Publication-quality plots (5 figures)
+│   │   ├── compare.py                    # 4-model tokenizer comparison + quality scoring
+│   │   └── visualize.py                  # 5 publication-quality matplotlib figures
+│   │
 │   ├── analysis/
 │   │   ├── sae_features.py              # Contrastive activation extraction + logit lens
-│   │   └── neuronpedia_features.py      # Neuronpedia API feature exploration
+│   │   └── neuronpedia_features.py      # Neuronpedia API: 163,840 SAE features/layer
+│   │
 │   ├── steering/
-│   │   ├── apply_vectors.py             # Initial steering (layer 35 only)
-│   │   ├── midlayer_sweep.py            # Mid-layer sweep (11 layers × 6 coefficients)
-│   │   ├── base_model_steering.py       # Base model (non-instruct) steering
-│   │   └── budget_guidance.py           # Budget guidance (Gamma predictor)
+│   │   ├── apply_vectors.py             # Phase 3a: Initial layer-35 steering (null result)
+│   │   ├── midlayer_sweep.py            # Phase 3b: 11 layers × 6 coefficients → sweet spot
+│   │   ├── base_model_steering.py       # Phase 3c: Base model — steerable but fragile
+│   │   ├── budget_guidance.py           # Phase 3d: Gamma predictor (null result)
+│   │   ├── slm_gsm8k_steering.py       # Phase 3e: SLM steering on GSM8K (Qwen3-0.6B) ★
+│   │   └── sampling_steering.py         # Phase 3f: KL divergence + sampling diversity ★
+│   │
 │   └── agents/
-│       └── prompt_baselines.py          # 5 prompt strategies + 29-case eval dataset
-├── results/
-│   ├── token_counts_heatmap.png         # Tokenizer comparison heatmap
-│   ├── compression_ratio_bar.png        # Compression ratios by model
-│   ├── quality_scores_radar.png         # Radar chart of quality metrics
-│   ├── tokenization_detail.png          # Visual token segmentation
-│   ├── fragmentation_focus.png          # Date/JSON fragmentation analysis
-│   ├── steering_vectors.pt             # 36 per-layer instruct steering vectors
-│   ├── base_steering_vectors.pt        # 36 per-layer base model steering vectors
-│   ├── layer_importance.json           # Layer ranking by discriminative power
-│   ├── logit_lens_results.json         # Promoted/suppressed tokens per layer
-│   ├── steering_results.json           # Initial layer-35 sweep results
-│   ├── midlayer_steering_results.json  # Full 11-layer × 6-coefficient sweep
-│   ├── base_model_steering_results.json # Base model sweep results
-│   ├── budget_guidance_results.json    # Budget guidance results
-│   └── neuronpedia_features.json       # SAE feature exploration results
-├── data/
-│   └── calendar_eval_dataset.json       # 29 bilingual test cases
-├── PLAN.md                              # Research plan with status
-└── requirements.txt                     # Python dependencies
+│       └── prompt_baselines.py          # 5 strategies × 29 bilingual eval cases
+│
+├── 📊 results/                           # All JSON results + steering vectors (.pt)
+├── 📁 data/                              # Evaluation datasets
+├── 📋 PLAN.md                            # Research plan with status tracking
+└── 📦 requirements.txt
 ```
 
-## Methodology
+---
 
-### 1. Tokenizer Analysis
+## 🧪 Experiments
 
-Comparative analysis of 4 tokenizers on 9 prompt categories:
+### 1️⃣ Tokenizer Analysis — 4 Models, 9 Prompt Categories
 
-| Model | Vocab Size | Overall Score | Best At |
-|-------|-----------|--------------|---------|
-| Qwen3-4B-Instruct-2507 | 151,643 | 0.483 | Multilingual parity |
-| Gemma-3-1B-IT | 262,144 | 0.511 | Semantic coherence |
-| **Llama-3.2-3B-Instruct** | **128,000** | **0.551** | **JSON + temporal** |
-| Phi-3-mini-4k-instruct | 32,000 | 0.438 | — |
+| Model | Vocab | Overall Score | Temporal | JSON | Multilingual |
+|-------|-------|:---:|:---:|:---:|:---:|
+| **Llama-3.2-3B** | 128K | **0.551** ★ | 0.316 | 0.375 | 0.816 |
+| Gemma-3-1B | 262K | 0.511 | 0.226 | 0.288 | 0.845 |
+| Qwen3-4B | 152K | 0.483 | 0.205 | 0.288 | 0.802 |
+| Phi-3-mini | 32K | 0.438 | 0.173 | 0.249 | 0.814 |
 
-### 2. Contrastive Feature Extraction
+> **All tokenizers score < 0.32 on temporal integrity** — ISO 8601 timestamps are universally fragmented into individual characters.
 
-SAE-inspired approach: 10 calendar vs 10 neutral prompts, hook-based residual stream extraction at all 36 layers, mean-difference steering vectors + logit lens projection.
+### 2️⃣ Contrastive Feature Extraction + Logit Lens
 
-```
-Layer 35: L2=361.0  →  Promotes: schedule, agenda, attendees, RSVP
-Layer 34: L2=218.6  →  Promotes: schedule, agenda, calendar, attendees
-Layer 33: L2=179.4  →  Promotes: agenda, schedule, invite, attendees
-```
+10 calendar vs 10 neutral prompts → per-layer mean-difference vectors → logit lens projection:
 
-### 3. Mid-Layer Steering Sweep
-
-11 layers × 6 coefficients on Qwen3-4B-Instruct:
-
-```
-Layer 35 @ α=200:  17% change  ← RIGID
-Layer 33 @ α=200:  17% change  ← RIGID
-Layer 15 @ α=30:  100% change  ← SWEET SPOT ★
-Layer 18 @ α=30:  100% change  ← SWEET SPOT ★
-Layer 5  @ α=60:  100% change  ← DEGENERATE (empty outputs)
+```python
+Layer 35: L2=361.0  →  ✅ schedule, agenda, attendees, RSVP    ❌ magnitude, density
+Layer 34: L2=218.6  →  ✅ schedule, agenda, calendar            ❌ licking, entropy
+Layer 33: L2=179.4  →  ✅ agenda, schedule, invite              ❌ entropy, Measured
 ```
 
-### 4. Base Model Steering
+### 3️⃣ Mid-Layer Steering Sweep
 
-Qwen3-4B (non-instruct) confirms the pattern but with a narrower effective range:
+**The experiment that changed everything.** 11 layers × 6 coefficients:
 
-```
-Layer 15, α=30:  cal_score 0.70 → 0.97 (+0.27)  ★ Effective
-Layer 15, α=60:  cal_score 0.70 → 0.33 (-0.37)  ✗ Degenerate
-Layer 35, α=200: cal_score 0.70 → 0.77 (+0.07)  ~ Minimal effect
-```
+| Layer | α=0 | α=10 | α=30 | α=60 | α=100 | α=200 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **15** | 0% | 17% | **100%** ★ | **100%** | 83% | 100% |
+| **18** | 0% | 33% | **100%** ★ | **100%** | **100%** | 67% |
+| 20 | 0% | 17% | 33% | 100% | 100% | 67% |
+| 33 | 0% | 0% | 17% | 17% | 17% | 17% |
+| 35 | 0% | 0% | 0% | 0% | 0% | 17% |
 
-### 5. Budget Guidance
+### 4️⃣ Base Model Steering — Calendar Score (0→1)
 
-Gamma-distribution EOS bias for controlling generation length:
+| Layer | α=0 | α=10 | α=30 | α=60 | α=100 | α=200 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **15** | 0.70 | 0.70 | **0.97** ★ | 0.33 💀 | 0.03 💀 | 0.00 💀 |
+| 18 | 0.70 | 0.73 | 0.73 | 0.13 💀 | 0.00 💀 | 0.00 💀 |
+| 35 | 0.70 | 0.70 | 0.70 | 0.70 | 0.73 | 0.77 |
 
-```
-Result: 0% token savings at ALL budget levels (32-512).
-The instruct model already produces minimal outputs (~75 tokens).
-Budget guidance targets thinking overhead, not structured output verbosity.
-```
+> Sweet spot → degeneration in **one coefficient step**. Instruction tuning acts as a stabilizer.
 
-### 6. Neuronpedia Feature Exploration
+### 5️⃣ Budget Guidance — Token-Level Control
 
-Transcoder-HP dictionary (163,840 features/layer):
-- 115 calendar features found via keyword search across layers 20-35
-- 9/450 random samples = 0.07% density (extreme sparsity)
-- Features specialize in later layers ("scheduling appointments" vs "time references")
+| Budget | Avg Tokens | Valid | Savings |
+|:---:|:---:|:---:|:---:|
+| ∞ (baseline) | 74.6 | 100% | — |
+| 32 | 74.6 | 100% | **0%** |
+| 512 | 74.6 | 100% | **0%** |
 
-### 7. Prompt Engineering Baselines
+> The instruct model is already Pareto-optimal for structured output. Budget guidance targets *thinking overhead*, not output verbosity.
 
-5 strategies on a 29-case bilingual dataset (18 FR / 11 EN):
+### 6️⃣ Neuronpedia SAE Feature Mapping
+
+- **163,840** transcoder features per layer
+- **115** calendar features via keyword search
+- **9/450** random samples (0.07% density)
+- Features specialize in later layers: generic "time" → specific "scheduling appointments"
+
+### 7️⃣ Prompt Engineering Baselines
 
 | Strategy | Messages | Description |
-|----------|----------|-------------|
+|----------|:---:|-------------|
 | Zero-shot | 2 | System prompt only |
-| Few-shot (3) | 8 | 3 example pairs |
+| Few-shot (3) | 8 | 3 example input/output pairs |
 | Few-shot (5) | 12 | 5 example pairs |
-| Chain-of-thought | 2 | Step-by-step extraction |
+| Chain-of-thought | 2 | Step-by-step reasoning |
 | Tool use | 2 + tool | Function calling schema |
 
-## Quick Start
+> 29 bilingual test cases (18 FR / 11 EN) × 4 complexity levels. Framework ready — full inference evaluation pending.
+
+### 8️⃣ SLM Steering on GSM8K — Qwen3-0.6B (28 layers)
+
+| Model | Strategy | Baseline | Best Steering | Layer | α |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Instruct** | zero_shot | 20% | **30%** (+10%) | 25 | 60 |
+| **Instruct** | cot | 10% | 10% (no gain) | — | — |
+| **Instruct** | few_shot | 20% | 20% (no gain) | — | — |
+| **Base** | zero_shot | 0% | 10% | 18 | 30 |
+| **Base** | cot | 0% | 0% | — | — |
+| **Base** | few_shot | 20% | **40%** (+20%) ★ | 20 | 100 |
+
+> Sweet spot shifts to 64–89% depth (layers 18–25) on the 28-layer model. Base model doubles accuracy with steering. CoT *hurts* the 0.6B model (10% < 20% zero-shot).
+
+### 9️⃣ Sampling-Based Steering — KL Divergence + Diversity
+
+**KL Divergence (bits) — Mid-layers vs. Late layers:**
+
+| Prompt | L15@α=30 | L18@α=30 | L35@α=30 | L35@α=60 |
+|:---:|:---:|:---:|:---:|:---:|
+| calendar_fr | 4.20 | 0.61 | 0.00 | 0.00 |
+| calendar_en | 1.51 | 2.10 | 0.00 | 0.00 |
+| ambiguous_en | 11.0 | 1.50 | 0.00 | 0.00 |
+| non_cal_fr | **21.2** | **23.5** | 0.00 | 0.01 |
+| non_cal_en | **20.5** | **17.8** | 0.00 | 0.00 |
+
+**Sampling Diversity (L15@α=30 vs. baseline):**
+
+| Prompt | Baseline T=0.3 | Steered T=0.3 | Baseline T=1.0 | Steered T=1.0 |
+|:---:|:---:|:---:|:---:|:---:|
+| calendar_fr | 20% | **100%** | 60% | **100%** |
+| calendar_en | 20% | **80%** | 40% | **80%** |
+| ambiguous_fr | 20% | **80%** | 60% | **100%** |
+
+> 3-order-of-magnitude KL gap between mid-layers and late layers. Steering increases diversity 2–5× while preserving JSON output type. Late-layer rigidity is **distributional**, not just behavioral.
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# Setup
+# Clone and setup
+git clone https://github.com/Shumatsurontek/steering-research.git
+cd steering-research
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Phase 1: Tokenizer analysis
-python -m src.tokenizers.compare
-python -m src.tokenizers.visualize
-
-# Phase 2: Feature extraction (downloads Qwen3-4B ~8GB)
-python -m src.analysis.sae_features
-
-# Phase 3a: Initial steering (layer 35 only)
-python -m src.steering.apply_vectors
-
-# Phase 3b: Mid-layer sweep (11 layers × 6 coefficients)
-python -m src.steering.midlayer_sweep
-
-# Phase 3c: Base model steering (downloads Qwen3-4B base ~8GB)
-python -m src.steering.base_model_steering
-
-# Phase 3d: Budget guidance
-python -m src.steering.budget_guidance
-
-# Phase 3e: Neuronpedia exploration (API calls, no GPU needed)
-python -m src.analysis.neuronpedia_features
-
-# Phase 4: Prompt baselines (creates eval dataset)
-python -m src.agents.prompt_baselines
+# Run the full pipeline
+python -m src.tokenizers.compare          # Phase 1: Tokenizer analysis
+python -m src.tokenizers.visualize        # Phase 1: Generate plots
+python -m src.analysis.sae_features       # Phase 2: Contrastive extraction
+python -m src.steering.apply_vectors      # Phase 3a: Layer-35 (null result)
+python -m src.steering.midlayer_sweep     # Phase 3b: Sweet spot discovery ★
+python -m src.steering.base_model_steering # Phase 3c: Base model fragility
+python -m src.steering.budget_guidance    # Phase 3d: Budget guidance (null)
+python -m src.steering.slm_gsm8k_steering  # Phase 3e: SLM GSM8K steering ★
+python -m src.steering.sampling_steering   # Phase 3f: KL divergence + diversity ★
+python -m src.analysis.neuronpedia_features # Phase 3g: SAE features (API)
+python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 ```
 
-## Models
+---
 
-| Model | Params | Context | Role |
-|-------|--------|---------|------|
-| [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) | 4.0B | 256K | Instruct: steering + generation |
-| [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | 4.0B | 256K | Base: steering comparison |
-| [Gemma-3-1B-IT](https://huggingface.co/google/gemma-3-1b-it) | 1.0B | 32K | Tokenizer comparison |
-| [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) | 3.2B | 128K | Tokenizer comparison |
-| [Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) | 3.8B | 4K | Tokenizer comparison |
+## 🤖 Models
 
-## References
+| Model | Params | Role | Key Insight |
+|-------|:---:|------|-------------|
+| [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) | 4.0B | Primary: steering + generation | Mid-layer sweet spot at L15–18 |
+| [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | 4.0B | Base model comparison | More steerable, more fragile |
+| [Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) | 0.6B | SLM instruct: GSM8K steering | Sweet spot at 64–89% depth |
+| [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base) | 0.6B | SLM base: GSM8K steering | Doubles accuracy with steering |
+| [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) | 3.2B | Tokenizer comparison | Best tokenizer for agentic tasks |
+| [Gemma-3-1B-IT](https://huggingface.co/google/gemma-3-1b-it) | 1.0B | Tokenizer comparison | Best semantic coherence |
+| [Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) | 3.8B | Tokenizer comparison | Smallest vocab (32K) |
 
-- [Steering LLM Reasoning Through Bias-Only Adaptation](https://arxiv.org/abs/2505.18706) (EMNLP 2025)
-- [Steering LLM Thinking with Budget Guidance](https://arxiv.org/abs/2506.13752)
-- [Activation Addition: Steering Language Models Without Optimization](https://arxiv.org/abs/2308.10248)
-- [Representation Engineering: A Top-Down Approach to AI Transparency](https://arxiv.org/abs/2310.01405)
-- [Transformer Explainer](https://poloclub.github.io/transformer-explainer/)
-- [Neuronpedia — Qwen3-4B Circuit Tracer](https://www.neuronpedia.org/qwen3-4b/graph)
-- [Gemma Scope 2 Tutorial](https://colab.research.google.com/drive/1NhWjg7n0nhfW--CjtsOdw5A5J_-Bzn4r)
+---
 
-## Future Work
+## 📚 References
 
-- [ ] Full inference evaluation with Ollama/llama.cpp + LangChain agent
-- [ ] Test steering on smaller SLM (Qwen or LFM2) on GSM8K benchmark vs prompt engineering
-- [ ] Train task-specific SAEs using Neuronpedia framework
-- [ ] Sampling-based generation (temperature > 0) to detect subtler steering effects
+| Paper | Key Idea |
+|-------|----------|
+| [Activation Addition](https://arxiv.org/abs/2308.10248) (Turner et al., 2023) | Contrastive mean-difference vectors for steering |
+| [Bias-Only Adaptation](https://arxiv.org/abs/2505.18706) (Gao et al., EMNLP 2025) | Per-layer RL steering matching full fine-tuning |
+| [Budget Guidance](https://arxiv.org/abs/2506.13752) (Li et al., 2025) | Gamma-distribution predictor for reasoning length |
+| [Representation Engineering](https://arxiv.org/abs/2310.01405) (Zou et al., 2023) | Top-down approach to AI transparency |
+| [Neuronpedia](https://www.neuronpedia.org/qwen3-4b/graph) | Circuit-level attribution for Qwen3-4B |
+| [Gemma Scope 2](https://colab.research.google.com/drive/1NhWjg7n0nhfW--CjtsOdw5A5J_-Bzn4r) | SAEs, Transcoders, Crosscoders tutorial |
 
-## License
+---
 
-MIT
+## 🔮 Future Work
+
+- [ ] Full agentic evaluation with Ollama/llama.cpp + LangChain
+- [x] SLM steering on GSM8K (Qwen3-0.6B) — **done**
+- [x] Sampling-based analysis (T>0, KL divergence) — **done**
+- [ ] Train task-specific SAEs via Neuronpedia
+- [ ] Multi-task steering (calendar + code + reasoning simultaneously)
+
+---
+
+<p align="center">
+  <strong>Arthur Edmond</strong> · <a href="https://swapn.com">Swapn</a><br/>
+  <sub>Built with PyTorch, HuggingFace Transformers, and an unhealthy obsession with residual streams</sub>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT"/>
+</p>

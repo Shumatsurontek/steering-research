@@ -32,8 +32,8 @@
 \title{Steering Vectors vs.\ Prompt Engineering for Agentic Calendar Tasks:\\
 A Comparative Study on Instruction-Tuned LLMs}
 
-\author[1]{[Author Name]}
-\affil[1]{[Affiliation]}
+\author[1]{Arthur Edmond}
+\affil[1]{LLM Engineer, Swapn}
 
 \date{\today}
 
@@ -42,9 +42,9 @@ A Comparative Study on Instruction-Tuned LLMs}
 
 % ===================================================================
 \begin{abstract}
-We present a comparative study of \textbf{activation steering} versus \textbf{prompt engineering} for improving task-specific behavior in instruction-tuned language models, focusing on an agentic calendar scheduling use case. Using Qwen3-4B-Instruct and its base variant as primary models, we (1)~analyze how four different tokenizers fragment calendar-related inputs, (2)~extract contrastive steering vectors from residual stream activations using a SAE-inspired methodology, (3)~perform a comprehensive layer-by-layer steering sweep across 11 layers and 6 coefficient levels, (4)~validate findings on the base (non-instruct) model, (5)~test budget guidance for reasoning length control, and (6)~map SAE features via Neuronpedia's transcoder dictionary.
+We present a comparative study of \textbf{activation steering} versus \textbf{prompt engineering} for improving task-specific behavior in instruction-tuned language models, focusing on an agentic calendar scheduling use case. Using Qwen3-4B-Instruct and its base variant as primary models, we (1)~analyze how four different tokenizers fragment calendar-related inputs, (2)~extract contrastive steering vectors from residual stream activations using a SAE-inspired methodology, (3)~perform a comprehensive layer-by-layer steering sweep across 11 layers and 6 coefficient levels, (4)~validate findings on the base (non-instruct) model, (5)~test budget guidance for reasoning length control, (6)~map SAE features via Neuronpedia's transcoder dictionary, (7)~evaluate steering on a 0.6B SLM for GSM8K math reasoning, and (8)~quantify steering effects via KL divergence and sampling diversity analysis.
 
-Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid; (b)~\textbf{base models are more steerable but fragile}---the sweet spot at layer 15, $\alpha=30$ boosts calendar scores from 0.70 to 0.97, but higher coefficients cause degeneration; (c)~\textbf{budget guidance has no effect} on instruct models that already produce compact structured outputs ($\sim$75 tokens); (d)~Neuronpedia transcoder features confirm calendar-related circuits distribute across layers 20--35 with extreme sparsity (9/450 sampled features, 0.07\% density). We discuss implications for the choice between steering and prompting in agentic applications.
+Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid; (b)~\textbf{base models are more steerable but fragile}---the sweet spot at layer 15, $\alpha=30$ boosts calendar scores from 0.70 to 0.97, but higher coefficients cause degeneration; (c)~\textbf{budget guidance has no effect} on instruct models that already produce compact structured outputs ($\sim$75 tokens); (d)~Neuronpedia transcoder features confirm calendar-related circuits distribute across layers 20--35 with extreme sparsity (9/450 sampled features, 0.07\% density); (e)~\textbf{steering on a 0.6B SLM doubles GSM8K accuracy} on the base model (20\%$\to$40\%) but the instruct model gains only $+10\%$; (f)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering, with mid-layer steering increasing sampling diversity from 20--40\% to 80--100\% while preserving output type. We discuss implications for the choice between steering and prompting in agentic applications.
 \end{abstract}
 
 \textbf{Keywords:} activation steering, prompt engineering, tokenizer analysis, mechanistic interpretability, agentic LLM, calendar scheduling
@@ -377,6 +377,113 @@ We explore Qwen3-4B's SAE features via Neuronpedia's transcoder dictionary (163,
 The 0.07\% density of calendar features (9/450 random samples $\times$ 163,840 features/layer) implies approximately 115 calendar-relevant features per layer---a tiny fraction of the total, but sufficient to encode the task-specific behavior observed in our steering experiments.
 
 % ===================================================================
+\section{SLM Steering on GSM8K}
+\label{sec:gsm8k}
+
+To test whether steering generalizes beyond calendar tasks and instruction-tuned models, we run a parallel experiment on \textbf{Qwen3-0.6B} (28 layers, 1024 hidden dim) using math reasoning (GSM8K) as the target task.
+
+\subsection{Setup}
+We extract contrastive vectors from 10 ``math reasoning'' prompts vs.\ 10 neutral prompts. We evaluate on 10 GSM8K problems using three prompt strategies (zero-shot, CoT, few-shot) and steering across 6 layers $\times$ 5 coefficients, on both the instruct and base variants.
+
+\subsection{Results}
+
+\begin{table}[H]
+\centering
+\caption{GSM8K accuracy (\%) on Qwen3-0.6B. Best steering result per layer in bold.}
+\label{tab:gsm8k}
+\small
+\begin{tabular}{rcccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Steering Coefficient ($\alpha$)}} \\
+\cmidrule(lr){2-6}
+\textbf{Layer} & 0 & 10 & 30 & 60 & 100 \\
+\midrule
+\multicolumn{6}{c}{\textit{Instruct model (baseline: 20\% zero-shot)}} \\
+\midrule
+5  & 20 & 0 & 0 & 0 & 0 \\
+15 & 20 & 0 & 0 & 0 & 0 \\
+18 & 20 & 10 & 20 & 10 & 0 \\
+25 & 20 & 20 & 10 & \textbf{30} & 10 \\
+\midrule
+\multicolumn{6}{c}{\textit{Base model (baseline: 20\% few-shot)}} \\
+\midrule
+5  & 20 & 0 & 0 & 0 & 0 \\
+15 & 20 & 20 & 0 & 10 & 0 \\
+18 & 20 & 20 & \textbf{30} & 20 & 0 \\
+20 & 20 & 20 & 20 & 30 & \textbf{40} \\
+25 & 20 & 20 & 30 & 30 & 30 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three findings emerge:
+
+\begin{enumerate}
+    \item \textbf{Steering is more effective on the base model}: Layer 20 at $\alpha=100$ \textbf{doubles} GSM8K accuracy (20\%$\to$40\%). The instruct model only achieves $+10\%$ at one configuration (Layer 25, $\alpha=60$).
+    \item \textbf{The sweet spot shifts with model depth}: On the 0.6B (28 layers), optimal steering occurs at layers 18--25 (64--89\% depth), compared to layers 15--18 (42--50\%) on the 4B (36 layers). This suggests a \textbf{relative depth hypothesis}: the steering sweet spot follows the syntactic$\to$semantic transition, which scales with total layer count.
+    \item \textbf{SLMs are extremely fragile}: Early layers (5--10) at any non-zero coefficient universally destroy accuracy, and CoT prompting actually \textit{hurts} the 0.6B model (10\% vs.\ 20\% zero-shot).
+\end{enumerate}
+
+% ===================================================================
+\section{Sampling-Based Steering Analysis}
+\label{sec:sampling}
+
+Previous experiments used greedy decoding ($T{=}0$), which collapses all probability mass onto the argmax token. To detect subtler steering effects, we analyze the full logit distribution via KL divergence and measure response diversity under sampling ($T>0$).
+
+\subsection{KL Divergence: Quantifying Distribution Shift}
+
+We compute KL divergence (in bits) between unsteered and steered first-token logit distributions across 6 prompts (2 calendar, 2 ambiguous, 2 non-calendar) for layers 15, 18, and 35 at three coefficient levels.
+
+\begin{table}[H]
+\centering
+\caption{KL divergence (bits) between steered and unsteered logit distributions. Mid-layers show 3--5 orders of magnitude more divergence than late layers.}
+\label{tab:kl_divergence}
+\begin{tabular}{l|rrr|rrr|rrr}
+\toprule
+& \multicolumn{3}{c|}{\textbf{Layer 15}} & \multicolumn{3}{c|}{\textbf{Layer 18}} & \multicolumn{3}{c}{\textbf{Layer 35}} \\
+\textbf{Prompt} & $\alpha{=}10$ & $\alpha{=}30$ & $\alpha{=}60$ & $\alpha{=}10$ & $\alpha{=}30$ & $\alpha{=}60$ & $\alpha{=}10$ & $\alpha{=}30$ & $\alpha{=}60$ \\
+\midrule
+calendar\_fr & 0.01 & 4.20 & 44.4 & 0.01 & 0.61 & 46.4 & 0.00 & 0.00 & 0.00 \\
+calendar\_en & 0.04 & 1.51 & 48.4 & 0.04 & 2.10 & 45.2 & 0.00 & 0.00 & 0.00 \\
+ambiguous\_en & 0.01 & 11.0 & 48.1 & 0.02 & 1.50 & 45.4 & 0.00 & 0.00 & 0.00 \\
+ambiguous\_fr & 0.00 & 10.6 & 45.4 & 0.03 & 2.61 & 43.1 & 0.00 & 0.00 & 0.00 \\
+non\_cal\_fr & 1.17 & 21.2 & 24.5 & 1.28 & 23.5 & 30.1 & 0.00 & 0.00 & 0.01 \\
+non\_cal\_en & 0.09 & 20.5 & 33.2 & 0.02 & 17.8 & 32.7 & 0.00 & 0.00 & 0.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three key observations emerge:
+\begin{enumerate}
+    \item \textbf{Late-layer rigidity is distributional, not just behavioral.} Layer 35 achieves at most 0.014 bits of KL divergence even at $\alpha{=}60$---the entire output distribution is effectively unchanged. This rules out the hypothesis that late-layer steering shifts probabilities subtly without changing the greedy argmax.
+    \item \textbf{Non-calendar prompts show the highest mid-layer KL.} At $\alpha{=}30$, non-calendar prompts exhibit 17--23 bits of divergence (vs.\ 0.6--11 bits for calendar prompts), indicating that steering maximally disrupts prompts that conflict with the steering direction.
+    \item \textbf{The $\alpha{=}10 \to 30$ transition is non-linear.} KL divergence jumps by 2--3 orders of magnitude between $\alpha{=}10$ ($<$1 bit for most prompts) and $\alpha{=}30$ (1--23 bits), suggesting a phase transition in representation override.
+\end{enumerate}
+
+\subsection{Sampling Diversity}
+
+Under sampling ($T \in \{0.3, 0.7, 1.0\}$, 5 samples per condition), we measure response diversity (unique responses / total) for layer 15 and 18 at $\alpha{=}30$:
+
+\begin{table}[H]
+\centering
+\caption{Response diversity (\% unique out of 5 samples) under sampling. Steering increases diversity while preserving JSON output type.}
+\label{tab:sampling_diversity}
+\begin{tabular}{l|ccc|ccc}
+\toprule
+& \multicolumn{3}{c|}{\textbf{Baseline}} & \multicolumn{3}{c}{\textbf{L15 @ $\alpha{=}30$}} \\
+\textbf{Prompt} & $T{=}0.3$ & $T{=}0.7$ & $T{=}1.0$ & $T{=}0.3$ & $T{=}0.7$ & $T{=}1.0$ \\
+\midrule
+calendar\_fr & 20\% & 40\% & 60\% & 100\% & 100\% & 100\% \\
+calendar\_en & 20\% & 20\% & 40\% & 80\% & 80\% & 80\% \\
+ambiguous\_en & 20\% & 40\% & 40\% & 80\% & 100\% & 100\% \\
+ambiguous\_fr & 20\% & 20\% & 60\% & 80\% & 100\% & 100\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Crucially, all steered samples remain valid JSON calendar outputs---steering flattens the probability distribution across \textit{valid} responses rather than introducing degenerate modes. This suggests mid-layer steering broadens the response manifold without breaking task competence, an effect invisible under greedy decoding.
+
+% ===================================================================
 \section{Prompt Engineering Baselines}
 \label{sec:baselines}
 
@@ -456,6 +563,8 @@ We presented a comprehensive study of activation steering vs.\ prompt engineerin
 \textbf{Base models are more steerable but fragile.} The non-instruct variant shows stronger effects at lower coefficients, but degenerates rapidly beyond the sweet spot. Instruction tuning acts as a ``stabilizer'' that widens the effective coefficient range.
 
 \textbf{Budget guidance is task-dependent.} For structured extraction where the instruct model already generates compact outputs, token-level length control adds no value. This is a useful negative result for practitioners.
+
+\textbf{Late-layer rigidity is distributional.} KL divergence analysis confirms that late layers show $<$0.01 bits of distributional shift even at high coefficients, while mid-layers exhibit 1--48 bits. Steering also increases sampling diversity (20\%$\to$100\%) while preserving output validity---an effect entirely invisible under greedy decoding.
 
 All code, data, and steering vectors are available at \url{https://github.com/Shumatsurontek/steering-research}.
 

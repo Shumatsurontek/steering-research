@@ -1,0 +1,344 @@
+{
+  "slm_instruct": "Qwen/Qwen3-0.6B",
+  "slm_base": "Qwen/Qwen3-0.6B-Base",
+  "gsm8k_problems": 10,
+  "layers_tested": [
+    5,
+    10,
+    15,
+    18,
+    20,
+    25
+  ],
+  "coefficients": [
+    0.0,
+    10.0,
+    30.0,
+    60.0,
+    100.0
+  ],
+  "instruct": {
+    "layer_norms": {
+      "27": 187.38,
+      "26": 179.5,
+      "25": 172.12,
+      "24": 153.25,
+      "23": 135.75,
+      "22": 118.25,
+      "21": 101.62,
+      "20": 86.06,
+      "19": 71.56,
+      "18": 55.41
+    },
+    "prompt_baselines": {
+      "zero_shot": {
+        "accuracy": 0.2,
+        "correct": 2
+      },
+      "cot": {
+        "accuracy": 0.1,
+        "correct": 1
+      },
+      "few_shot": {
+        "accuracy": 0.2,
+        "correct": 2
+      }
+    },
+    "steering": {
+      "5": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "30.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "60.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "10": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        },
+        "30.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "60.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "15": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "30.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "60.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "18": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        },
+        "30.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "60.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "20": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "30.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "60.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "25": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "30.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        },
+        "60.0": {
+          "accuracy": 0.3,
+          "correct": 3
+        },
+        "100.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        }
+      }
+    }
+  },
+  "base": {
+    "layer_norms": {
+      "27": 198.88,
+      "26": 193.25,
+      "25": 186.0,
+      "24": 167.0,
+      "23": 152.0,
+      "22": 134.25,
+      "21": 113.25,
+      "20": 95.56,
+      "19": 77.5,
+      "18": 60.78
+    },
+    "prompt_baselines": {
+      "zero_shot": {
+        "accuracy": 0.0,
+        "correct": 0
+      },
+      "cot": {
+        "accuracy": 0.0,
+        "correct": 0
+      },
+      "few_shot": {
+        "accuracy": 0.2,
+        "correct": 2
+      }
+    },
+    "steering": {
+      "5": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "30.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "60.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "10": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        },
+        "30.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "60.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "15": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "30.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        },
+        "60.0": {
+          "accuracy": 0.1,
+          "correct": 1
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "18": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "30.0": {
+          "accuracy": 0.3,
+          "correct": 3
+        },
+        "60.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "100.0": {
+          "accuracy": 0.0,
+          "correct": 0
+        }
+      },
+      "20": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "30.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "60.0": {
+          "accuracy": 0.3,
+          "correct": 3
+        },
+        "100.0": {
+          "accuracy": 0.4,
+          "correct": 4
+        }
+      },
+      "25": {
+        "0.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "10.0": {
+          "accuracy": 0.2,
+          "correct": 2
+        },
+        "30.0": {
+          "accuracy": 0.3,
+          "correct": 3
+        },
+        "60.0": {
+          "accuracy": 0.3,
+          "correct": 3
+        },
+        "100.0": {
+          "accuracy": 0.3,
+          "correct": 3
+        }
+      }
+    }
+  }
+}
