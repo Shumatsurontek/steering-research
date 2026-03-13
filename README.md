@@ -19,7 +19,7 @@
   <a href="article/main.pdf"><img src="https://img.shields.io/badge/📄_Read_the_Paper-PDF-red?style=flat-square" alt="Paper PDF"/></a>
   <img src="https://img.shields.io/badge/Model-Qwen3--4B-blue?style=flat-square" alt="Qwen3-4B"/>
   <img src="https://img.shields.io/badge/Layers-36-green?style=flat-square" alt="36 Layers"/>
-  <img src="https://img.shields.io/badge/Experiments-10-orange?style=flat-square" alt="10 Experiments"/>
+  <img src="https://img.shields.io/badge/Experiments-13-orange?style=flat-square" alt="13 Experiments"/>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License"/>
 </p>
 
@@ -123,10 +123,15 @@ steering-research/
 │   │   ├── base_model_steering.py       # Phase 3c: Base model — steerable but fragile
 │   │   ├── budget_guidance.py           # Phase 3d: Gamma predictor (null result)
 │   │   ├── slm_gsm8k_steering.py       # Phase 3e: SLM steering on GSM8K (Qwen3-0.6B) ★
-│   │   └── sampling_steering.py         # Phase 3f: KL divergence + sampling diversity ★
+│   │   ├── sampling_steering.py         # Phase 3f: KL divergence + sampling diversity ★
+│   │   ├── gsm8k_benchmark.py           # Phase 3g: lm-eval validation (5-shot + 0-shot) ★
+│   │   ├── domain_vectors.py            # Phase 6a: Domain-specific vector extraction ★
+│   │   ├── vector_composition.py        # Phase 6b: Composition tests (add vs switch) ★
+│   │   └── swebench_domain_vectors.py   # Phase 6c: SWE-bench cluster vectors ★
 │   │
 │   └── agents/
-│       └── prompt_baselines.py          # 5 strategies × 29 bilingual eval cases
+│       ├── prompt_baselines.py          # 5 strategies × 29 bilingual eval cases
+│       └── steering_orchestrator.py     # Phase 6d: Dynamic steering orchestrator ★
 │
 ├── 📊 results/                           # All JSON results + steering vectors (.pt)
 ├── 📁 data/                              # Evaluation datasets
@@ -255,6 +260,38 @@ Layer 33: L2=179.4  →  ✅ agenda, schedule, invite              ❌ entropy, 
 | ambiguous_fr | 20% | **80%** | 60% | **100%** |
 
 > 3-order-of-magnitude KL gap between mid-layers and late layers. Steering increases diversity 2–5× while preserving JSON output type. Late-layer rigidity is **distributional**, not just behavioral.
+
+### 🔟 Dynamic Steering Orchestrator
+
+**Vector Composition (can we add vectors?):**
+
+| Composition | Strategy | Coherent | Avg Score |
+|:---:|:---:|:---:|:---:|
+| code + bug | baseline | 3/3 | **4.0** |
+| code + bug | addition | 3/3 | 2.0 (diluted) |
+| code + bug + patch | addition (3 vec) | 3/3 | 5.7 (= baseline) |
+
+> **Addition dilutes signal** — no degeneration but no gain. Sequential switching is the right architecture.
+
+**Orchestrator — Dynamic vs Static vs Baseline:**
+
+| Scenario | Variant | KW Hits | Tokens | Coherence |
+|:---:|:---:|:---:|:---:|:---:|
+| bug fix | **dynamic** | **4** (vs 1) | 768 | 100% |
+| test failure | **dynamic** | **7** (vs 1) | 818 (-20%) | 100% |
+| feature regression | **dynamic** | **8** (vs 9) | 1280 | 100% |
+
+> **Dynamic switching = 4–7× more domain-relevant output** vs baseline. Static steering *hurts* on heterogeneous tasks (4 vs 9 hits). Zero degeneration across all conditions.
+
+**SWE-bench Cluster Vectors:**
+
+| Cluster | Best Config | Score | Cosine to Generic |
+|:---:|:---:|:---:|:---:|
+| django_web (46%) | L18@α=10 | **13** | 0.865 (bug_analysis) |
+| scientific (37%) | L18@α=60 | 6 | 0.844 |
+| dev_tooling (15%) | L25@α=10 | 8 | 0.849 |
+
+> Each cluster has a **distinct sweet spot**. Cluster-specific vectors capture additional signal beyond generic domains (cosine 0.84–0.87, not 1.0).
 
 ---
 

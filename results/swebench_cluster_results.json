@@ -1,0 +1,434 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "device": "mps",
+  "dtype": "torch.float16",
+  "n_layers": 28,
+  "hidden_dim": 1024,
+  "clusters": [
+    "django_web",
+    "scientific_computing",
+    "dev_tooling"
+  ],
+  "sweep_layers": [
+    15,
+    18,
+    20,
+    22,
+    25
+  ],
+  "sweep_coefficients": [
+    10.0,
+    30.0,
+    60.0
+  ],
+  "layer_norms": {
+    "django_web": {
+      "0": 0.8486,
+      "1": 1.7871,
+      "2": 2.6094,
+      "3": 4.4062,
+      "4": 4.2578,
+      "5": 6.2109,
+      "6": 7.6094,
+      "7": 9.2266,
+      "8": 10.3203,
+      "9": 12.4219,
+      "10": 14.9531,
+      "11": 16.8438,
+      "12": 18.625,
+      "13": 19.0312,
+      "14": 20.4531,
+      "15": 27.5312,
+      "16": 31.3125,
+      "17": 44.0938,
+      "18": 55.4062,
+      "19": 69.8125,
+      "20": 85.5,
+      "21": 102.8125,
+      "22": 123.25,
+      "23": 140.375,
+      "24": 159.5,
+      "25": 182.0,
+      "26": 201.375,
+      "27": 226.25
+    },
+    "scientific_computing": {
+      "0": 0.7178,
+      "1": 1.3545,
+      "2": 2.082,
+      "3": 3.5,
+      "4": 3.2012,
+      "5": 4.7227,
+      "6": 6.1797,
+      "7": 8.2188,
+      "8": 9.1797,
+      "9": 11.5,
+      "10": 13.8516,
+      "11": 15.4375,
+      "12": 17.6875,
+      "13": 17.9688,
+      "14": 19.375,
+      "15": 26.6562,
+      "16": 29.9688,
+      "17": 42.7812,
+      "18": 54.9375,
+      "19": 68.6875,
+      "20": 84.9375,
+      "21": 102.5625,
+      "22": 121.875,
+      "23": 138.625,
+      "24": 156.25,
+      "25": 177.75,
+      "26": 189.75,
+      "27": 211.0
+    },
+    "dev_tooling": {
+      "0": 0.7773,
+      "1": 1.6533,
+      "2": 2.4883,
+      "3": 4.2578,
+      "4": 4.0508,
+      "5": 5.8867,
+      "6": 7.4688,
+      "7": 9.6484,
+      "8": 10.625,
+      "9": 12.9062,
+      "10": 15.8359,
+      "11": 17.3438,
+      "12": 19.1562,
+      "13": 19.4219,
+      "14": 20.8594,
+      "15": 28.2031,
+      "16": 32.4062,
+      "17": 45.625,
+      "18": 57.6562,
+      "19": 72.0,
+      "20": 88.4375,
+      "21": 107.375,
+      "22": 128.375,
+      "23": 147.0,
+      "24": 166.875,
+      "25": 191.0,
+      "26": 209.875,
+      "27": 237.625
+    }
+  },
+  "best_config": {
+    "django_web": {
+      "layer": 18,
+      "alpha": 10.0,
+      "keyword_score": 13
+    },
+    "scientific_computing": {
+      "layer": 18,
+      "alpha": 60.0,
+      "keyword_score": 6
+    },
+    "dev_tooling": {
+      "layer": 25,
+      "alpha": 10.0,
+      "keyword_score": 8
+    }
+  },
+  "sweep_details": {
+    "django_web": [
+      {
+        "layer": 15,
+        "alpha": 10.0,
+        "score": 9
+      },
+      {
+        "layer": 15,
+        "alpha": 30.0,
+        "score": 6
+      },
+      {
+        "layer": 15,
+        "alpha": 60.0,
+        "score": 0
+      },
+      {
+        "layer": 18,
+        "alpha": 10.0,
+        "score": 13
+      },
+      {
+        "layer": 18,
+        "alpha": 30.0,
+        "score": 6
+      },
+      {
+        "layer": 18,
+        "alpha": 60.0,
+        "score": 7
+      },
+      {
+        "layer": 20,
+        "alpha": 10.0,
+        "score": 12
+      },
+      {
+        "layer": 20,
+        "alpha": 30.0,
+        "score": 11
+      },
+      {
+        "layer": 20,
+        "alpha": 60.0,
+        "score": 11
+      },
+      {
+        "layer": 22,
+        "alpha": 10.0,
+        "score": 10
+      },
+      {
+        "layer": 22,
+        "alpha": 30.0,
+        "score": 9
+      },
+      {
+        "layer": 22,
+        "alpha": 60.0,
+        "score": 11
+      },
+      {
+        "layer": 25,
+        "alpha": 10.0,
+        "score": 10
+      },
+      {
+        "layer": 25,
+        "alpha": 30.0,
+        "score": 9
+      },
+      {
+        "layer": 25,
+        "alpha": 60.0,
+        "score": 13
+      }
+    ],
+    "scientific_computing": [
+      {
+        "layer": 15,
+        "alpha": 10.0,
+        "score": 5
+      },
+      {
+        "layer": 15,
+        "alpha": 30.0,
+        "score": 4
+      },
+      {
+        "layer": 15,
+        "alpha": 60.0,
+        "score": 0
+      },
+      {
+        "layer": 18,
+        "alpha": 10.0,
+        "score": 5
+      },
+      {
+        "layer": 18,
+        "alpha": 30.0,
+        "score": 5
+      },
+      {
+        "layer": 18,
+        "alpha": 60.0,
+        "score": 6
+      },
+      {
+        "layer": 20,
+        "alpha": 10.0,
+        "score": 4
+      },
+      {
+        "layer": 20,
+        "alpha": 30.0,
+        "score": 5
+      },
+      {
+        "layer": 20,
+        "alpha": 60.0,
+        "score": 4
+      },
+      {
+        "layer": 22,
+        "alpha": 10.0,
+        "score": 5
+      },
+      {
+        "layer": 22,
+        "alpha": 30.0,
+        "score": 4
+      },
+      {
+        "layer": 22,
+        "alpha": 60.0,
+        "score": 4
+      },
+      {
+        "layer": 25,
+        "alpha": 10.0,
+        "score": 6
+      },
+      {
+        "layer": 25,
+        "alpha": 30.0,
+        "score": 6
+      },
+      {
+        "layer": 25,
+        "alpha": 60.0,
+        "score": 6
+      }
+    ],
+    "dev_tooling": [
+      {
+        "layer": 15,
+        "alpha": 10.0,
+        "score": 7
+      },
+      {
+        "layer": 15,
+        "alpha": 30.0,
+        "score": 6
+      },
+      {
+        "layer": 15,
+        "alpha": 60.0,
+        "score": 1
+      },
+      {
+        "layer": 18,
+        "alpha": 10.0,
+        "score": 7
+      },
+      {
+        "layer": 18,
+        "alpha": 30.0,
+        "score": 6
+      },
+      {
+        "layer": 18,
+        "alpha": 60.0,
+        "score": 7
+      },
+      {
+        "layer": 20,
+        "alpha": 10.0,
+        "score": 6
+      },
+      {
+        "layer": 20,
+        "alpha": 30.0,
+        "score": 5
+      },
+      {
+        "layer": 20,
+        "alpha": 60.0,
+        "score": 6
+      },
+      {
+        "layer": 22,
+        "alpha": 10.0,
+        "score": 5
+      },
+      {
+        "layer": 22,
+        "alpha": 30.0,
+        "score": 7
+      },
+      {
+        "layer": 22,
+        "alpha": 60.0,
+        "score": 7
+      },
+      {
+        "layer": 25,
+        "alpha": 10.0,
+        "score": 8
+      },
+      {
+        "layer": 25,
+        "alpha": 30.0,
+        "score": 5
+      },
+      {
+        "layer": 25,
+        "alpha": 60.0,
+        "score": 7
+      }
+    ]
+  },
+  "cosine_vs_generic": {
+    "django_web": {
+      "code_reading": {
+        "mean": 0.7976,
+        "max": 0.8725,
+        "at_layer_15": 0.7646
+      },
+      "bug_analysis": {
+        "mean": 0.865,
+        "max": 0.909,
+        "at_layer_15": 0.8699
+      },
+      "patch_writing": {
+        "mean": 0.8602,
+        "max": 0.8998,
+        "at_layer_15": 0.8574
+      },
+      "test_reasoning": {
+        "mean": 0.8208,
+        "max": 0.8649,
+        "at_layer_15": 0.8115
+      }
+    },
+    "scientific_computing": {
+      "code_reading": {
+        "mean": 0.7386,
+        "max": 0.8188,
+        "at_layer_15": 0.6978
+      },
+      "bug_analysis": {
+        "mean": 0.8443,
+        "max": 0.8926,
+        "at_layer_15": 0.8716
+      },
+      "patch_writing": {
+        "mean": 0.7863,
+        "max": 0.8431,
+        "at_layer_15": 0.796
+      },
+      "test_reasoning": {
+        "mean": 0.7615,
+        "max": 0.8235,
+        "at_layer_15": 0.7498
+      }
+    },
+    "dev_tooling": {
+      "code_reading": {
+        "mean": 0.7576,
+        "max": 0.842,
+        "at_layer_15": 0.7327
+      },
+      "bug_analysis": {
+        "mean": 0.8486,
+        "max": 0.9161,
+        "at_layer_15": 0.8635
+      },
+      "patch_writing": {
+        "mean": 0.8226,
+        "max": 0.8718,
+        "at_layer_15": 0.828
+      },
+      "test_reasoning": {
+        "mean": 0.7868,
+        "max": 0.8428,
+        "at_layer_15": 0.7893
+      }
+    }
+  }
+}

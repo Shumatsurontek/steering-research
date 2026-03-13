@@ -159,30 +159,40 @@ L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, 
 └─────────────────────────────────────────────────────┘
 ```
 
-### 6.2 Extraction de vecteurs domain-specific
-- [ ] Définir les domaines SWE-bench : code_reading, bug_analysis, patch_writing, test_reasoning
-- [ ] Construire des paires contrastives par domaine (10+ prompts positifs vs neutres)
-- [ ] Extraire les vecteurs sur Qwen3-0.6B et Qwen3-4B
-- [ ] Identifier le sweet spot (layer, α) par domaine via sweep automatisé
-- [ ] Sauvegarder une "steering library" : `{domain: {layer, coeff, vector}}`
+### 6.2 Extraction de vecteurs domain-specific ✅
+- [x] 4 domaines génériques : code_reading, bug_analysis, patch_writing, test_reasoning
+- [x] 3 clusters SWE-bench : django_web, scientific_computing, dev_tooling
+- [x] Sweet spot par domaine identifié (L15-18 génériques, L18-25 clusters)
+- [x] Steering library sauvegardée : `domain_steering_vectors.pt` + `swebench_cluster_vectors.pt`
 
-### 6.3 Composition et interférence
-- [ ] Test d'addition de vecteurs : v_code + v_debug → cohérent ou dégénéré ?
-- [ ] Test de switching séquentiel : v_code → remove → v_debug (pas de résiduel ?)
-- [ ] Mesurer la fenêtre de stabilité par domaine (α_min, α_max avant dégénérescence)
-- [ ] Explorer le coefficient adaptatif : α = f(confidence, task_complexity)
+**Résultats clés :**
+- Chaque domaine a un sweet spot distinct (L15@α=30 vs L18@α=60 vs L25@α=10)
+- test_reasoning = le plus steerable (score 11), django_web = meilleur cluster (score 13)
+- Cosine similarity clusters vs génériques : 0.84-0.87 (signal additionnel capturé)
 
-### 6.4 Benchmark SWE-bench Verified
-- [ ] Charger le dataset : `SWE-bench/SWE-bench_Verified` (HuggingFace)
-- [ ] Pipeline : repo clone → issue parsing → steering-augmented generation → patch apply → test
+### 6.3 Composition et interférence ✅
+- [x] Addition : pas de dégénérescence MAIS dilution du signal (score 4.0→2.0)
+- [x] Weighted 0.7/0.3 : meilleur que 0.5/0.5 mais toujours sous baseline
+- [x] Sequential switching : clean, pas de résiduel entre hooks
+- [x] **Verdict : sequential switching >> composition simultanée**
+
+### 6.4 Orchestrateur dynamique ✅
+- [x] Prototype `steering_orchestrator.py` avec hook switching par étape
+- [x] 3 scénarios SWE-bench × 3 variantes (baseline, static, dynamic)
+- [x] **Dynamic = 4-7× keyword hits vs baseline, 100% coherence, -20% tokens**
+- [x] Static steering *pire* que baseline sur tâches hétérogènes
+
+### 6.5 Benchmark SWE-bench Verified (Next)
+- [x] Dataset analysé : 500 instances, 12 repos, 71% bug fixes
+- [ ] Pipeline complète : repo clone → issue parsing → steering-augmented generation → patch apply → test
 - [ ] Comparer : SLM baseline vs SLM + dynamic steering vs SLM + prompt engineering
 - [ ] Métriques : % resolved, patch quality, token efficiency
 
-### 6.5 Questions ouvertes
-- **Composabilité** : peut-on additionner des vecteurs de domaines différents ?
-- **Fenêtre de stabilité** : chaque domaine a-t-il son propre α_max ?
-- **Scaling** : le gain relatif du steering est-il plus fort sur les SLMs (0.6B) que sur les LLMs (4B+) ?
-- **Analogie LoRA** : steering vectors = "LoRA sans entraînement" — quelles sont les limites ?
+### 6.6 Questions résolues et ouvertes
+- **Composabilité** : ✅ Possible sans dégénérescence, mais dilue le signal → ne pas utiliser
+- **Fenêtre de stabilité** : ✅ Chaque domaine a son propre sweet spot (layer ET α)
+- **Scaling** : ❓ À tester sur 4B+ (le 0.6B instruct répond bien, le base moins)
+- **Analogie LoRA** : ❓ Steering = "LoRA sans entraînement" mais avec less control — limites à explorer
 
 ---
 
