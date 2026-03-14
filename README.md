@@ -1,25 +1,25 @@
 <p align="center">
   <img src="https://img.shields.io/badge/🧠_Mechanistic-Interpretability-blueviolet?style=for-the-badge" alt="Mechanistic Interpretability"/>
   <img src="https://img.shields.io/badge/🎯_Activation-Steering-ff6b6b?style=for-the-badge" alt="Activation Steering"/>
-  <img src="https://img.shields.io/badge/📅_Agentic-Calendar_Tasks-00b894?style=for-the-badge" alt="Agentic Calendar"/>
+  <img src="https://img.shields.io/badge/🤖_Multi--Agent-Orchestration-00b894?style=for-the-badge" alt="Multi-Agent Orchestration"/>
   <img src="https://img.shields.io/badge/🔬_Research-Paper-fdcb6e?style=for-the-badge" alt="Research Paper"/>
 </p>
 
 <h1 align="center">
-  🧬 Steering Vectors vs. Prompt Engineering<br/>
-  <sub>for Agentic Calendar Tasks</sub>
+  🧬 Activation Steering for Small Language Models<br/>
+  <sub>From Mid-Layer Sweet Spots to Dynamic Multi-Agent Orchestration</sub>
 </h1>
 
 <p align="center">
   <strong>Arthur Edmond</strong> · LLM Engineer @ <a href="https://swapn.com">Swapn</a><br/>
-  <em>A deep dive into where, how, and why activation steering works (or doesn't) on instruction-tuned LLMs</em>
+  <em>A deep dive into where, how, and why activation steering works (or doesn't) on SLMs — from mechanistic analysis to SWE-bench</em>
 </p>
 
 <p align="center">
   <a href="article/main.pdf"><img src="https://img.shields.io/badge/📄_Read_the_Paper-PDF-red?style=flat-square" alt="Paper PDF"/></a>
-  <img src="https://img.shields.io/badge/Model-Qwen3--4B-blue?style=flat-square" alt="Qwen3-4B"/>
-  <img src="https://img.shields.io/badge/Layers-36-green?style=flat-square" alt="36 Layers"/>
-  <img src="https://img.shields.io/badge/Experiments-13-orange?style=flat-square" alt="13 Experiments"/>
+  <img src="https://img.shields.io/badge/Models-Qwen3_·_LFM2.5_·_Llama3-blue?style=flat-square" alt="Multi-Model"/>
+  <img src="https://img.shields.io/badge/Benchmarks-GSM8K_·_SWE--bench_·_MMLU--Pro-green?style=flat-square" alt="Benchmarks"/>
+  <img src="https://img.shields.io/badge/Experiments-14-orange?style=flat-square" alt="14 Experiments"/>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License"/>
 </p>
 
@@ -27,7 +27,7 @@
 
 ## ⚡ TL;DR
 
-> **Mid-layer steering (layers 15–18) at moderate coefficients (α=30) achieves 100% behavioral change on instruction-tuned models**, while the "obvious" choice — steering at the most discriminative final layers — does absolutely nothing. This paper maps the full landscape of when steering works, when it breaks, and when you should just write a better prompt.
+> **Mid-layer steering (layers 15–18) at moderate coefficients (α=30) achieves 100% behavioral change on SLMs**, while late layers do nothing. Steering boosts zero-shot by +16pp on GSM8K but *hurts* when combined with few-shot or RAG context. On SWE-bench, RAG-augmented generation raises path validity from 0% to 68%. We validate a dynamic multi-agent architecture with sequential vector switching across three benchmarks.
 
 ---
 
@@ -38,28 +38,28 @@
 <td width="50%">
 
 ### 🎯 The Steering Sweet Spot
-Layers 15–18 at α=30 → **100% change rate** on Qwen3-4B-Instruct. Non-calendar prompts get reinterpreted as calendar tasks. Late layers (33–35) → **0% change** even at α=200.
+Layers 15–18 at α=30 → **100% change rate** on Qwen3-4B-Instruct. Non-target prompts get reinterpreted toward the steering direction. Late layers (33–35) → **0% change** even at α=200.
 
 ### 🧊 Late-Layer Rigidity is Architectural
 Both instruct AND base models show the same rigidity pattern at layers 30–35. This is a **transformer property**, not an instruction-tuning artifact.
 
 ### 💥 Base Models: Powerful but Fragile
-Layer 15 at α=30 boosts calendar score from 0.70→**0.97** on base model. But α≥60 → **total degeneration** (score 0.0). The effective window is razor-thin.
+Layer 15 at α=30 boosts task score from 0.70→**0.97** on base model. But α≥60 → **total degeneration** (score 0.0). The effective window is razor-thin.
 
 </td>
 <td width="50%">
 
-### 📊 Budget Guidance: A Null Result
-Instruct model already produces **~75 tokens** of compact JSON. Budget guidance (32–512 token limits) achieves **0% savings**. It targets thinking overhead, not output verbosity.
+### 🧮 SLM Steering: GSM8K +16pp Zero-Shot
+Zero-shot CoT + steering on Qwen3-0.6B-Instruct: **46%→62% (+16pp)**. But **5-shot + steering = interference** (-8pp). Adaptive `α = f(n_few_shot)` needed.
 
-### 🔬 SAE Features: Extreme Sparsity
-Neuronpedia transcoder analysis: only **9/450 random samples** (0.07%) are calendar-related. Yet 115 features found via keyword search across layers 20–35.
+### 🔧 SWE-bench: RAG + Steering
+RAG raises path validity from **0%→68%**. But steering *degrades* RAG patches (68%→15%→0%). **Steering is optimal in zero-shot regime only**.
 
-### 🧮 SLM Steering: GSM8K Math Reasoning
-Zero-shot CoT + steering on Qwen3-0.6B-Instruct: **46%→62% (+16pp)** flexible-extract. But **5-shot + steering = interference** (-8pp). Steering and prompting interact non-trivially → adaptive `α = f(n_few_shot)` needed.
+### 🤖 Dynamic Multi-Agent Orchestrator
+Sequential vector switching: **4–7× more domain-relevant output** vs baseline. Vector composition dilutes signal. Each domain has a distinct (layer, α) sweet spot.
 
 ### 📊 KL Divergence: 3-Order Gap
-Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steering increases sampling diversity from 20%→**100%** while preserving JSON output type.
+Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steering increases sampling diversity from 20%→**100%** while preserving output type.
 
 </td>
 </tr>
@@ -105,7 +105,7 @@ Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steer
 steering-research/
 │
 ├── 📄 article/
-│   ├── main.tex                          # LaTeX source (~10 pages, arxiv-ready)
+│   ├── main.tex                          # LaTeX source (~16 pages, arxiv-ready)
 │   └── main.pdf                          # Compiled paper
 │
 ├── 🔬 src/
@@ -131,7 +131,9 @@ steering-research/
 │   │
 │   └── agents/
 │       ├── prompt_baselines.py          # 5 strategies × 29 bilingual eval cases
-│       └── steering_orchestrator.py     # Phase 6d: Dynamic steering orchestrator ★
+│       ├── steering_orchestrator.py     # Phase 6d: Dynamic steering orchestrator ★
+│       ├── swebench_pipeline.py         # Phase 6e: SWE-bench eval pipeline + RAG ★
+│       └── swebench_rag.py             # Phase 6e: Repo checkout + file retrieval ★
 │
 ├── 📊 results/                           # All JSON results + steering vectors (.pt)
 ├── 📁 data/                              # Evaluation datasets
@@ -293,6 +295,22 @@ Layer 33: L2=179.4  →  ✅ agenda, schedule, invite              ❌ entropy, 
 
 > Each cluster has a **distinct sweet spot**. Cluster-specific vectors capture additional signal beyond generic domains (cosine 0.84–0.87, not 1.0).
 
+### 1️⃣1️⃣ SWE-bench Verified — RAG + Steering (Qwen3-0.6B)
+
+**Without RAG (n=20): all patches fail** — 0% resolved, model invents file paths.
+
+**With RAG (n=20):**
+
+| Variant | Valid Diffs | Path Validity | Avg Quality |
+|:---:|:---:|:---:|:---:|
+| **rag_baseline** | **95%** | **68%** | **0.655** |
+| rag_static (code_reading) | 100% | 15% | 0.276 |
+| rag_dynamic (3-step) | 90% | 0% | 0.205 |
+
+> **Steering degrades RAG performance** — same pattern as GSM8K: RAG context acts like implicit few-shot, and steering on top causes destructive interference. The unsteered rag_baseline is the best variant. **Steering is optimal in zero-shot regime only.**
+
+> **Thinking mode pitfall:** Qwen3's `<think>` blocks + steering vectors = generation loops (6000s/instance). Fix: `enable_thinking=False` → 30s/instance.
+
 ---
 
 ## 🚀 Quick Start
@@ -322,15 +340,16 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 
 ## 🤖 Models
 
-| Model | Params | Role | Key Insight |
-|-------|:---:|------|-------------|
-| [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) | 4.0B | Primary: steering + generation | Mid-layer sweet spot at L15–18 |
-| [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | 4.0B | Base model comparison | More steerable, more fragile |
-| [Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) | 0.6B | SLM instruct: GSM8K steering | Sweet spot at 64–89% depth |
-| [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base) | 0.6B | SLM base: GSM8K steering | Doubles accuracy with steering |
-| [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) | 3.2B | Tokenizer comparison | Best tokenizer for agentic tasks |
-| [Gemma-3-1B-IT](https://huggingface.co/google/gemma-3-1b-it) | 1.0B | Tokenizer comparison | Best semantic coherence |
-| [Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) | 3.8B | Tokenizer comparison | Smallest vocab (32K) |
+| Model | Params | Architecture | Role |
+|-------|:---:|:---:|------|
+| [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) | 4.0B | Transformer (36L) | Primary: steering sweet spot discovery |
+| [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | 4.0B | Transformer (36L) | Base model fragility analysis |
+| [Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) | 0.6B | Transformer (28L) | SLM: GSM8K, SWE-bench, MMLU-Pro |
+| [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base) | 0.6B | Transformer (28L) | SLM base: GSM8K steering |
+| [LFM2.5-1.2B-Instruct](https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct) | 1.2B | **Hybrid SSM+Attn (16L)** | MMLU-Pro: cross-architecture steering |
+| [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) | 3.2B | Transformer (32L) | Tokenizer + MMLU-Pro scaling test |
+| [Gemma-3-1B-IT](https://huggingface.co/google/gemma-3-1b-it) | 1.0B | Transformer | Tokenizer comparison |
+| [Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) | 3.8B | Transformer | Tokenizer comparison |
 
 ---
 
@@ -349,13 +368,14 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 
 ## 🔮 Future Work
 
-- [ ] **Dynamic steering for multi-agent orchestration** — inject domain-specific steering vectors (code, debug, math) at each tool call step, benchmarked on [SWE-bench Verified](https://huggingface.co/datasets/SWE-bench/SWE-bench_Verified)
-- [ ] Steering vector composition — can we add v_code + v_debug without degeneration?
-- [ ] Adaptive coefficient selection — α = f(confidence, task_complexity)
-- [ ] Full agentic evaluation with Ollama/llama.cpp + LangChain
-- [x] SLM steering on GSM8K (Qwen3-0.6B) — **done**
-- [x] Sampling-based analysis (T>0, KL divergence) — **done**
-- [ ] Train task-specific SAEs via Neuronpedia
+- [x] SLM steering on GSM8K (Qwen3-0.6B) — **+16pp zero-shot**
+- [x] Sampling-based analysis (T>0, KL divergence) — **3-order gap confirmed**
+- [x] Dynamic multi-agent orchestrator — **4–7× domain relevance**
+- [x] SWE-bench Verified + RAG — **0%→68% path validity**
+- [ ] **MMLU-Pro multi-model benchmark** — domain-specific steering across 14 domains × 3 models (Qwen3-0.6B, LFM2.5-1.2B, Llama-3.2-3B)
+- [ ] Cross-architecture steering — does SSM+Attention (LFM2.5) respond to mid-layer steering?
+- [ ] Relative depth hypothesis — is the sweet spot at ~50% depth universal across architectures?
+- [ ] Docker evaluation of RAG patches on SWE-bench
 
 ---
 

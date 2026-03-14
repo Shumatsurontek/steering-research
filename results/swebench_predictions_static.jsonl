@@ -1,0 +1,20 @@
+{"instance_id": "django__django-10097", "model_name_or_path": "qwen3-0.6b-static", "model_patch": ""}
+{"instance_id": "django__django-10554", "model_name_or_path": "qwen3-0.6b-static", "model_patch": ""}
+{"instance_id": "django__django-10880", "model_name_or_path": "qwen3-0.6b-static", "model_patch": ""}
+{"instance_id": "django__django-10914", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/.../file.py b/.../file.py"}
+{"instance_id": "django__django-10973", "model_name_or_path": "qwen3-0.6b-static", "model_patch": ""}
+{"instance_id": "django__django-10999", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/django/utils/dateparse/parse_duration.py b/django/utils/dateparse/parse_duration.py"}
+{"instance_id": "django__django-11066", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/django/contrib/contenttypes/management/__init__.py b/django/contrib/contenttypes/management/__init__.py"}
+{"instance_id": "django__django-11087", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/management/commands/cycle_data.py b/management/commands/cycle_data.py\n--- a/management/commands/cycle_data.py\n+++ a/management/commands/cycle_data.py\n@@ -461,10 +461,10 @@"}
+{"instance_id": "django__django-11095", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/models.py b/models.py"}
+{"instance_id": "django__django-11099", "model_name_or_path": "qwen3-0.6b-static", "model_patch": ""}
+{"instance_id": "matplotlib__matplotlib-13989", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/... b/..."}
+{"instance_id": "matplotlib__matplotlib-14623", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/plot_helper.py b/plot_helper.py\n--- a/plot_helper.py\n+++ a/plot_helper.py\n@@ -10,4 +10,4 @@\nexisting logic\n+new logic\n@@"}
+{"instance_id": "matplotlib__matplotlib-20488", "model_name_or_path": "qwen3-0.6b-static", "model_patch": ""}
+{"instance_id": "matplotlib__matplotlib-20676", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/.../print.py b/.../print.py"}
+{"instance_id": "matplotlib__matplotlib-20826", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/... b/... (assuming the original code is not present)"}
+{"instance_id": "pylint-dev__pylint-4551", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/file.py b/file.py"}
+{"instance_id": "pylint-dev__pylint-4604", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/abc.py b/abc.py\n--- a/abc.py\n+++ a/abc.py\n@@ -10,4 +10,4 @@\nexisting line\n+new line\n+added line"}
+{"instance_id": "pylint-dev__pylint-4661", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/pylint.d.py b/pylint.d.py"}
+{"instance_id": "pylint-dev__pylint-4970", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/.../file.py\n--- a/.../file.py\n+++ a/.../file.py\n@@ -... -... -..."}
+{"instance_id": "pylint-dev__pylint-6386", "model_name_or_path": "qwen3-0.6b-static", "model_patch": "diff --git a/pylint.py b/pylint.py"}

@@ -1,0 +1,36 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "device": "mps",
+  "limit": 20,
+  "n_instances": 20,
+  "use_rag": true,
+  "variants": {
+    "rag_baseline": {
+      "predictions_path": "/Users/utilisateur/steering-research/results/swebench_predictions_rag_baseline.jsonl",
+      "n_valid": 19,
+      "n_total": 20,
+      "valid_pct": 95.0,
+      "avg_quality_score": 0.655,
+      "avg_path_validity": 0.684,
+      "total_seconds": 519.2
+    },
+    "rag_static": {
+      "predictions_path": "/Users/utilisateur/steering-research/results/swebench_predictions_rag_static.jsonl",
+      "n_valid": 20,
+      "n_total": 20,
+      "valid_pct": 100.0,
+      "avg_quality_score": 0.276,
+      "avg_path_validity": 0.15,
+      "total_seconds": 672.6
+    },
+    "rag_dynamic": {
+      "predictions_path": "/Users/utilisateur/steering-research/results/swebench_predictions_rag_dynamic.jsonl",
+      "n_valid": 18,
+      "n_total": 20,
+      "valid_pct": 90.0,
+      "avg_quality_score": 0.205,
+      "avg_path_validity": 0.0,
+      "total_seconds": 243.8
+    }
+  }
+}

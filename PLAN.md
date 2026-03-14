@@ -77,29 +77,10 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 
 ---
 
-## Phase 4 — Prompt Engineering Baseline ✅
-> Construire la baseline pour la comparaison
+## Phase 4 — Standardized Benchmarks ✅ (partial)
+> Évaluation quantitative du steering sur des benchmarks standardisés
 
-### 4.1 Stratégies de prompting ✅
-- [x] Zero-shot, Few-shot (3 et 5 examples), Chain-of-thought, Tool use
-- [x] System prompts avec date de référence pour les dates relatives
-- [x] Format function calling compatible Ollama
-
-### 4.2 Dataset et métriques ✅
-- [x] 29 cas de test bilingues (18 FR, 11 EN) — 4 niveaux de complexité
-- [x] Métriques : exact match, field accuracy (par champ), partial score (pondéré)
-- [x] Framework d'agrégation des résultats prêt
-
-**En attente :** Inference réelle avec Ollama/llama.cpp
-
----
-
-## Phase 5 — Intégration Agentique (Future Work)
-> Tester en conditions réelles avec Ollama/llama.cpp + LangChain
-
-- [ ] Servir Qwen3-4B via Ollama
-- [ ] Agent LangChain avec tool "create_calendar_event"
-- [ ] Évaluation comparative sur les 29 cas avec les 5 stratégies
+### 4.1 GSM8K (Qwen3-0.6B) ✅
 - [x] Test SLM (Qwen3-0.6B) sur GSM8K vs prompt engineering
 - [x] Sampling-based analysis (T>0, KL divergence, diversity)
 - [x] Validation lm-eval GSM8K (n=50) — standardized 5-shot evaluation
@@ -127,10 +108,46 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 
 - **Zero-shot + steering = synergie** (+16pp instruct flexible) — meilleur résultat global
 - **5-shot + steering = interférence destructrice** — les exemplaires few-shot et le vecteur sont redondants
-- Le steering améliore le raisonnement mais pas le formatage (flexible > strict)
-- Base model à α=100 dégénère dans les deux cas → α trop agressif
 - **Conclusion clé : α = f(n_few_shot, model_type)** — coefficient adaptatif nécessaire
-- Script : `src/steering/gsm8k_benchmark.py` (subclasse HFLM avec hooks steering, `--task` flag)
+- Script : `src/steering/gsm8k_benchmark.py`
+
+### 4.2 MMLU-Pro Multi-Model Benchmark (Next — Final Experiment)
+> Hypothèse : le steering domain-specific au zero-shot améliore les SLMs sur un benchmark multi-domaine exigeant
+
+**Dataset : TIGER-Lab/MMLU-Pro**
+- 12,032 questions, 14 domaines (math, physics, law, CS, biology, etc.)
+- 10 options (vs 4 MMLU) → baseline chance = 10%
+- CoT critique (+20% vs direct) — le steering en zero-shot est la condition idéale
+- Déjà dans lm-eval : `--tasks mmlu_pro`
+
+**Modèles testés (3) :**
+
+| Modèle | Params | Architecture | Intérêt |
+|--------|--------|-------------|---------|
+| Qwen3-0.6B | 0.6B | Transformer (28 layers) | Référence steering, déjà calibré |
+| LiquidAI/LFM2.5-1.2B-Instruct | 1.2B | Hybrid SSM+Attention (16 layers) | Architecture non-standard, test de généralisation du steering |
+| Llama-3.2-3B-Instruct | 3B | Transformer (32 layers) | Étudié en Phase 1 (tokenizer), scaling test |
+
+**Plan d'expériences :**
+- [ ] Extraction de vecteurs domain-specific pour chaque modèle (14 domaines MMLU-Pro)
+- [ ] Sweep layer × α par domaine pour identifier les sweet spots
+- [ ] lm-eval MMLU-Pro : baseline vs steered (zero-shot) par domaine × modèle
+- [ ] Analyse : quels domaines bénéficient le plus du steering ? Est-ce que le sweet spot relatif (% depth) est constant cross-model ?
+- [ ] Test cross-architecture : le steering fonctionne-t-il sur SSM+Attention (LFM2.5) ?
+
+**Questions de recherche :**
+- Le steering domain-specific améliore-t-il les SLMs au-delà de ce que CoT apporte ?
+- La profondeur relative du sweet spot est-elle un invariant architectural ?
+- Les architectures hybrides SSM/Attention répondent-elles au steering de la même manière que les transformers purs ?
+
+---
+
+## ~~Phase 5 — Calendar Prompt Engineering~~ (Archivé)
+> Résultats préliminaires non concluants — remplacé par MMLU-Pro multi-model
+
+- [x] 29 cas de test bilingues, 5 stratégies de prompting conçues
+- [ ] ~~Inference Ollama/llama.cpp~~ — abandonné au profit de benchmarks standardisés
+- Voir `src/prompts/` et `data/calendar_test_cases.json` pour référence
 
 ---
 
@@ -182,11 +199,36 @@ L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, 
 - [x] **Dynamic = 4-7× keyword hits vs baseline, 100% coherence, -20% tokens**
 - [x] Static steering *pire* que baseline sur tâches hétérogènes
 
-### 6.5 Benchmark SWE-bench Verified (Next)
+### 6.5 Benchmark SWE-bench Verified
 - [x] Dataset analysé : 500 instances, 12 repos, 71% bug fixes
-- [ ] Pipeline complète : repo clone → issue parsing → steering-augmented generation → patch apply → test
-- [ ] Comparer : SLM baseline vs SLM + dynamic steering vs SLM + prompt engineering
-- [ ] Métriques : % resolved, patch quality, token efficiency
+- [x] Pipeline sans RAG (n=20) : baseline 75%, static 70%, dynamic 75% valid diffs — mais 0% resolved (paths inventés)
+- [x] Module RAG (`swebench_rag.py`) : clone repo@base_commit, keyword extraction, file search/ranking, context injection
+- [x] Intégration RAG dans pipeline (`--rag` flag) : 3 variantes rag_baseline, rag_static, rag_dynamic
+- [x] Validation de paths : le modèle utilise désormais des vrais chemins de fichiers
+- [ ] Évaluation RAG complète (n=20) avec Docker harness
+- [ ] Comparer : SLM baseline vs SLM + dynamic steering vs SLM + RAG + steering
+- [ ] Métriques : % resolved, patch quality (path validity), token efficiency
+
+**Résultats préliminaires sans RAG (n=20) :**
+- 0/20 patches appliquées — le modèle 0.6B invente des paths (ex: `core.validators.URLValidator.py`)
+- Valid diffs : baseline 75%, static 70%, dynamic 75% (syntaxiquement corrects mais paths faux)
+
+**RAG pilot (n=2) :**
+- Paths réels utilisés (validation paths:1/1 sur instance matplotlib)
+- Pipeline fonctionnelle : clone → keyword extraction → file ranking → context injection → generation
+
+**RAG generation (n=20, thinking disabled) :**
+
+| Variante | Valid Diffs | Path Validity | Avg Quality | Temps |
+|----------|:----------:|:------------:|:-----------:|:-----:|
+| rag_baseline | **95%** | **68.4%** | **0.655** | 519s |
+| rag_static | 100% | 15.0% | 0.276 | 673s |
+| rag_dynamic | 90% | 0.0% | 0.205 | 244s |
+
+- **Le steering dégrade les patches RAG** : même pattern que GSM8K zero-shot/few-shot
+- RAG = contexte implicite (comme few-shot) → steering + RAG = interférence destructrice
+- Le modèle non steered (rag_baseline) est le meilleur → **steering optimal en régime zero-shot uniquement**
+- Thinking mode de Qwen3 + steering = boucles infinies → `enable_thinking=False` obligatoire
 
 ### 6.6 Questions résolues et ouvertes
 - **Composabilité** : ✅ Possible sans dégénérescence, mais dilue le signal → ne pas utiliser
@@ -223,12 +265,13 @@ Python 3.14 + venv
 
 ## Modèles
 
-| Modèle | Params | Usage |
-|--------|--------|-------|
-| Qwen3-4B-Instruct-2507 | 4B | Modèle principal, steering instruct |
-| Qwen3-4B | 4B | Steering base model (comparaison) |
-| Qwen3-0.6B | 0.6B | SLM instruct : GSM8K steering + lm-eval benchmark |
-| Qwen3-0.6B-Base | 0.6B | SLM base : GSM8K steering + lm-eval benchmark |
-| Gemma-3-1B-IT | 1B | Comparaison tokenizer |
-| Llama-3.2-3B-Instruct | 3B | Comparaison tokenizer |
-| Phi-3-mini-4k-instruct | 3.8B | Comparaison tokenizer |
+| Modèle | Params | Architecture | Usage |
+|--------|--------|-------------|-------|
+| Qwen3-4B-Instruct-2507 | 4B | Transformer | Modèle principal, steering instruct |
+| Qwen3-4B | 4B | Transformer | Steering base model (comparaison) |
+| Qwen3-0.6B | 0.6B | Transformer (28L) | SLM instruct : GSM8K, SWE-bench, MMLU-Pro |
+| Qwen3-0.6B-Base | 0.6B | Transformer (28L) | SLM base : GSM8K steering |
+| LiquidAI/LFM2.5-1.2B-Instruct | 1.2B | Hybrid SSM+Attention (16L) | MMLU-Pro cross-architecture steering |
+| Llama-3.2-3B-Instruct | 3B | Transformer (32L) | Tokenizer + MMLU-Pro scaling test |
+| Gemma-3-1B-IT | 1B | Transformer | Comparaison tokenizer |
+| Phi-3-mini-4k-instruct | 3.8B | Transformer | Comparaison tokenizer |
