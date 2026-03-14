@@ -42,12 +42,12 @@ From Mid-Layer Sweet Spots to Dynamic Multi-Agent Orchestration}
 
 % ===================================================================
 \begin{abstract}
-We present a comprehensive study of \textbf{activation steering} for improving task-specific behavior in small language models (SLMs), from mechanistic analysis to practical multi-agent orchestration. Using Qwen3-4B and Qwen3-0.6B as primary models, we (1)~analyze tokenizer fragmentation across four models, (2)~extract contrastive steering vectors via SAE-inspired methodology, (3)~perform a layer$\times$coefficient sweep identifying mid-layer sweet spots, (4)~validate on base (non-instruct) models, (5)~evaluate on GSM8K math reasoning, (6)~quantify effects via KL divergence and sampling diversity, (7)~build a dynamic multi-agent steering orchestrator, and (8)~test on SWE-bench Verified with RAG-augmented patch generation.
+We present a comprehensive study of \textbf{activation steering} for improving task-specific behavior in small language models (SLMs), from mechanistic analysis to practical multi-agent orchestration. Using Qwen3-4B and Qwen3-0.6B as primary models, and extending to Llama-3.2-3B-Instruct and LFM2.5-1.2B-Instruct for cross-architecture analysis, we (1)~analyze tokenizer fragmentation across four models, (2)~extract contrastive steering vectors via SAE-inspired methodology, (3)~perform a layer$\times$coefficient sweep identifying mid-layer sweet spots, (4)~validate on base (non-instruct) models, (5)~evaluate on GSM8K math reasoning, (6)~quantify effects via KL divergence and sampling diversity, (7)~build a dynamic multi-agent steering orchestrator, (8)~test on SWE-bench Verified with RAG-augmented patch generation, and (9)~demonstrate that domain steering geometry is architecture-invariant across three fundamentally different architectures.
 
-Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid---an \textit{architectural} property independent of instruction tuning; (b)~\textbf{base models are more steerable but fragile}---effective at $\alpha=30$ but degenerate at $\alpha\geq60$; (c)~\textbf{steering on a 0.6B SLM boosts GSM8K accuracy by +16pp} under zero-shot CoT (46\%$\to$62\%), but \textbf{degrades under 5-shot} ($-$8pp), revealing destructive interference between steering and few-shot prompting; (d)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering; (e)~a \textbf{dynamic steering orchestrator} that switches domain-specific vectors per plan step achieves 4--7$\times$ more domain-relevant outputs than baseline; (f)~on SWE-bench Verified, RAG-augmented steering produces patches with \textbf{68\% valid file paths} (vs.\ 0\% without RAG), with 95\% of instances generating syntactically valid diffs. We present a validated architecture for training-free enhancement of SLM agents via sequential steering with adaptive coefficients.
+Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid---an \textit{architectural} property independent of instruction tuning; (b)~\textbf{base models are more steerable but fragile}---effective at $\alpha=30$ but degenerate at $\alpha\geq60$; (c)~\textbf{steering on a 0.6B SLM boosts GSM8K accuracy by +16pp} under zero-shot CoT (46\%$\to$62\%), but \textbf{degrades under 5-shot} ($-$8pp), revealing destructive interference between steering and few-shot prompting; (d)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering; (e)~a \textbf{dynamic steering orchestrator} that switches domain-specific vectors per plan step achieves 4--7$\times$ more domain-relevant outputs than baseline; (f)~on SWE-bench Verified, RAG-augmented steering produces patches with \textbf{68\% valid file paths} (vs.\ 0\% without RAG), with 95\% of instances generating syntactically valid diffs; (g)~\textbf{domain steering geometry is architecture-invariant} (Spearman $\rho > 0.88$ across Transformer, larger Transformer, and hybrid SSM+Attention models), with history as a universal outlier---though direct vector transfer remains impossible due to differing hidden dimensions. We present a validated architecture for training-free enhancement of SLM agents via sequential steering with adaptive coefficients.
 \end{abstract}
 
-\textbf{Keywords:} activation steering, small language models, mechanistic interpretability, multi-agent orchestration, SWE-bench, dynamic steering
+\textbf{Keywords:} activation steering, small language models, mechanistic interpretability, multi-agent orchestration, SWE-bench, dynamic steering, cross-architecture transfer, MMLU-Pro
 
 % ===================================================================
 \section{Introduction}
@@ -64,7 +64,7 @@ Small Language Models (SLMs) with 0.6--3B parameters are increasingly deployed a
 
 Recent work has shown that per-layer steering vectors trained via reinforcement learning can match fully fine-tuned models on mathematical reasoning tasks, adding only 0.0016\% parameters~\cite{gao2025steering}. Separately, budget guidance techniques demonstrate training-free control of reasoning length via token-level distribution modeling~\cite{li2025budget}. However, these approaches have primarily been studied on reasoning benchmarks --- their effectiveness in agentic tool-use contexts remains unexplored.
 
-\textbf{Contributions.} This paper makes seven contributions:
+\textbf{Contributions.} This paper makes eight contributions:
 \begin{itemize}
     \item A comparative tokenizer analysis across four models revealing universal fragmentation of structured expressions (\cref{sec:tokenizers}).
     \item SAE-inspired contrastive feature extraction with logit lens validation (\cref{sec:features}).
@@ -73,6 +73,7 @@ Recent work has shown that per-layer steering vectors trained via reinforcement 
     \item Zero-shot steering synergy on GSM8K ($+$16pp) contrasted with destructive 5-shot interference (\cref{sec:gsm8k}).
     \item A dynamic multi-agent steering orchestrator with domain-specific vector switching (\cref{sec:dynamic_steering}).
     \item RAG-augmented SWE-bench evaluation showing 0\%$\to$68\% path validity via steering + retrieval (\cref{sec:swebench}).
+    \item Cross-architecture analysis showing domain geometry is invariant across Transformer and hybrid SSM+Attention models ($\rho > 0.88$), with Procrustes-aligned MDS revealing a universal domain map (\cref{sec:cross_architecture}).
 \end{itemize}
 
 % ===================================================================
@@ -681,6 +682,57 @@ The optimal architecture is a \textbf{steering library} with sequential switchin
     \item Never compose vectors simultaneously---sequential switching preserves signal strength.
 \end{itemize}
 
+\subsection{Cross-Architecture Geometry of Steering Vectors}
+\label{sec:cross_architecture}
+
+A natural question arises: are steering vectors architecture-specific artifacts, or do they reflect a universal structure? We investigate by comparing the geometry of domain-specific steering vectors across three fundamentally different architectures:
+\begin{itemize}
+    \item \textbf{Qwen3-0.6B} --- Transformer, 1024-dim hidden states, 28 layers
+    \item \textbf{Llama-3.2-3B-Instruct} --- Transformer, 3072-dim hidden states, 28 layers
+    \item \textbf{LFM2.5-1.2B-Instruct} --- Hybrid SSM+Attention, 2048-dim hidden states, 16 layers
+\end{itemize}
+
+\subsubsection{Methodology}
+
+For each model, we extract contrastive steering vectors for all 14 MMLU-Pro domains using 10 domain-specific and 10 neutral prompts per domain. We then compute the $14 \times 14$ pairwise cosine similarity matrix at each model's mid-layer (layer 14 for Qwen/Llama, layer 8 for LFM2.5). To compare geometry \textit{across} models with different hidden dimensions, we correlate the upper triangles of these matrices (91 pairwise cosines) and project into a shared 2D space via MDS with Procrustes alignment.
+
+\subsubsection{Results}
+
+\begin{table}[H]
+\centering
+\caption{Cross-model geometry comparison. All three architectures share highly similar domain similarity structure despite different hidden dimensions and architectures.}
+\label{tab:cross_model_geometry}
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Model Pair} & \textbf{Spearman $\rho$} & \textbf{Pearson $r$} \\
+\midrule
+Qwen3-0.6B vs.\ Llama-3.2-3B & 0.893 & 0.920 \\
+Qwen3-0.6B vs.\ LFM2.5-1.2B & 0.936 & 0.957 \\
+Llama-3.2-3B vs.\ LFM2.5-1.2B & 0.888 & 0.909 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Spearman correlations ($\rho > 0.88$ for all pairs, $p < 10^{-31}$) demonstrate that \textbf{domain geometry is architecture-invariant}: the relative distances between domain steering vectors are preserved across a pure Transformer (Qwen), a larger Transformer (Llama), and a hybrid SSM+Attention model (LFM2.5). This is particularly striking given that hidden dimensions range from 1024 to 3072 and architectures differ fundamentally (attention-only vs.\ SSM+Attention hybrid).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/cross_model_mds.png}
+    \caption{MDS projection of domain steering vectors, Procrustes-aligned to Qwen3. Each shape represents a model; black borders mark target domains (math, law, history). Gray lines connect the same domain across models. The tight clustering of same-domain markers confirms architecture-invariant geometry. Procrustes disparity: Llama $d=0.200$, LFM2.5 $d=0.194$.}
+    \label{fig:cross_model_mds}
+\end{figure}
+
+\subsubsection{Key Findings}
+
+\textbf{History is a universal outlier.} Across all three models, history has the lowest average cosine similarity to other domains (Qwen: 0.277, Llama: 0.256, LFM2.5: 0.359). In the MDS projection (\cref{fig:cross_model_mds}), history occupies an isolated position far from the main cluster, regardless of architecture.
+
+\textbf{STEM domains cluster together.} Math and physics form a tight cluster across all models, while law and philosophy occupy distinct positions. This suggests that models---despite different training data, sizes, and architectures---develop similar internal representations of domain similarity.
+
+\textbf{Direct vector transfer is impossible.} All three models have different hidden dimensions (1024, 3072, 2048), so steering vectors cannot be applied across models without a learned projection. However, the preserved geometry suggests that a simple linear map (e.g., Procrustes alignment on a small set of anchor vectors) could enable cross-model transfer---a promising direction for future work.
+
+\textbf{Norm scaling varies dramatically.} At mid-layer, L2 norms differ by $60\times$ between models: Qwen $\sim$17, Llama $\sim$6, LFM2.5 $\sim$0.25. This means steering coefficients must be calibrated per architecture: the same $\alpha$ value would have vastly different effects across models. The hybrid SSM+Attention architecture (LFM2.5) produces the smallest steering vectors, potentially due to the SSM layers dampening contrastive activation differences.
+
 \subsection{SWE-bench Verified: RAG + Steering}
 \label{sec:swebench}
 
@@ -741,6 +793,8 @@ We presented a comprehensive study of activation steering for small language mod
 \textbf{Dynamic steering outperforms static steering.} Our orchestrator prototype demonstrates that switching domain-specific vectors at each plan step yields 4--7$\times$ more domain-relevant outputs than baseline, with zero degeneration. Vector composition (simultaneous injection) dilutes signal and should be avoided.
 
 \textbf{RAG + steering enables real-world patch generation.} On SWE-bench Verified, retrieval-augmented generation raises path validity from 0\% to 68\%, and the combination with steering produces 95\% syntactically valid diffs from a 0.6B model. Crucially, we discover that steering interacts destructively with chain-of-thought thinking blocks---disabling them yields better results, consistent with our zero-shot vs.\ few-shot findings on GSM8K.
+
+\textbf{Domain geometry is architecture-invariant.} Comparing steering vectors across Qwen3-0.6B (Transformer, 1024d), Llama-3.2-3B (Transformer, 3072d), and LFM2.5-1.2B (hybrid SSM+Attention, 2048d), we find that the $14 \times 14$ cosine similarity matrices correlate at $\rho > 0.88$ (Spearman) for all model pairs. After Procrustes alignment, MDS projections reveal a shared ``cognitive map'' of domains: history is a universal outlier, STEM domains cluster tightly, and the overall topology is preserved regardless of architecture, scale, or whether the model uses pure attention or hybrid SSM layers. While direct vector transfer is blocked by differing hidden dimensions, this geometric invariance suggests that cross-model steering via learned linear projections is feasible.
 
 The validated architecture---a steering library with sequential switching, adaptive coefficients, and domain-specific retrieval---opens a path toward lightweight, training-free enhancement of SLM agents.
 

@@ -1,0 +1,88 @@
+{
+  "hidden_dims": {
+    "qwen3_0.6b": 1024,
+    "llama3_3b": 3072,
+    "lfm2_1.2b": 2048
+  },
+  "geometry_correlations": {
+    "qwen3_0.6b_vs_llama3_3b": {
+      "spearman": 0.8926,
+      "pearson": 0.9199
+    },
+    "qwen3_0.6b_vs_lfm2_1.2b": {
+      "spearman": 0.9362,
+      "pearson": 0.9566
+    },
+    "llama3_3b_vs_lfm2_1.2b": {
+      "spearman": 0.8878,
+      "pearson": 0.9088
+    }
+  },
+  "domain_rankings": {
+    "qwen3_0.6b": [
+      "economics",
+      "business",
+      "computer_science",
+      "biology",
+      "other",
+      "psychology",
+      "chemistry",
+      "engineering",
+      "health",
+      "philosophy",
+      "law",
+      "math",
+      "physics",
+      "history"
+    ],
+    "llama3_3b": [
+      "other",
+      "economics",
+      "computer_science",
+      "engineering",
+      "psychology",
+      "chemistry",
+      "philosophy",
+      "health",
+      "math",
+      "biology",
+      "physics",
+      "law",
+      "business",
+      "history"
+    ],
+    "lfm2_1.2b": [
+      "economics",
+      "computer_science",
+      "biology",
+      "psychology",
+      "health",
+      "other",
+      "chemistry",
+      "business",
+      "engineering",
+      "law",
+      "philosophy",
+      "physics",
+      "math",
+      "history"
+    ]
+  },
+  "target_pairwise": {
+    "qwen3_0.6b": {
+      "math_vs_law": 0.3921,
+      "math_vs_history": 0.0122,
+      "law_vs_history": 0.3428
+    },
+    "llama3_3b": {
+      "math_vs_law": 0.5243,
+      "math_vs_history": 0.1183,
+      "law_vs_history": 0.2585
+    },
+    "lfm2_1.2b": {
+      "math_vs_law": 0.4791,
+      "math_vs_history": 0.1696,
+      "law_vs_history": 0.3945
+    }
+  }
+}

@@ -33,3 +33,6 @@ article/*.bbl
 
 # HuggingFace cache
 .cache/
+
+# Results
+logs/
