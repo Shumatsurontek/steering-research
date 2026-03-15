@@ -24,6 +24,7 @@ RESULTS_DIR = Path(__file__).resolve().parents[2] / "results"
 # ---------------------------------------------------------------------------
 MODELS = {
     "qwen3_0.6b": "Qwen/Qwen3-0.6B",
+    "qwen3_4b": "Qwen/Qwen3-4B",
     "llama3_3b": "meta-llama/Llama-3.2-3B-Instruct",
     "lfm2_1.2b": "LiquidAI/LFM2.5-1.2B-Instruct",
 }
@@ -355,13 +356,20 @@ def find_most_dissimilar_triplet(vectors, layer):
 # Main
 # ---------------------------------------------------------------------------
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, default=None,
+                        help="Run only this model key (e.g. qwen3_4b)")
+    args = parser.parse_args()
+
     device, dtype = get_device_and_dtype()
     print(f"Device: {device} | dtype: {dtype}\n")
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     all_results = {}
 
-    for model_key, model_id in MODELS.items():
+    models_to_run = {args.model: MODELS[args.model]} if args.model else MODELS
+    for model_key, model_id in models_to_run.items():
         print(f"\n{'='*60}")
         print(f"MODEL: {model_id}")
         print(f"{'='*60}")

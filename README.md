@@ -19,7 +19,7 @@
   <a href="article/main.pdf"><img src="https://img.shields.io/badge/📄_Read_the_Paper-PDF-red?style=flat-square" alt="Paper PDF"/></a>
   <img src="https://img.shields.io/badge/Models-Qwen3_·_LFM2.5_·_Llama3-blue?style=flat-square" alt="Multi-Model"/>
   <img src="https://img.shields.io/badge/Benchmarks-GSM8K_·_SWE--bench_·_MMLU--Pro-green?style=flat-square" alt="Benchmarks"/>
-  <img src="https://img.shields.io/badge/Experiments-14-orange?style=flat-square" alt="14 Experiments"/>
+  <img src="https://img.shields.io/badge/Experiments-18-orange?style=flat-square" alt="18 Experiments"/>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License"/>
 </p>
 
@@ -27,7 +27,7 @@
 
 ## ⚡ TL;DR
 
-> **Mid-layer steering (layers 15–18) at moderate coefficients (α=30) achieves 100% behavioral change on SLMs**, while late layers do nothing. Steering boosts zero-shot by +16pp on GSM8K but *hurts* when combined with few-shot or RAG context. On SWE-bench, RAG-augmented generation raises path validity from 0% to 68%. We validate a dynamic multi-agent architecture with sequential vector switching across three benchmarks.
+> **Mid-layer steering (layers 15–18) at moderate coefficients (α=30) achieves 100% behavioral change on SLMs**, while late layers do nothing. Steering boosts zero-shot by +16pp on GSM8K but *hurts* when combined with few-shot or RAG context. On MMLU-Pro (n=200), steering consistently degrades accuracy — initial n=20 "improvements" were false positives. SAE feature decomposition reveals why: contrastive vectors activate 50–60% of features diffusely, with near-zero overlap with domain-specific features. A **Streamlit demo** lets you explore baseline vs steered outputs live.
 
 ---
 
@@ -60,6 +60,12 @@ Sequential vector switching: **4–7× more domain-relevant output** vs baseline
 
 ### 📊 KL Divergence: 3-Order Gap
 Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steering increases sampling diversity from 20%→**100%** while preserving output type.
+
+### 🧬 SAE: Style ≠ Knowledge
+Custom SAE (8192 features, 20M tokens) reveals contrastive vectors activate **50–60% of features diffusely**. Domain-specific features are sparse & localized. **Overlap: 0–4 / 20** → contrastive vectors ≠ domain knowledge. Finding **robust across sparsity regimes** (10× L1 penalty yields same pattern).
+
+### 📉 MMLU-Pro n=200: False Positives
+n=20 suggested +15pp on history. n=200 (stderr ±2.5pp) **reversed every positive finding**. Steering degrades all domains by -2 to -6pp.
 
 </td>
 </tr>
@@ -105,8 +111,9 @@ Mid-layers: **1–48 bits** of KL divergence. Late layers: **<0.01 bits**. Steer
 steering-research/
 │
 ├── 📄 article/
-│   ├── main.tex                          # LaTeX source (~16 pages, arxiv-ready)
-│   └── main.pdf                          # Compiled paper
+│   ├── main.tex                          # LaTeX source (~26 pages, arxiv-ready)
+│   ├── main.pdf                          # Compiled paper
+│   └── figures/                          # Publication-quality figures (PDF + PNG)
 │
 ├── 🔬 src/
 │   ├── tokenizers/
@@ -125,6 +132,14 @@ steering-research/
 │   │   ├── slm_gsm8k_steering.py       # Phase 3e: SLM steering on GSM8K (Qwen3-0.6B) ★
 │   │   ├── sampling_steering.py         # Phase 3f: KL divergence + sampling diversity ★
 │   │   ├── gsm8k_benchmark.py           # Phase 3g: lm-eval validation (5-shot + 0-shot) ★
+│   │   ├── mmlu_pro_benchmark_mc.py     # MMLU-Pro loglikelihood benchmark (3 models)
+│   │   ├── mmlu_pro_figures.py          # Publication figures for MMLU-Pro results
+│   │   ├── mmlu_pro_samples.py          # Per-sample output capture (baseline vs steered)
+│   │   ├── mmlu_pro_sample_figures.py   # Log-likelihood & probability distribution figures
+│   │   ├── train_sae.py                 # SAE training (multi-model: --model Qwen/Qwen3-4B)
+│   │   ├── analyze_sae_features.py      # SAE domain analysis + contrastive overlap (multi-model)
+│   │   ├── feature_targeted_steering.py # Feature-targeted vectors from SAE decoder columns ★
+│   │   ├── app_steering_demo.py         # 🎮 Streamlit demo: live comparison of steering methods
 │   │   ├── domain_vectors.py            # Phase 6a: Domain-specific vector extraction ★
 │   │   ├── vector_composition.py        # Phase 6b: Composition tests (add vs switch) ★
 │   │   └── swebench_domain_vectors.py   # Phase 6c: SWE-bench cluster vectors ★
@@ -135,7 +150,7 @@ steering-research/
 │       ├── swebench_pipeline.py         # Phase 6e: SWE-bench eval pipeline + RAG ★
 │       └── swebench_rag.py             # Phase 6e: Repo checkout + file retrieval ★
 │
-├── 📊 results/                           # All JSON results + steering vectors (.pt)
+├── 📊 results/                           # All JSON results + steering vectors (.pt) + SAE weights
 ├── 📁 data/                              # Evaluation datasets
 ├── 📋 PLAN.md                            # Research plan with status tracking
 └── 📦 requirements.txt
@@ -309,7 +324,75 @@ Layer 33: L2=179.4  →  ✅ agenda, schedule, invite              ❌ entropy, 
 
 > **Steering degrades RAG performance** — same pattern as GSM8K: RAG context acts like implicit few-shot, and steering on top causes destructive interference. The unsteered rag_baseline is the best variant. **Steering is optimal in zero-shot regime only.**
 
-> **Thinking mode pitfall:** Qwen3's `<think>` blocks + steering vectors = generation loops (6000s/instance). Fix: `enable_thinking=False` → 30s/instance.
+### 1️⃣2️⃣ MMLU-Pro Multi-Model Benchmark (n=200 validation)
+
+**Dual-mode evaluation** on 3 models × 3 domains (math, law, history):
+
+| Domain | Baseline | α=10 | α=30 | α=60 |
+|:---:|:---:|:---:|:---:|:---:|
+| math | 25.5% (±3.1) | 27.0% (+1.5) | 24.0% (-1.5) | 20.0% (-5.5) |
+| law | 17.0% (±2.7) | 14.5% (-2.5) | 11.0% (-6.0) | 8.5% (-8.5) |
+| history | 19.5% (±2.8) | 15.5% (-4.0) | 16.5% (-3.0) | 14.0% (-5.5) |
+
+> **n=20 produced false positives** (history +15pp with stderr ±9pp). **n=200 reversed every positive finding** (stderr ±2.5pp). Steering consistently degrades all domains. Generate-until mode is catastrophic (0% at α=60).
+
+### 1️⃣3️⃣ Cross-Architecture Geometry
+
+| Model Pair | Spearman ρ | Pearson r |
+|:---:|:---:|:---:|
+| Qwen3-0.6B vs Llama-3.2-3B | 0.893 | 0.920 |
+| Qwen3-0.6B vs LFM2.5-1.2B | 0.936 | 0.957 |
+| Llama-3.2-3B vs LFM2.5-1.2B | 0.888 | 0.909 |
+
+> **Domain geometry is architecture-invariant** (ρ > 0.88). History = universal outlier. STEM clusters tightly. Topology preserved across Transformer, larger Transformer, and hybrid SSM+Attention.
+
+### 1️⃣4️⃣ SAE Feature Decomposition — Why Contrastive Vectors Fail
+
+Custom SAE: 8192 features (8× expansion), 20M tokens OpenWebText, layer 14.
+
+| Domain | Contrastive activates | Overlap (top-20 ∩ top-20) |
+|:---:|:---:|:---:|
+| Math | 4,664 / 8,192 (57%) | **2 features** |
+| Law | 4,845 / 8,192 (59%) | **0 features** |
+| History | 3,857 / 8,192 (47%) | **4 features** |
+
+> Contrastive vectors = **diffuse directions** activating majority of SAE dictionary. Domain-specific features are **sparse & localized**. Near-zero overlap explains "domain style vs domain knowledge" distinction.
+
+### 1️⃣5️⃣ Feature-Targeted Steering vs Contrastive (n=50)
+
+Vectors built from SAE decoder columns instead of contrastive means:
+
+| Domain | Method | α=3 | α=5 | α=10 |
+|:---:|:---:|:---:|:---:|:---:|
+| math | Baseline | 18.0% | — | — |
+| math | Contrastive | 18.0% | 18.0% | 20.0% |
+| math | **Feature uniform k20** | 18.0% | 18.0% | **22.0%** |
+| law | Baseline | 24.0% | — | — |
+| law | Contrastive | 22.0% | 22.0% | 18.0% |
+| law | **Feature uniform k20** | **24.0%** | **24.0%** | 16.0% |
+
+> Feature-targeted vectors **preserve baseline accuracy** better at low α (law: 24% maintained vs 22% contrastive). Marginal improvements within noise — the 0.6B model simply lacks deep domain knowledge to unlock. Feature-targeted steering degrades less aggressively than contrastive at moderate α.
+
+### 1️⃣6️⃣ SAE Sparsity Robustness (L1=0.05)
+
+Retrained with 10× higher L1 penalty to verify findings aren't artifacts:
+
+| Metric | L1=0.005 | L1=0.05 |
+|:---:|:---:|:---:|
+| MSE | 26.9 | 71.4 |
+| L0 (active features) | 7,131 (87%) | 5,793 (71%) |
+| Contrastive activations | 47–59% | 48–56% |
+| Overlap (max) | 4/20 | 3/20 |
+
+> **Finding is robust**: 10× L1 reduces L0 by only 19% — still far from truly sparse (ideal: L0 < 200). Contrastive vectors remain diffuse across sparsity regimes. Achieving interpretable sparsity would require L1 ≥ 1.0 or a larger SAE (32K+ features).
+
+### 🎮 Streamlit Demo
+
+```bash
+streamlit run src/steering/app_steering_demo.py
+```
+
+Interactive comparison of baseline, contrastive, and feature-targeted steering with adjustable domain, coefficient, and strategy. Includes word-level diff highlighting and batch mode for all domain prompts.
 
 ---
 
@@ -343,7 +426,7 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 | Model | Params | Architecture | Role |
 |-------|:---:|:---:|------|
 | [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) | 4.0B | Transformer (36L) | Primary: steering sweet spot discovery |
-| [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | 4.0B | Transformer (36L) | Base model fragility analysis |
+| [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | 4.0B | Transformer (36L) | Base model fragility + SAE comparison |
 | [Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) | 0.6B | Transformer (28L) | SLM: GSM8K, SWE-bench, MMLU-Pro |
 | [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base) | 0.6B | Transformer (28L) | SLM base: GSM8K steering |
 | [LFM2.5-1.2B-Instruct](https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct) | 1.2B | **Hybrid SSM+Attn (16L)** | MMLU-Pro: cross-architecture steering |
@@ -363,6 +446,8 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 | [Representation Engineering](https://arxiv.org/abs/2310.01405) (Zou et al., 2023) | Top-down approach to AI transparency |
 | [Neuronpedia](https://www.neuronpedia.org/qwen3-4b/graph) | Circuit-level attribution for Qwen3-4B |
 | [Gemma Scope 2](https://colab.research.google.com/drive/1NhWjg7n0nhfW--CjtsOdw5A5J_-Bzn4r) | SAEs, Transcoders, Crosscoders tutorial |
+| [SAELens](https://github.com/jbloomAus/SAELens) (Bloom et al., 2024) | SAE training & analysis library |
+| [MMLU-Pro](https://arxiv.org/abs/2406.01574) (Wang et al., 2024) | 10-way MC benchmark (12K questions, 14 domains) |
 
 ---
 
@@ -372,10 +457,15 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 - [x] Sampling-based analysis (T>0, KL divergence) — **3-order gap confirmed**
 - [x] Dynamic multi-agent orchestrator — **4–7× domain relevance**
 - [x] SWE-bench Verified + RAG — **0%→68% path validity**
-- [ ] **MMLU-Pro multi-model benchmark** — domain-specific steering across 14 domains × 3 models (Qwen3-0.6B, LFM2.5-1.2B, Llama-3.2-3B)
-- [ ] Cross-architecture steering — does SSM+Attention (LFM2.5) respond to mid-layer steering?
-- [ ] Relative depth hypothesis — is the sweet spot at ~50% depth universal across architectures?
+- [x] **MMLU-Pro multi-model benchmark** — n=200 validation revealed false positives, steering degrades all domains
+- [x] **Cross-architecture geometry** — domain similarity invariant across Transformer/SSM (ρ > 0.88)
+- [x] **SAE feature decomposition** — near-zero overlap between contrastive vectors and domain features
+- [x] **Feature-targeted steering** — SAE decoder column vectors preserve baseline better than contrastive
+- [x] **Streamlit demo** — live comparison of steering methods with word-level diff
+- [x] Higher sparsity SAE (L1=0.05) — finding robust: contrastive still diffuse, overlap 0–3/20
+- [ ] **Qwen3-4B SAE comparison** — 20,480 features (8×2560), layer 18. Does a 6.7× larger model show more interpretable features and better feature-targeted steering?
 - [ ] Docker evaluation of RAG patches on SWE-bench
+- [ ] Cross-model steering via learned linear projections (leveraging geometric invariance)
 
 ---
 

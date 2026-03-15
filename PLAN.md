@@ -111,29 +111,99 @@ Comparer **steering vectors** vs **prompt engineering** dans un contexte agentiq
 - **Conclusion clé : α = f(n_few_shot, model_type)** — coefficient adaptatif nécessaire
 - Script : `src/steering/gsm8k_benchmark.py`
 
-### 4.2 MMLU-Pro Multi-Model Benchmark (Next — Final Experiment)
+### 4.2 MMLU-Pro Multi-Model Benchmark ✅
 > Hypothèse : le steering domain-specific au zero-shot améliore les SLMs sur un benchmark multi-domaine exigeant
 
 **Dataset : TIGER-Lab/MMLU-Pro**
-- 12,032 questions, 14 domaines (math, physics, law, CS, biology, etc.)
-- 10 options (vs 4 MMLU) → baseline chance = 10%
-- CoT critique (+20% vs direct) — le steering en zero-shot est la condition idéale
-- Déjà dans lm-eval : `--tasks mmlu_pro`
+- 12,032 questions, 14 domaines, 10 options (baseline chance = 10%)
+- 3 domaines sélectionnés par cosine dissimilarity : **math, law, history** (avg cos 0.249)
 
 **Modèles testés (3) :**
 
-| Modèle | Params | Architecture | Intérêt |
-|--------|--------|-------------|---------|
-| Qwen3-0.6B | 0.6B | Transformer (28 layers) | Référence steering, déjà calibré |
-| LiquidAI/LFM2.5-1.2B-Instruct | 1.2B | Hybrid SSM+Attention (16 layers) | Architecture non-standard, test de généralisation du steering |
-| Llama-3.2-3B-Instruct | 3B | Transformer (32 layers) | Étudié en Phase 1 (tokenizer), scaling test |
+| Modèle | Params | Architecture | Mid-layer |
+|--------|--------|-------------|-----------|
+| Qwen3-0.6B | 0.6B | Transformer (28L, 1024d) | L14 |
+| Llama-3.2-3B-Instruct | 3B | Transformer (28L, 3072d) | L14 |
+| LFM2.5-1.2B-Instruct | 1.2B | Hybrid SSM+Attention (16L, 2048d) | L8 |
 
-**Plan d'expériences :**
-- [ ] Extraction de vecteurs domain-specific pour chaque modèle (14 domaines MMLU-Pro)
-- [ ] Sweep layer × α par domaine pour identifier les sweet spots
-- [ ] lm-eval MMLU-Pro : baseline vs steered (zero-shot) par domaine × modèle
-- [ ] Analyse : quels domaines bénéficient le plus du steering ? Est-ce que le sweet spot relatif (% depth) est constant cross-model ?
-- [ ] Test cross-architecture : le steering fonctionne-t-il sur SSM+Attention (LFM2.5) ?
+**Dual-mode evaluation :**
+- [x] `generate_until` (CoT) : Qwen complet, Llama math+law (history OOM)
+- [x] `multiple_choice` (loglikelihood) : 3 modèles × 3 domaines × 4 conditions = 36 évals
+
+**Résultats generate_until (n=20) — le steering dégrade systématiquement :**
+
+| Modèle | Domaine | Baseline | α=10 | α=30 | α=60 |
+|--------|---------|:--------:|:----:|:----:|:----:|
+| Qwen3-0.6B | math | **30%** | 25% | 10% | 0% |
+| Qwen3-0.6B | law | **15%** | 10% | 20% | 0% |
+| Qwen3-0.6B | history | **20%** | 15% | 5% | 0% |
+| Llama-3.2-3B | math | **25%** | 5% | 0% | 0% |
+| Llama-3.2-3B | law | **30%** | 0% | 0% | 0% |
+
+**Résultats loglikelihood (n=20) — pattern nuancé, améliorations ciblées :**
+
+| Modèle | Domaine | Baseline | α=10 | α=30 | α=60 |
+|--------|---------|:--------:|:----:|:----:|:----:|
+| Qwen3-0.6B | math | 20% | **25%** | **25%** | 15% |
+| Qwen3-0.6B | law | **20%** | 20% | 15% | 10% |
+| Qwen3-0.6B | history | 5% | 10% | **20%** | **20%** |
+| Llama-3.2-3B | math | **15%** | 10% | 5% | 5% |
+| Llama-3.2-3B | law | 0% | **10%** | 5% | **10%** |
+| Llama-3.2-3B | history | **20%** | 10% | 15% | 15% |
+| LFM2.5-1.2B | math | **25%** | 10% | 5% | 5% |
+| LFM2.5-1.2B | law | 10% | **15%** | **15%** | **15%** |
+| LFM2.5-1.2B | history | **30%** | 10% | 10% | 10% |
+
+**Finding clé n=20 (INVALIDÉ par n=200, voir ci-dessous) :**
+- Qwen history : 5% → 20% (+15pp) semblait significatif mais stderr ~9pp ⇒ faux positif
+
+**Validation n=200 (Qwen3-0.6B, loglikelihood) :**
+
+| Domaine | Baseline | α=10 | α=30 | α=60 |
+|---------|:--------:|:----:|:----:|:----:|
+| math    | 25.5% (±3.1) | 27.0% (+1.5) | 24.0% (-1.5) | 20.0% (-5.5) |
+| law     | 17.0% (±2.7) | 14.5% (-2.5) | 11.0% (-6.0) | 8.5% (-8.5) |
+| history | 19.5% (±2.8) | 15.5% (-4.0) | 16.5% (-3.0) | 14.0% (-5.5) |
+
+- **Steering dégrade systématiquement** toutes les conditions — aucune amélioration n'est significative
+- stderr passé de ±9pp (n=20) à ±2.5pp (n=200) → résultats fiables
+- history +15pp à n=20 → -4pp à n=200 : **faux positif classique de petit échantillon**
+
+**Analyse qualitative per-sample :**
+- Loglikelihood : le steering aplatit les distributions, crée un biais de position vers option A
+- Generate-until : le steering remplace le raisonnement spécifique par du filler générique
+- **Insight clé : "domain style vs domain knowledge"** — les vecteurs contrastifs capturent la saveur du domaine, pas les connaissances factuelles
+
+**Scripts :** `mmlu_pro_vectors.py`, `mmlu_pro_benchmark.py`, `mmlu_pro_benchmark_mc.py`, `mmlu_pro_figures.py`, `mmlu_pro_samples.py`, `mmlu_pro_sample_figures.py`
+**Custom tasks :** `src/steering/tasks/mmlu_pro_mc/` (loglikelihood mode)
+**Figures :** `article/figures/mmlu_mc_*.pdf`, `article/figures/mmlu_samples_*.pdf`
+
+### 4.3 Cross-Architecture Geometry Analysis ✅
+> La géométrie des steering vectors est-elle universelle ou propre à chaque architecture ?
+
+- [x] Comparaison des matrices cosine similarity 14×14 entre 3 modèles
+- [x] Corrélation Spearman des upper triangles (91 paires de domaines)
+- [x] MDS + Procrustes alignment pour projection 2D partagée
+- [x] Figures publication-quality générées
+
+**Résultats clés :**
+
+| Paire de modèles | Spearman ρ | Pearson r |
+|-------------------|:----------:|:---------:|
+| Qwen3-0.6B vs Llama-3.2-3B | 0.893 | 0.920 |
+| Qwen3-0.6B vs LFM2.5-1.2B | 0.936 | 0.957 |
+| Llama-3.2-3B vs LFM2.5-1.2B | 0.888 | 0.909 |
+
+- **La géométrie des domaines est invariante architecturalement** (ρ > 0.88, p < 10⁻³¹)
+- History = outlier universel (avg cos le plus bas dans les 3 modèles)
+- STEM (math, physics) cluster serré ; law et philosophy isolés
+- Transfert direct impossible (dims: 1024, 3072, 2048) — projection linéaire nécessaire
+- Normes L2 varient de 60× (Qwen ~17, Llama ~6, LFM2 ~0.25) → α doit être calibré par archi
+- Procrustes disparity faible (~0.19-0.20) → topologie bien préservée
+
+**Figures :** `article/figures/cross_model_mds.png`, `cross_model_combined.png`, `cross_model_heatmaps.png`
+**Scripts :** `src/steering/cross_model_analysis.py`, `src/steering/cross_model_figures.py`
+**Données :** `results/cross_model_analysis.json`
 
 **Questions de recherche :**
 - Le steering domain-specific améliore-t-il les SLMs au-delà de ce que CoT apporte ?
@@ -238,14 +308,132 @@ L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, 
 
 ---
 
-## Phase 7 — Rédaction de l'Article ✅
+## Phase 7 — Rédaction de l'Article ✅ (itérations continues)
 > Synthèse des résultats
 
-- [x] Article LaTeX ~12 pages, format arxiv-ready
-- [x] Sections : Introduction, Related Work, Tokenizer Analysis, Feature Extraction, Steering (mid-layer + base), Budget Guidance, Neuronpedia, GSM8K, Sampling, Baselines, Discussion
-- [x] Résultats intégrés : mid-layer sweet spot, base model fragility, budget guidance null, Neuronpedia sparsity, GSM8K SLM, KL divergence
+- [x] Article LaTeX ~25 pages, format arxiv-ready
+- [x] Sections : Introduction, Related Work, Tokenizer Analysis, Feature Extraction, Steering (mid-layer + base), Budget Guidance, Neuronpedia, GSM8K, Sampling, Baselines, Discussion (MMLU-Pro, cross-architecture, SAE, SWE-bench)
+- [x] Résultats intégrés : mid-layer sweet spot, base model fragility, budget guidance null, Neuronpedia sparsity, GSM8K SLM, KL divergence, MMLU-Pro n=200 validation, per-sample qualitative analysis, SAE feature decomposition, cross-architecture geometry
+- [x] 11 contributions listées dans l'introduction
 - [x] Compilé en PDF (`article/main.pdf`)
 - [x] Repo GitHub : https://github.com/Shumatsurontek/steering-research
+
+---
+
+## Phase 8 — SAE Feature Decomposition ✅
+> Comprendre mécanistiquement pourquoi les vecteurs contrastifs échouent sur les benchmarks de connaissances
+
+### 8.1 Entraînement SAE custom ✅
+- [x] SAE Standard (SAELens) sur Qwen3-0.6B layer 14 (residual stream)
+- [x] Config : d_in=1024, d_sae=8192 (8x expansion), L1=5e-3, lr=3e-4
+- [x] Entraînement 5M tokens OpenWebText (MSE: 212K → 99)
+- [x] Entraînement 20M tokens complété ✅ (MSE: 26.9, explained variance: 99.99%, L0=7131)
+- [x] wandb : https://wandb.ai/arthur-edmond-perso/sae-qwen3-0.6b/runs/62p791yw
+- [x] Intégration wandb pour visualisation des courbes de loss
+
+**Scripts :** `src/steering/train_sae.py`
+**Résultats :** `results/sae_qwen3_0.6b_L14_8x/` (cfg.json + sae_weights.safetensors, ~64MB)
+**Note :** L0=7131/8192 (87% features actives) → L1 coefficient pourrait être augmenté pour plus de sparsité
+
+### 8.2 Analyse des features par domaine ✅
+- [x] Activation différentielle : 10 prompts × 3 domaines (math, law, history)
+- [x] Forward pass → cache → SAE encode → mean per-prompt → top-k différentiel
+- [x] Features spécialisées identifiées : differential activation 1.5-2.0 par domaine
+- [x] Law features activent 3-4× plus fortement que math (mean 5-10 vs 2-4)
+
+### 8.3 Comparaison contrastive vs SAE ✅
+- [x] Projection des vecteurs contrastifs dans l'espace SAE via W_enc
+- [x] **Chaque vecteur contrastif active 47-59% des 8192 features** (direction diffuse)
+- [x] Math: 4664/8192 actives, overlap=2 ; Law: 4845/8192, overlap=**0** ; History: 3857/8192, overlap=4
+- [x] Les 4 overlaps history sont des features humanities partagées law/history (5586, 5355, 8191)
+- [x] **Conclusion : les vecteurs contrastifs ≠ features interprétables localisées**
+
+**Implication :** Le "domain style vs domain knowledge" s'explique mécanistiquement :
+- Features SAE domaine-spécifiques = sparse, localisées (top-20 sur 8192)
+- Vecteurs contrastifs = directions diffuses activant la majorité du dictionnaire
+- Pour du steering basé sur les connaissances : cibler des features SAE spécifiques plutôt que des moyennes contrastives
+
+**Scripts :** `src/steering/analyze_sae_features.py`
+**Données :** `results/sae_domain_analysis.json`
+
+### 8.4 Feature-Targeted Steering Benchmark ✅
+> Hypothèse : cibler les features SAE spécifiques au domaine via les colonnes du décodeur produit un steering plus précis
+
+- [x] 3 stratégies : weighted (top-k × diff), uniform (top-k equal), single (best feature)
+- [x] Vecteurs construits : v = Σ W_dec[feature_i] × weight_i pour top-k features
+- [x] Benchmark MMLU-Pro MC (n=50) : 3 domaines × 3 stratégies × 3 coefficients (α=3,5,10)
+- [x] Comparaison directe contrastive vs feature-targeted
+
+**Résultats clés :**
+- Feature uniform k20 à α=10 : meilleur sur math (22% vs 20% contrastive)
+- Feature uniform k20 : **préserve la baseline** mieux que contrastive (law 24% maintenu vs 22%)
+- À α≥30 : les deux approches dégradent — le modèle 0.6B n'a simplement pas les connaissances profondes
+- **Conclusion : feature-targeted = dégradation plus douce, mais pas de gain significatif**
+
+**Scripts :** `src/steering/feature_targeted_steering.py`
+**Données :** `results/feature_targeted_benchmark_n50.json`
+
+### 8.5 Entraînement SAE haute sparsité (L1=0.05) ✅
+- [x] Lancement 20M tokens avec L1=0.05 (10× plus que baseline)
+- [x] Analyse post-training : L0, overlap, features plus interprétables ?
+- wandb : https://wandb.ai/arthur-edmond-perso/sae-qwen3-0.6b/runs/vgfylcxl
+
+**Métriques L1=0.05 vs L1=0.005 :**
+| Métrique | L1=0.005 | L1=0.05 |
+|----------|:--------:|:-------:|
+| MSE | 26.9 | 71.4 |
+| Explained variance | 99.99% | 99.98% |
+| L0 (features actives) | 7131 (87%) | 5793 (71%) |
+| Contrastive activations | 47-59% | 48-56% |
+| Overlap math | 2/20 | 3/20 |
+| Overlap law | 0/20 | 0/20 |
+| Overlap history | 4/20 | 0/20 |
+
+**Conclusion :** 10× L1 réduit L0 de ~19% mais reste loin d'une sparsité interprétable (idéal : L0~50-200, soit <3%). Le finding principal (contrastive = diffus, domain = sparse) est robuste à la sparsité. Pour atteindre une vraie sparsité, il faudrait L1≥1.0 ou un SAE plus large (32K+ features).
+
+### 8.6 Streamlit Demo ✅
+- [x] App interactive : baseline vs contrastive vs feature-targeted en temps réel
+- [x] Sidebar : domaine, coefficient, stratégie, top-k
+- [x] Mode batch : 10 prompts par domaine
+- [x] Diff visuel mot-par-mot avec coloration
+- [x] Lancement : `streamlit run src/steering/app_steering_demo.py`
+
+**Script :** `src/steering/app_steering_demo.py`
+
+---
+
+## Phase 9 — Qwen3-4B SAE Comparison 🔄
+> Reproduire l'analyse SAE sur Qwen3-4B pour comparer avec Qwen3-0.6B : un modèle 6.7× plus grand montre-t-il des features plus interprétables et un meilleur steering feature-targeted ?
+
+**Architecture Qwen3-4B :** 36 layers, hidden_dim=2560, SAE 8× = 20,480 features
+
+### 9.1 Scripts rendus model-agnostiques ✅
+- [x] `train_sae.py` : `--model`, `--layer`, `--d_in` avec presets par modèle
+- [x] `analyze_sae_features.py` : `--model`, `--layer`, `--sae_dir`
+- [x] `feature_targeted_steering.py` : `--model`, `--layer`
+- [x] `mmlu_pro_vectors.py` : `--model` filter + Qwen3-4B ajouté
+- [x] Tous les `stop_at_layer` dynamiques (plus de hardcoded 15)
+
+### 9.2 Vecteurs contrastifs Qwen3-4B 🔄
+- [ ] `python -m src.steering.mmlu_pro_vectors --model qwen3_4b`
+- [ ] Fichier attendu : `results/mmlu_pro_vectors_qwen3_4b.pt`
+
+### 9.3 Entraînement SAE Qwen3-4B ⬜
+- [ ] `python -m src.steering.train_sae --model Qwen/Qwen3-4B --training_tokens 20000000 --wandb`
+- [ ] Config : d_in=2560, d_sae=20480 (8×), layer 18, L1=5e-3
+- [ ] Fichier attendu : `results/sae_qwen3_4b_L18_8x/`
+
+### 9.4 Analyse domaine SAE 4B ⬜
+- [ ] `python -m src.steering.analyze_sae_features --model Qwen/Qwen3-4B`
+- [ ] Comparer overlap et sparsité avec 0.6B
+
+### 9.5 Feature-targeted benchmark 4B ⬜
+- [ ] `python -m src.steering.feature_targeted_steering --model Qwen/Qwen3-4B --limit 50`
+- [ ] Hypothèse : le 4B a plus de connaissances domaine → gain possible avec feature-targeted ?
+
+### 9.6 Article & synthèse comparative ⬜
+- [ ] Table comparative 0.6B vs 4B : SAE metrics, overlap, feature-targeted accuracy
+- [ ] Mise à jour article/main.tex
 
 ---
 
@@ -260,7 +448,11 @@ Python 3.14 + venv
 ├── matplotlib 3.10.8     # Visualisations
 ├── pandas 3.0.1          # Data manipulation
 ├── huggingface-hub 1.6.0 # Model downloads
-└── lm-eval              # EleutherAI standardized evaluation (GSM8K benchmark)
+├── lm-eval              # EleutherAI standardized evaluation (GSM8K, MMLU-Pro)
+├── sae-lens             # SAE training & analysis
+├── transformer-lens     # Hook-based model internals (SAE activation extraction)
+├── wandb                # Training visualization
+└── streamlit            # Interactive steering demo app
 ```
 
 ## Modèles

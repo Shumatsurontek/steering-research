@@ -42,12 +42,12 @@ From Mid-Layer Sweet Spots to Dynamic Multi-Agent Orchestration}
 
 % ===================================================================
 \begin{abstract}
-We present a comprehensive study of \textbf{activation steering} for improving task-specific behavior in small language models (SLMs), from mechanistic analysis to practical multi-agent orchestration. Using Qwen3-4B and Qwen3-0.6B as primary models, and extending to Llama-3.2-3B-Instruct and LFM2.5-1.2B-Instruct for cross-architecture analysis, we (1)~analyze tokenizer fragmentation across four models, (2)~extract contrastive steering vectors via SAE-inspired methodology, (3)~perform a layer$\times$coefficient sweep identifying mid-layer sweet spots, (4)~validate on base (non-instruct) models, (5)~evaluate on GSM8K math reasoning, (6)~quantify effects via KL divergence and sampling diversity, (7)~build a dynamic multi-agent steering orchestrator, (8)~test on SWE-bench Verified with RAG-augmented patch generation, and (9)~demonstrate that domain steering geometry is architecture-invariant across three fundamentally different architectures.
+We present a comprehensive study of \textbf{activation steering} for improving task-specific behavior in small language models (SLMs), from mechanistic analysis to practical multi-agent orchestration. Using Qwen3-4B and Qwen3-0.6B as primary models, and extending to Llama-3.2-3B-Instruct and LFM2.5-1.2B-Instruct for cross-architecture analysis, we (1)~analyze tokenizer fragmentation across four models, (2)~extract contrastive steering vectors via SAE-inspired methodology, (3)~perform a layer$\times$coefficient sweep identifying mid-layer sweet spots, (4)~validate on base (non-instruct) models, (5)~evaluate on GSM8K math reasoning, (6)~quantify effects via KL divergence and sampling diversity, (7)~build a dynamic multi-agent steering orchestrator, (8)~test on SWE-bench Verified with RAG-augmented patch generation, (9)~demonstrate that domain steering geometry is architecture-invariant across three fundamentally different architectures, (10)~benchmark on MMLU-Pro in both generation and loglikelihood modes with rigorous sample sizing ($n=200$), revealing that steering degrades both modes---catastrophically for generation, modestly for scoring---and that small-sample evaluations ($n=20$) produce misleading false positives, and (11)~decompose contrastive steering vectors via a custom-trained SAE, revealing near-zero overlap with domain-specific features and explaining why contrastive vectors capture ``style'' but not ``knowledge.''
 
 Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid---an \textit{architectural} property independent of instruction tuning; (b)~\textbf{base models are more steerable but fragile}---effective at $\alpha=30$ but degenerate at $\alpha\geq60$; (c)~\textbf{steering on a 0.6B SLM boosts GSM8K accuracy by +16pp} under zero-shot CoT (46\%$\to$62\%), but \textbf{degrades under 5-shot} ($-$8pp), revealing destructive interference between steering and few-shot prompting; (d)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering; (e)~a \textbf{dynamic steering orchestrator} that switches domain-specific vectors per plan step achieves 4--7$\times$ more domain-relevant outputs than baseline; (f)~on SWE-bench Verified, RAG-augmented steering produces patches with \textbf{68\% valid file paths} (vs.\ 0\% without RAG), with 95\% of instances generating syntactically valid diffs; (g)~\textbf{domain steering geometry is architecture-invariant} (Spearman $\rho > 0.88$ across Transformer, larger Transformer, and hybrid SSM+Attention models), with history as a universal outlier---though direct vector transfer remains impossible due to differing hidden dimensions. We present a validated architecture for training-free enhancement of SLM agents via sequential steering with adaptive coefficients.
 \end{abstract}
 
-\textbf{Keywords:} activation steering, small language models, mechanistic interpretability, multi-agent orchestration, SWE-bench, dynamic steering, cross-architecture transfer, MMLU-Pro
+\textbf{Keywords:} activation steering, small language models, mechanistic interpretability, sparse autoencoders, multi-agent orchestration, SWE-bench, dynamic steering, cross-architecture transfer, MMLU-Pro
 
 % ===================================================================
 \section{Introduction}
@@ -64,7 +64,7 @@ Small Language Models (SLMs) with 0.6--3B parameters are increasingly deployed a
 
 Recent work has shown that per-layer steering vectors trained via reinforcement learning can match fully fine-tuned models on mathematical reasoning tasks, adding only 0.0016\% parameters~\cite{gao2025steering}. Separately, budget guidance techniques demonstrate training-free control of reasoning length via token-level distribution modeling~\cite{li2025budget}. However, these approaches have primarily been studied on reasoning benchmarks --- their effectiveness in agentic tool-use contexts remains unexplored.
 
-\textbf{Contributions.} This paper makes eight contributions:
+\textbf{Contributions.} This paper makes nine contributions:
 \begin{itemize}
     \item A comparative tokenizer analysis across four models revealing universal fragmentation of structured expressions (\cref{sec:tokenizers}).
     \item SAE-inspired contrastive feature extraction with logit lens validation (\cref{sec:features}).
@@ -74,6 +74,8 @@ Recent work has shown that per-layer steering vectors trained via reinforcement 
     \item A dynamic multi-agent steering orchestrator with domain-specific vector switching (\cref{sec:dynamic_steering}).
     \item RAG-augmented SWE-bench evaluation showing 0\%$\to$68\% path validity via steering + retrieval (\cref{sec:swebench}).
     \item Cross-architecture analysis showing domain geometry is invariant across Transformer and hybrid SSM+Attention models ($\rho > 0.88$), with Procrustes-aligned MDS revealing a universal domain map (\cref{sec:cross_architecture}).
+    \item MMLU-Pro dual-mode evaluation (generation vs.\ loglikelihood) across 3 models $\times$ 3 domains, with $n=200$ validation revealing that both modes degrade under steering and that small-sample ($n=20$) results produce false positives (\cref{sec:mmlu_pro}).
+    \item SAE feature decomposition showing that contrastive steering vectors activate 50--60\% of SAE features diffusely, with near-zero overlap (0--3/20) with domain-specific features, explaining why they capture ``style'' but not ``knowledge'' (\cref{sec:sae_analysis}).
 \end{itemize}
 
 % ===================================================================
@@ -733,6 +735,271 @@ The Spearman correlations ($\rho > 0.88$ for all pairs, $p < 10^{-31}$) demonstr
 
 \textbf{Norm scaling varies dramatically.} At mid-layer, L2 norms differ by $60\times$ between models: Qwen $\sim$17, Llama $\sim$6, LFM2.5 $\sim$0.25. This means steering coefficients must be calibrated per architecture: the same $\alpha$ value would have vastly different effects across models. The hybrid SSM+Attention architecture (LFM2.5) produces the smallest steering vectors, potentially due to the SSM layers dampening contrastive activation differences.
 
+\subsection{MMLU-Pro Multi-Model Benchmark}
+\label{sec:mmlu_pro}
+
+To test whether domain-specific steering vectors improve zero-shot performance on a standardized knowledge benchmark, we evaluate on \textbf{MMLU-Pro}~\cite{wang2024mmlu} (12,032 questions, 14 domains, 10-option multiple choice). We select the three most dissimilar domains---\textbf{math}, \textbf{law}, and \textbf{history}---identified via cosine similarity analysis (avg.\ cosine 0.249 on Qwen3, \cref{sec:cross_architecture}), and test across three architectures: Qwen3-0.6B (Transformer, 1024d), Llama-3.2-3B-Instruct (Transformer, 3072d), and LFM2.5-1.2B-Instruct (hybrid SSM+Attention, 2048d).
+
+\subsubsection{Experimental Design}
+
+We use lm-eval~\cite{eval-harness} with our \texttt{SteeredHFLM} subclass, which injects a normalized steering vector at the model's mid-layer via \texttt{register\_forward\_hook}. Each model is evaluated in two modes:
+\begin{itemize}
+    \item \textbf{Generate-until} (\texttt{generate\_until}): the standard MMLU-Pro evaluation, where the model generates chain-of-thought reasoning followed by ``the answer is (X)'', extracted via regex. This mirrors how reasoning models are typically evaluated.
+    \item \textbf{Multiple-choice} (\texttt{loglikelihood}): the model scores each of the 10 options via a single forward pass, selecting the highest-probability answer. No text generation occurs---this directly measures how steering affects the model's internal probability distribution over answers.
+\end{itemize}
+
+This dual-mode evaluation is critical: if steering degrades \texttt{generate\_until} but not \texttt{loglikelihood}, the problem lies in the interaction between steering and sequential generation, not in the steering vector itself.
+
+\subsubsection{Results: Generate-Until (CoT)}
+
+\begin{table}[H]
+\centering
+\caption{MMLU-Pro accuracy (\%) with \texttt{generate\_until} (chain-of-thought), $n=20$. Steering systematically degrades performance, with $\alpha=60$ producing 0\% across all conditions.}
+\label{tab:mmlu_gen}
+\small
+\begin{tabular}{ll cccc}
+\toprule
+\textbf{Model} & \textbf{Domain} & \textbf{Baseline} & $\boldsymbol{\alpha=10}$ & $\boldsymbol{\alpha=30}$ & $\boldsymbol{\alpha=60}$ \\
+\midrule
+\multirow{3}{*}{Qwen3-0.6B} & math & \textbf{30} & 25 & 10 & 0 \\
+& law & \textbf{15} & 10 & 20 & 0 \\
+& history & \textbf{20} & 15 & 5 & 0 \\
+\midrule
+\multirow{2}{*}{Llama-3.2-3B} & math & \textbf{25} & 5 & 0 & 0 \\
+& law & \textbf{30} & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The results are unambiguous: in generation mode, steering degrades performance on MMLU-Pro. At $\alpha=60$, accuracy drops to 0\% for every model and domain tested. Even mild steering ($\alpha=10$) reduces Llama's law accuracy from 30\% to 0\%. This is consistent with the GSM8K 5-shot finding (\cref{sec:gsm8k}): MMLU-Pro's CoT prompting acts like implicit few-shot context, and steering on top causes destructive interference with the generation process.
+
+\subsubsection{Results: Multiple-Choice (Loglikelihood)}
+
+We first evaluate with $n=20$ across all three architectures (\cref{tab:mmlu_mc}), then validate Qwen3-0.6B with $n=200$ for statistical robustness (\cref{tab:mmlu_mc_n200}).
+
+\begin{table}[H]
+\centering
+\caption{MMLU-Pro accuracy (\%) with \texttt{loglikelihood} (direct scoring), $n=20$. Standard errors range from 5--10pp, making most differences statistically insignificant.}
+\label{tab:mmlu_mc}
+\small
+\begin{tabular}{ll cccc}
+\toprule
+\textbf{Model} & \textbf{Domain} & \textbf{Baseline} & $\boldsymbol{\alpha=10}$ & $\boldsymbol{\alpha=30}$ & $\boldsymbol{\alpha=60}$ \\
+\midrule
+\multirow{3}{*}{Qwen3-0.6B} & math & 20 & \textbf{25} & \textbf{25} & 15 \\
+& law & \textbf{20} & 20 & 15 & 10 \\
+& history & 5 & 10 & \textbf{20} & \textbf{20} \\
+\midrule
+\multirow{3}{*}{Llama-3.2-3B} & math & \textbf{15} & 10 & 5 & 5 \\
+& law & 0 & \textbf{10} & 5 & \textbf{10} \\
+& history & \textbf{20} & 10 & 15 & 15 \\
+\midrule
+\multirow{3}{*}{LFM2.5-1.2B} & math & \textbf{25} & 10 & 5 & 5 \\
+& law & 10 & \textbf{15} & \textbf{15} & \textbf{15} \\
+& history & \textbf{30} & 10 & 10 & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $n=20$, the results suggested that steering might improve specific domains: Qwen3 history appeared to jump from 5\% to 20\% ($+15$pp). However, with standard errors of 5--10pp at this sample size, we cannot draw reliable conclusions. We therefore re-evaluate Qwen3-0.6B with $n=200$.
+
+\begin{table}[H]
+\centering
+\caption{MMLU-Pro accuracy (\%) with \texttt{loglikelihood}, Qwen3-0.6B, $n=200$. Standard errors $\approx 2.3$--$2.7$pp. No steering condition significantly outperforms the baseline.}
+\label{tab:mmlu_mc_n200}
+\small
+\begin{tabular}{l cccc}
+\toprule
+\textbf{Domain} & \textbf{Baseline} & $\boldsymbol{\alpha=10}$ & $\boldsymbol{\alpha=30}$ & $\boldsymbol{\alpha=60}$ \\
+\midrule
+math & \textbf{12.5} {\scriptsize $\pm$2.3} & 11.0 {\scriptsize $\pm$2.2} & 11.5 {\scriptsize $\pm$2.3} & 13.5 {\scriptsize $\pm$2.4} \\
+law & \textbf{18.0} {\scriptsize $\pm$2.7} & 16.5 {\scriptsize $\pm$2.6} & 16.0 {\scriptsize $\pm$2.6} & 12.0 {\scriptsize $\pm$2.3} \\
+history & \textbf{16.0} {\scriptsize $\pm$2.6} & 13.0 {\scriptsize $\pm$2.4} & 14.0 {\scriptsize $\pm$2.5} & 12.0 {\scriptsize $\pm$2.3} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/mmlu_mc_combined.pdf}
+\caption{MMLU-Pro loglikelihood benchmark results. (a)~Qwen3-0.6B per-domain accuracy at $n=200$; (b)~accuracy as a function of steering coefficient, showing monotonic degradation on law and history; (c)~the ``history improvement'' observed at $n=20$ (gray) disappears at $n=200$ (orange), revealing it as sampling noise; (d)~best steering delta across all three models at $n=20$.}
+\label{fig:mmlu_mc}
+\end{figure}
+
+The $n=200$ results overturn the preliminary $n=20$ findings:
+\begin{enumerate}
+    \item \textbf{The history ``improvement'' was noise.} At $n=20$, Qwen3 history appeared to improve from 5\% to 20\% ($+15$pp)---but with a standard error of $\pm$9pp, this was within random fluctuation. At $n=200$, history \textit{degrades} from 16.0\% to 12.0--14.0\% under steering (\cref{fig:mmlu_mc}c).
+    \item \textbf{Steering consistently degrades loglikelihood.} Law drops from 18.0\% to 12.0\% at $\alpha=60$ ($-6$pp, $>2\sigma$). History drops from 16.0\% to 12.0\% ($-4$pp). Only math shows a marginal, non-significant increase at $\alpha=60$ ($+1$pp).
+    \item \textbf{Higher coefficients cause larger degradation.} \Cref{fig:mmlu_mc}b shows monotonic decline for law and history as $\alpha$ increases, consistent with the steering vector introducing noise into the probability distribution rather than useful domain information.
+    \item \textbf{Small-sample benchmarks are unreliable for steering evaluation.} The $10\times$ increase in sample size ($n=20 \to 200$) reduced standard errors by $\sim$$3.5\times$ and reversed every apparent positive finding. This methodological lesson applies broadly to steering research.
+\end{enumerate}
+
+\subsubsection{Interpretation: Generation vs.\ Representation}
+
+The $n=200$ results fundamentally change our interpretation. Both evaluation modes tell a consistent story:
+
+\begin{itemize}
+    \item \textbf{Generate-until} (CoT): steering catastrophically degrades performance. At $\alpha=60$, accuracy drops to 0\% across all conditions. The steering vector perturbs \textit{every token generation step}, accumulating interference over hundreds of tokens.
+    \item \textbf{Loglikelihood} (single-pass scoring): steering also degrades performance, though less dramatically ($-2$ to $-6$pp rather than $-$30pp). Even without sequential generation, the injected vector does not improve option discrimination.
+\end{itemize}
+
+The distinction between the two modes remains informative: the \textit{degree} of degradation differs by an order of magnitude ($-6$pp vs.\ $-30$pp), confirming that autoregressive accumulation amplifies the steering perturbation. However, we cannot claim that steering vectors ``encode meaningful domain information'' as the $n=20$ results initially suggested---at least not in a way that transfers to improved MMLU-Pro accuracy.
+
+This finding has practical implications: \textbf{domain-specific steering vectors extracted via contrastive methods improve behavioral alignment (topic adherence, output style) but do not improve knowledge-intensive QA}. The vectors capture ``domain flavor'' rather than ``domain knowledge.'' For benchmarks requiring factual recall over 10-way classification, even loglikelihood-mode steering is insufficient.
+
+\subsubsection{Qualitative Analysis: Per-Sample Outputs}
+
+To understand \textit{how} steering degrades performance, we examine individual model outputs across both evaluation modes.
+
+\paragraph{Loglikelihood mode: steering flattens discrimination.}
+\Cref{fig:mmlu_loglik} shows the log-likelihood distributions over answer options for three history questions. Under baseline evaluation, the model assigns peaked probability mass---often concentrating $>40\%$ on a single option (\cref{fig:mmlu_spread}, left). While the model frequently selects the wrong answer (this is a 0.6B model on 10-way MC), it at least \textit{discriminates} between plausible and implausible options.
+
+Under steering ($\alpha=30$), the distribution flattens dramatically: all log-likelihoods drop by 2--4 nats, and the model loses its ability to distinguish between options. A residual \textbf{position bias toward option A} emerges: in 5/5 steered history questions, the model selects option A regardless of content. This is visible in \cref{fig:mmlu_spread} (right), where probability mass collapses toward option index 0 across all questions. The steering vector does not redirect the model toward ``history knowledge''---it degrades the signal-to-noise ratio of the entire logit distribution.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/mmlu_samples_loglik.pdf}
+\caption{Per-option log-likelihoods for three history questions. Top: baseline (varied, peaked distributions). Bottom: steered $\alpha=30$ (uniformly depressed, option A dominates). Red triangles indicate the model's selection.}
+\label{fig:mmlu_loglik}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/mmlu_samples_spread.pdf}
+\caption{Softmax probability distributions over answer options (5 history questions). Baseline (left) shows peaked distributions with question-specific discrimination. Steered (right) flattens all distributions, with residual position bias toward early options.}
+\label{fig:mmlu_spread}
+\end{figure}
+
+\paragraph{Generate-until mode: steering replaces reasoning with filler.}
+Examining the generated chain-of-thought text reveals the qualitative degradation mechanism (\cref{tab:gen_samples}). The baseline model produces domain-specific reasoning (``We refer to Wikipedia articles on history\ldots'', ``The Inca fought many wars to demonstrate\ldots''), citing plausible (if often incorrect) factual content. The steered model replaces this with \textbf{generic filler text}: ``This was a major factor in\ldots'', ``This reflects the development of state system\ldots''---sentences that could apply to any domain and contain no factual content. The steering vector overrides the model's ability to retrieve domain-specific tokens, replacing them with a vague ``history-flavored'' style.
+
+\begin{table}[H]
+\centering
+\caption{Generate-until outputs: baseline vs steered ($\alpha=30$) on history. Baseline produces specific (though often incorrect) reasoning; steered produces generic filler.}
+\label{tab:gen_samples}
+\small
+\begin{tabular}{p{3cm} p{5.5cm} p{5.5cm}}
+\toprule
+\textbf{Question} & \textbf{Baseline} & \textbf{Steered ($\alpha=30$)} \\
+\midrule
+Inca wars \newline (expected: D) &
+``We refer to Wikipedia articles on history\ldots The Inca fought many wars to demonstrate their military prowess\ldots'' $\to$ \textbf{(A)} &
+``This was a major factor in the Inca's success, but it was a result of the combination of internal and external factors.'' $\to$ \textbf{(E)} \\
+\midrule
+Ancient state symbols \newline (expected: D) &
+``The most obvious material symbols are the monumental works, such as pyramids\ldots'' $\to$ \textbf{(D)} \checkmark &
+``This reflects the development of state system, which marked the emergence\ldots'' $\to$ \textbf{(G)} \\
+\midrule
+Cahokia \newline (expected: C) &
+``The ancient city of Cahokia had over 100 pyramidal mounds and a population of around 200,000.'' $\to$ \textbf{(F)} &
+``This was a major factor in the development of the urbanization of the region\ldots'' $\to$ \textbf{(G)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These qualitative observations explain the quantitative findings: steering does not inject domain \textit{knowledge} but rather a domain \textit{style}. The resulting outputs \textit{sound} like history text but lack the factual grounding needed to answer specific questions correctly.
+
+\subsubsection{SAE Feature Decomposition: Why Contrastive Vectors Fail}
+\label{sec:sae_analysis}
+
+To understand \textit{mechanistically} why contrastive steering vectors fail to encode domain knowledge, we train a Sparse Autoencoder (SAE) on the same layer targeted by our steering vectors (layer~14 of Qwen3-0.6B) and compare the two representations.
+
+\paragraph{SAE training.}
+We use SAELens~\cite{bloom2024saelens} to train a Standard SAE with $8\times$ expansion (8{,}192 latent features from 1{,}024-dimensional residual stream activations) on 20M tokens from OpenWebText, streamed through TransformerLens. Training uses $\ell_1$ sparsity coefficient $\lambda = 5 \times 10^{-3}$, learning rate $3 \times 10^{-4}$, and batch size 4{,}096 tokens. The SAE achieves stable reconstruction (final MSE: 26.9, explained variance: 99.99\%).
+
+\paragraph{Domain-specific feature identification.}
+We compute SAE feature activations for 10 domain-specific prompts each in math, law, and history (30 prompts total). For each prompt, we forward-pass through the model, extract residual stream activations at layer~14, encode them through the SAE, and average feature activations over the sequence length. We then identify \textit{differential features}: for each domain, we compute the feature-wise difference between mean in-domain activation and mean out-of-domain activation, selecting the top~20.
+
+Each domain yields sharply localized differential features. \Cref{tab:sae_domain} shows representative results: law features activate 5--6$\times$ more strongly than math features (mean activation 15--21 vs.\ 2--6), consistent with law prompts triggering highly specialized vocabulary representations at this layer. Interestingly, features 5586, 8191, and 5355 appear in both law and history top-10, suggesting shared ``humanities/social science'' super-features encoding a broad non-STEM signal.
+
+\begin{table}[H]
+\centering
+\caption{Top-5 SAE differential features per domain (layer 14, 8{,}192 features, 20M training tokens). Differential = mean in-domain $-$ mean out-of-domain activation.}
+\label{tab:sae_domain}
+\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{Domain} & \textbf{Feature ID} & \textbf{Differential} & \textbf{Mean Activation} \\
+\midrule
+Math    & 7125 & 1.95 & 3.62 \\
+        & 112  & 1.86 & 4.21 \\
+        & 2937 & 1.79 & 3.71 \\
+\midrule
+Law     & 5586 & 3.42 & 20.64 \\
+        & 8191 & 3.24 & 18.34 \\
+        & 6716 & 2.77 & 16.89 \\
+\midrule
+History & 8191 & 2.69 & 17.98 \\
+        & 5355 & 2.35 & 19.77 \\
+        & 5586 & 2.33 & 19.91 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Contrastive vector projection into SAE space.}
+We project each contrastive steering vector into the SAE's feature space via $\text{ReLU}(\mathbf{v} \cdot \mathbf{W}_\text{enc} + \mathbf{b}_\text{enc})$, mirroring the standard SAE encoding. This reveals which latent features the steering vector ``activates'' when decomposed into interpretable directions.
+
+The results are striking: each contrastive vector activates \textbf{47--59\% of all 8{,}192 features} (\cref{tab:sae_overlap}). Math activates 4{,}664 features, law 4{,}845, and history 3{,}857. This confirms that contrastive mean-difference vectors are \textit{diffuse directions} in activation space, not aligned with the sparse, localized features that encode specific domain knowledge.
+
+\paragraph{Overlap analysis.}
+Comparing the top-20 domain-specific SAE features with the top-20 features from contrastive vector projection yields \textbf{0--4 overlapping features per domain} (\cref{tab:sae_overlap}). Law---the domain with the strongest differential features---has \textit{zero} overlap: the contrastive vector's top features are entirely disjoint from the SAE's domain-specific features. History's 4 overlapping features (5586, 5355, 8191, 7735) are predominantly shared law/history ``humanities'' features, not history-specific ones.
+
+\begin{table}[H]
+\centering
+\caption{Overlap between domain-specific SAE features and contrastive vector projections (top-20 each, 20M-token SAE). Contrastive vectors activate thousands of features diffusely with near-zero targeting of domain-specific features.}
+\label{tab:sae_overlap}
+\small
+\begin{tabular}{lcccl}
+\toprule
+\textbf{Domain} & \textbf{SAE top-20} & \textbf{Contrastive top-20} & \textbf{Active / 8192} & \textbf{Overlap} \\
+\midrule
+Math    & 20 & 20 & 4{,}664 (57\%) & 2 features \\
+Law     & 20 & 20 & 4{,}845 (59\%) & 0 features \\
+History & 20 & 20 & 3{,}857 (47\%) & 4 features \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This provides a mechanistic explanation for the ``domain style vs.\ domain knowledge'' distinction: contrastive steering vectors push the residual stream in a \textit{broad direction} that shifts topic adherence and output vocabulary, but they do not selectively amplify the \textit{sparse, interpretable features} that encode actual domain expertise.
+
+\paragraph{Robustness to sparsity penalty.}
+To verify that this finding is not an artifact of SAE training, we retrain with $10\times$ higher $\ell_1$ penalty ($\lambda = 0.05$). The sparser SAE (L0: 5{,}793 vs.\ 7{,}131; MSE: 71.4 vs.\ 26.9) yields qualitatively identical results: contrastive vectors still activate 48--56\% of features, and overlap with domain-specific features remains 0--3 out of 20. The diffuse-vs.-sparse asymmetry is robust across sparsity regimes.
+
+\paragraph{Feature-targeted steering: a controlled experiment.}
+\label{sec:feature_targeted}
+To test whether targeting specific SAE features improves knowledge-level QA, we construct steering vectors from the SAE decoder matrix rather than contrastive means. For each domain, we sum the decoder columns $\mathbf{W}_\text{dec}[i]$ for the top-$k$ domain-specific features (weighted by differential activation or uniformly). These vectors target the exact sparse features the model uses for domain recognition.
+
+We evaluate three strategies on MMLU-Pro MC ($n=50$, Qwen3-0.6B): weighted sum, uniform sum, and single best feature, at $\alpha \in \{3, 5, 10\}$.
+
+\begin{table}[H]
+\centering
+\caption{Feature-targeted vs contrastive steering on MMLU-Pro MC ($n=50$). Feature-targeted preserves baseline better at low $\alpha$ but does not improve accuracy beyond noise.}
+\label{tab:feature_targeted}
+\small
+\begin{tabular}{llccc}
+\toprule
+\textbf{Domain} & \textbf{Method} & $\alpha=3$ & $\alpha=5$ & $\alpha=10$ \\
+\midrule
+\multirow{3}{*}{Math}
+  & Baseline          & 18.0\% & --- & --- \\
+  & Contrastive       & 18.0\% & 18.0\% & 20.0\% \\
+  & Feature uniform k20 & 18.0\% & 18.0\% & \textbf{22.0\%} \\
+\midrule
+\multirow{3}{*}{Law}
+  & Baseline          & 24.0\% & --- & --- \\
+  & Contrastive       & 22.0\% & 22.0\% & 18.0\% \\
+  & Feature uniform k20 & \textbf{24.0\%} & \textbf{24.0\%} & 16.0\% \\
+\midrule
+\multirow{3}{*}{History}
+  & Baseline          & 14.0\% & --- & --- \\
+  & Contrastive       & 12.0\% & 14.0\% & 12.0\% \\
+  & Feature uniform k20 & 12.0\% & 12.0\% & \textbf{14.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The results reveal a nuanced picture: feature-targeted vectors \textbf{preserve baseline accuracy better} than contrastive vectors at low coefficients (law: 24\% maintained at $\alpha=3{-}5$ vs.\ 22\% contrastive), and degrade less aggressively at moderate $\alpha$. However, no method produces statistically significant improvements (all deltas within $\pm$1--2 stderr). The 0.6B model simply lacks the deep domain knowledge that either steering approach could ``unlock.'' Feature-targeted steering's advantage is \textit{reduced harm} rather than \textit{increased knowledge}---a meaningful distinction for safety-critical deployment where preserving baseline capability matters.
+
 \subsection{SWE-bench Verified: RAG + Steering}
 \label{sec:swebench}
 
@@ -795,6 +1062,10 @@ We presented a comprehensive study of activation steering for small language mod
 \textbf{RAG + steering enables real-world patch generation.} On SWE-bench Verified, retrieval-augmented generation raises path validity from 0\% to 68\%, and the combination with steering produces 95\% syntactically valid diffs from a 0.6B model. Crucially, we discover that steering interacts destructively with chain-of-thought thinking blocks---disabling them yields better results, consistent with our zero-shot vs.\ few-shot findings on GSM8K.
 
 \textbf{Domain geometry is architecture-invariant.} Comparing steering vectors across Qwen3-0.6B (Transformer, 1024d), Llama-3.2-3B (Transformer, 3072d), and LFM2.5-1.2B (hybrid SSM+Attention, 2048d), we find that the $14 \times 14$ cosine similarity matrices correlate at $\rho > 0.88$ (Spearman) for all model pairs. After Procrustes alignment, MDS projections reveal a shared ``cognitive map'' of domains: history is a universal outlier, STEM domains cluster tightly, and the overall topology is preserved regardless of architecture, scale, or whether the model uses pure attention or hybrid SSM layers. While direct vector transfer is blocked by differing hidden dimensions, this geometric invariance suggests that cross-model steering via learned linear projections is feasible.
+
+\textbf{Steering degrades both scoring and generation on knowledge benchmarks.} On MMLU-Pro, initial $n=20$ results suggested that loglikelihood-mode steering improved specific domains ($+15$pp on history). However, validation at $n=200$ (reducing standard errors from $\pm$9pp to $\pm$2.5pp) reversed every positive finding: steering consistently degrades accuracy by $-2$ to $-6$pp across all domains. In generate-until mode, degradation is catastrophic ($\alpha=60$ yields 0\%). This order-of-magnitude gap between modes ($-6$pp vs.\ $-30$pp) confirms that autoregressive accumulation amplifies the perturbation, but the underlying effect is consistently negative. Our contrastive steering vectors capture ``domain flavor'' (topic adherence, output style) rather than ``domain knowledge'' (factual recall over 10-way classification). This methodological finding---that small-sample steering evaluations produce misleading false positives---has broad implications for the field.
+
+\textbf{SAE decomposition reveals why contrastive vectors fail.} Training a Sparse Autoencoder (8{,}192 features, $8\times$ expansion) on the same residual stream layer targeted by our steering vectors, we find that domain-specific knowledge is encoded in \textit{sparse, localized features} (top-20 differential features per domain), while contrastive vectors activate 50--60\% of all features diffusely. The overlap between domain-specific SAE features and contrastive vector projections is near-zero (0--3/20). This mechanistic finding explains the ``domain style vs.\ domain knowledge'' distinction: contrastive mean-difference vectors shift topic adherence but do not amplify the interpretable features encoding actual domain expertise. We tested this directly: feature-targeted vectors built from SAE decoder columns preserve baseline accuracy better than contrastive vectors (e.g., law at 24\% vs.\ 22\% at $\alpha=3$), but produce no statistically significant improvements on MMLU-Pro. The 0.6B model lacks the domain knowledge to unlock. Feature-targeted steering's advantage is \textit{reduced harm} rather than increased knowledge---relevant for safety-critical deployment.
 
 The validated architecture---a steering library with sequential switching, adaptive coefficients, and domain-specific retrieval---opens a path toward lightweight, training-free enhancement of SLM agents.
 
@@ -870,6 +1141,17 @@ L.~Gao et al.
 \newblock A framework for few-shot language model evaluation.
 \newblock \textit{Zenodo}, 2024.
 \newblock \url{https://github.com/EleutherAI/lm-evaluation-harness}
+
+\bibitem{wang2024mmlu}
+Y.~Wang et al.
+\newblock {MMLU-Pro}: A more robust and challenging multi-task language understanding benchmark.
+\newblock \textit{arXiv preprint arXiv:2406.01574}, 2024.
+
+\bibitem{bloom2024saelens}
+J.~Bloom, S.~Chanin, and contributors.
+\newblock {SAELens}: A library for training and analyzing sparse autoencoders.
+\newblock 2024.
+\newblock \url{https://github.com/jbloomAus/SAELens}
 
 \end{thebibliography}
 

@@ -18,7 +18,11 @@ venv/
 # Model weights (too large for git)
 *.bin
 *.safetensors
-steering_vectors.pt
+*.pt
+
+# SAE trained weights (64MB+ each)
+results/sae_*/
+results/sae_checkpoints/
 
 # LaTeX build artifacts
 article/*.aux
@@ -35,4 +39,22 @@ article/*.bbl
 .cache/
 
 # Results
+logs/
+
+# Env
+.env
+
+#Article
+article/
+
+# Wandb
+wandb/
+
+# Outputs
+outputs/
+
+# Results
+results/
+
+# Logs
 logs/
