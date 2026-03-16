@@ -58,3 +58,7 @@ results/
 
 # Logs
 logs/
+
+# Frontend
+web/frontend/node_modules/
+web/frontend/dist/

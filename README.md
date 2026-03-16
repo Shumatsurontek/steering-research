@@ -150,11 +150,49 @@ steering-research/
 │       ├── swebench_pipeline.py         # Phase 6e: SWE-bench eval pipeline + RAG ★
 │       └── swebench_rag.py             # Phase 6e: Repo checkout + file retrieval ★
 │
+├── 🌐 web/
+│   ├── api/                              # FastAPI backend (SSE streaming, model management)
+│   │   ├── main.py                       # App, CORS, lifespan, request logging
+│   │   ├── deps.py                       # ModelManager singleton (1 model in RAM)
+│   │   ├── steering.py                   # Extracted hook + generation logic
+│   │   └── routers/                      # generate, models, vectors endpoints
+│   └── frontend/                         # React + TypeScript + Vite
+│       └── src/components/               # Sidebar, ArenaPanel, ChatCard, VectorViz
+│
 ├── 📊 results/                           # All JSON results + steering vectors (.pt) + SAE weights
 ├── 📁 data/                              # Evaluation datasets
 ├── 📋 PLAN.md                            # Research plan with status tracking
+├── 🐳 Dockerfile                         # Multi-stage build (Node + Python)
+├── 📋 justfile                           # Task runner (just up, just dev, etc.)
 └── 📦 requirements.txt
 ```
+
+---
+
+## 🌐 Steering Arena (Web App)
+
+Interactive React + FastAPI app for real-time comparison of steering methods. Streams baseline, contrastive, and SAE feature-targeted generation side by side.
+
+**Features:**
+- Real-time SSE streaming with 3 methods running sequentially
+- Dynamic layer selection with cross-layer SAE support (warning when not at trained layer)
+- Vector space visualizations (PCA, cosine similarity heatmap, L2 norms)
+- Model hot-swapping (Qwen3-0.6B / Qwen3-4B)
+
+**Quick start with Docker:**
+
+```bash
+just up    # builds image + runs on :8000 (mount results/ for vectors)
+```
+
+**Dev mode (hot reload):**
+
+```bash
+just dev-backend   # uvicorn on :8000
+just dev-frontend  # vite on :5173 (proxies /api → :8000)
+```
+
+*Developed by Arthur EDMOND*
 
 ---
 
@@ -487,7 +525,6 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 - [x] **Streamlit demo** — live comparison of steering methods with word-level diff
 - [x] Higher sparsity SAE (L1=0.05) — finding robust: contrastive still diffuse, overlap 0–3/20
 - [x] **Qwen3-4B SAE comparison** — contrastive less diffuse (41-51%), law overlap 5/20, but still no accuracy gains
-- [ ] Docker evaluation of RAG patches on SWE-bench
 - [ ] Cross-model steering via learned linear projections (leveraging geometric invariance)
 
 ---

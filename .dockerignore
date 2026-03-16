@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+.venv
+.git
+.claude
+node_modules
+web/frontend/dist
+web/frontend/node_modules
+*.pt
+*.safetensors
+results/
+.DS_Store
