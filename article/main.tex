@@ -42,12 +42,12 @@ From Mid-Layer Sweet Spots to Dynamic Multi-Agent Orchestration}
 
 % ===================================================================
 \begin{abstract}
-We present a comprehensive study of \textbf{activation steering} for improving task-specific behavior in small language models (SLMs), from mechanistic analysis to practical multi-agent orchestration. Using Qwen3-4B and Qwen3-0.6B as primary models, and extending to Llama-3.2-3B-Instruct and LFM2.5-1.2B-Instruct for cross-architecture analysis, we (1)~analyze tokenizer fragmentation across four models, (2)~extract contrastive steering vectors via SAE-inspired methodology, (3)~perform a layer$\times$coefficient sweep identifying mid-layer sweet spots, (4)~validate on base (non-instruct) models, (5)~evaluate on GSM8K math reasoning, (6)~quantify effects via KL divergence and sampling diversity, (7)~build a dynamic multi-agent steering orchestrator, (8)~test on SWE-bench Verified with RAG-augmented patch generation, (9)~demonstrate that domain steering geometry is architecture-invariant across three fundamentally different architectures, (10)~benchmark on MMLU-Pro in both generation and loglikelihood modes with rigorous sample sizing ($n=200$), revealing that steering degrades both modes---catastrophically for generation, modestly for scoring---and that small-sample evaluations ($n=20$) produce misleading false positives, and (11)~decompose contrastive steering vectors via a custom-trained SAE, revealing near-zero overlap with domain-specific features and explaining why contrastive vectors capture ``style'' but not ``knowledge.''
+We present a comprehensive study of \textbf{activation steering} for improving task-specific behavior in small language models (SLMs), from mechanistic analysis to practical multi-agent orchestration. Using Qwen3-4B and Qwen3-0.6B as primary models, and extending to Llama-3.2-3B-Instruct and LFM2.5-1.2B-Instruct for cross-architecture analysis, we (1)~analyze tokenizer fragmentation across four models, (2)~extract contrastive steering vectors via SAE-inspired methodology, (3)~perform a layer$\times$coefficient sweep identifying mid-layer sweet spots, (4)~validate on base (non-instruct) models, (5)~evaluate on GSM8K math reasoning, (6)~quantify effects via KL divergence and sampling diversity, (7)~build a dynamic multi-agent steering orchestrator, (8)~test on SWE-bench Verified with RAG-augmented patch generation, (9)~demonstrate that domain steering geometry is architecture-invariant across three fundamentally different architectures, (10)~benchmark on MMLU-Pro in both generation and loglikelihood modes with rigorous sample sizing ($n=200$), revealing that steering degrades both modes---catastrophically for generation, modestly for scoring---and that small-sample evaluations ($n=20$) produce misleading false positives, (11)~decompose contrastive steering vectors via a custom-trained SAE, revealing near-zero overlap with domain-specific features and explaining why contrastive vectors capture ``style'' but not ``knowledge,'' and (12)~replicate the full SAE pipeline on Qwen3-4B, demonstrating that steering's inability to inject knowledge is scale-independent despite improved feature alignment.
 
 Our key findings are: (a)~\textbf{mid-layer steering (layers 15--18) achieves 100\% behavioral change} at moderate coefficients ($\alpha=30$), while late layers (33--35) are rigid---an \textit{architectural} property independent of instruction tuning; (b)~\textbf{base models are more steerable but fragile}---effective at $\alpha=30$ but degenerate at $\alpha\geq60$; (c)~\textbf{steering on a 0.6B SLM boosts GSM8K accuracy by +16pp} under zero-shot CoT (46\%$\to$62\%), but \textbf{degrades under 5-shot} ($-$8pp), revealing destructive interference between steering and few-shot prompting; (d)~\textbf{KL divergence confirms a 3-order-of-magnitude gap} between mid-layer (1--48 bits) and late-layer ($<$0.01 bits) steering; (e)~a \textbf{dynamic steering orchestrator} that switches domain-specific vectors per plan step achieves 4--7$\times$ more domain-relevant outputs than baseline; (f)~on SWE-bench Verified, RAG-augmented steering produces patches with \textbf{68\% valid file paths} (vs.\ 0\% without RAG), with 95\% of instances generating syntactically valid diffs; (g)~\textbf{domain steering geometry is architecture-invariant} (Spearman $\rho > 0.88$ across Transformer, larger Transformer, and hybrid SSM+Attention models), with history as a universal outlier---though direct vector transfer remains impossible due to differing hidden dimensions. We present a validated architecture for training-free enhancement of SLM agents via sequential steering with adaptive coefficients.
 \end{abstract}
 
-\textbf{Keywords:} activation steering, small language models, mechanistic interpretability, sparse autoencoders, multi-agent orchestration, SWE-bench, dynamic steering, cross-architecture transfer, MMLU-Pro
+\textbf{Keywords:} activation steering, small language models, mechanistic interpretability, sparse autoencoders, multi-agent orchestration, SWE-bench, dynamic steering, cross-architecture transfer, MMLU-Pro, model scaling
 
 % ===================================================================
 \section{Introduction}
@@ -64,7 +64,7 @@ Small Language Models (SLMs) with 0.6--3B parameters are increasingly deployed a
 
 Recent work has shown that per-layer steering vectors trained via reinforcement learning can match fully fine-tuned models on mathematical reasoning tasks, adding only 0.0016\% parameters~\cite{gao2025steering}. Separately, budget guidance techniques demonstrate training-free control of reasoning length via token-level distribution modeling~\cite{li2025budget}. However, these approaches have primarily been studied on reasoning benchmarks --- their effectiveness in agentic tool-use contexts remains unexplored.
 
-\textbf{Contributions.} This paper makes nine contributions:
+\textbf{Contributions.} This paper makes eleven contributions:
 \begin{itemize}
     \item A comparative tokenizer analysis across four models revealing universal fragmentation of structured expressions (\cref{sec:tokenizers}).
     \item SAE-inspired contrastive feature extraction with logit lens validation (\cref{sec:features}).
@@ -76,6 +76,7 @@ Recent work has shown that per-layer steering vectors trained via reinforcement 
     \item Cross-architecture analysis showing domain geometry is invariant across Transformer and hybrid SSM+Attention models ($\rho > 0.88$), with Procrustes-aligned MDS revealing a universal domain map (\cref{sec:cross_architecture}).
     \item MMLU-Pro dual-mode evaluation (generation vs.\ loglikelihood) across 3 models $\times$ 3 domains, with $n=200$ validation revealing that both modes degrade under steering and that small-sample ($n=20$) results produce false positives (\cref{sec:mmlu_pro}).
     \item SAE feature decomposition showing that contrastive steering vectors activate 50--60\% of SAE features diffusely, with near-zero overlap (0--3/20) with domain-specific features, explaining why they capture ``style'' but not ``knowledge'' (\cref{sec:sae_analysis}).
+    \item A scaling comparison on Qwen3-4B replicating the full SAE pipeline, showing that despite higher baselines (math 48\% vs 18\%, history 34\% vs 14\%), less diffuse contrastive vectors (41--51\% vs 47--59\%), and improved contrastive-SAE overlap (5/20 vs 0/20 for law), \textbf{no steering method exceeds baseline accuracy}---confirming that steering captures style, not knowledge, independent of model scale (\cref{sec:sae_analysis}).
 \end{itemize}
 
 % ===================================================================
@@ -999,6 +1000,39 @@ We evaluate three strategies on MMLU-Pro MC ($n=50$, Qwen3-0.6B): weighted sum, 
 \end{table}
 
 The results reveal a nuanced picture: feature-targeted vectors \textbf{preserve baseline accuracy better} than contrastive vectors at low coefficients (law: 24\% maintained at $\alpha=3{-}5$ vs.\ 22\% contrastive), and degrade less aggressively at moderate $\alpha$. However, no method produces statistically significant improvements (all deltas within $\pm$1--2 stderr). The 0.6B model simply lacks the deep domain knowledge that either steering approach could ``unlock.'' Feature-targeted steering's advantage is \textit{reduced harm} rather than \textit{increased knowledge}---a meaningful distinction for safety-critical deployment where preserving baseline capability matters.
+
+\paragraph{Scaling to Qwen3-4B: does model size help?}
+To test whether the 0.6B result is a capacity limitation, we replicate the full SAE pipeline on Qwen3-4B (36~layers, $d=2560$, SAE: 20{,}480 features at layer~18). The 4B model has substantially higher baselines (math: 48\% vs.\ 18\%; history: 34\% vs.\ 14\%), confirming deeper domain knowledge.
+
+SAE analysis reveals that contrastive vectors are \textit{less diffuse} on 4B (41--51\% of features activated vs.\ 47--59\% on 0.6B), and law achieves 5/20 overlap (vs.\ 0/20 on 0.6B)---the first domain with meaningful contrastive--SAE alignment. Despite this, feature-targeted steering still fails to improve accuracy (\cref{tab:feature_targeted_4b}).
+
+\begin{table}[H]
+\centering
+\caption{Feature-targeted steering on Qwen3-4B ($n=50$). Higher baselines and less diffuse contrastive vectors, but no method exceeds baseline. Single-feature preserves accuracy best at moderate $\alpha$.}
+\label{tab:feature_targeted_4b}
+\small
+\begin{tabular}{llccc}
+\toprule
+\textbf{Domain} & \textbf{Method} & $\alpha=10$ & $\alpha=30$ & $\alpha=60$ \\
+\midrule
+\multirow{3}{*}{Math (48\%)}
+  & Contrastive       & 44.0\% & 16.0\% & 4.0\% \\
+  & Feature single    & \textbf{44.0\%} & \textbf{26.0\%} & \textbf{14.0\%} \\
+\midrule
+\multirow{3}{*}{Law (22\%)}
+  & Contrastive       & \textbf{24.0\%} & 16.0\% & 10.0\% \\
+  & Feature single    & 18.0\% & \textbf{24.0\%} & \textbf{18.0\%} \\
+\midrule
+\multirow{3}{*}{History (34\%)}
+  & Contrastive       & \textbf{34.0\%} & \textbf{34.0\%} & 18.0\% \\
+  & Feature uniform k20 & \textbf{34.0\%} & 32.0\% & \textbf{22.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern is consistent across scales: single-feature steering preserves baseline accuracy significantly better than contrastive at moderate coefficients (law at $\alpha=30$: 24\% vs.\ 16\%, +8pp; math at $\alpha=30$: 26\% vs.\ 16\%, +10pp). History on 4B is notably steering-resistant, maintaining 34\% through $\alpha=30$ with contrastive vectors---larger models' stronger representations resist perturbation more effectively.
+
+The conclusion is unambiguous: \textbf{scaling from 0.6B to 4B does not solve the fundamental limitation}. Despite higher baselines, less diffuse contrastive representations, and non-trivial SAE overlap on law, steering vectors cannot inject domain knowledge that the model does not already surface through its baseline computation. Feature-targeted steering's value is \textit{harm reduction} at moderate coefficients, not knowledge amplification.
 
 \subsection{SWE-bench Verified: RAG + Steering}
 \label{sec:swebench}

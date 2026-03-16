@@ -101,7 +101,7 @@ def compute_domain_activations(sae, model, prompts, hook_name):
     return torch.stack(all_acts)
 
 
-def build_feature_vectors(sae, model, top_k=20):
+def build_feature_vectors(sae, model, top_k=20, hook_name="blocks.14.hook_resid_post"):
     """
     Build feature-targeted steering vectors for each domain.
 
@@ -113,7 +113,7 @@ def build_feature_vectors(sae, model, top_k=20):
     print("\n  Computing SAE activations per domain...")
     activations = {}
     for domain, prompts in DOMAIN_PROMPTS.items():
-        acts = compute_domain_activations(sae, model, prompts, HOOK_NAME)
+        acts = compute_domain_activations(sae, model, prompts, hook_name)
         activations[domain] = acts.mean(dim=0)  # (d_sae,)
         print(f"    {domain}: mean act = {activations[domain].mean():.4f}")
 
@@ -312,7 +312,7 @@ def main():
     sae = SAE.load_from_disk(str(sae_path), device=device)
     print(f"  SAE loaded: d_in={sae.cfg.d_in}, d_sae={sae.cfg.d_sae}")
 
-    feature_vectors = build_feature_vectors(sae, tl_model, top_k=args.top_k)
+    feature_vectors = build_feature_vectors(sae, tl_model, top_k=args.top_k, hook_name=hook_name)
 
     # Free TransformerLens model (we'll use HFLM for eval)
     del tl_model, sae

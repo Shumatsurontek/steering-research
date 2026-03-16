@@ -414,24 +414,66 @@ L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, 
 - [x] `mmlu_pro_vectors.py` : `--model` filter + Qwen3-4B ajouté
 - [x] Tous les `stop_at_layer` dynamiques (plus de hardcoded 15)
 
-### 9.2 Vecteurs contrastifs Qwen3-4B 🔄
-- [ ] `python -m src.steering.mmlu_pro_vectors --model qwen3_4b`
-- [ ] Fichier attendu : `results/mmlu_pro_vectors_qwen3_4b.pt`
+### 9.2 Vecteurs contrastifs Qwen3-4B ✅
+- [x] `python -m src.steering.mmlu_pro_vectors --model qwen3_4b`
+- [x] Triplet le plus dissimilaire (L18) : physics, business, history (cos=0.335)
+- [x] Fichier : `results/mmlu_pro_vectors_qwen3_4b.pt`
 
-### 9.3 Entraînement SAE Qwen3-4B ⬜
-- [ ] `python -m src.steering.train_sae --model Qwen/Qwen3-4B --training_tokens 20000000 --wandb`
-- [ ] Config : d_in=2560, d_sae=20480 (8×), layer 18, L1=5e-3
-- [ ] Fichier attendu : `results/sae_qwen3_4b_L18_8x/`
+### 9.3 Entraînement SAE Qwen3-4B ✅
+- [x] Pilot 5M tokens (quick test) : MSE=363, explained variance=99.97%, L0=17076/20480 (83%)
+- [x] Config : d_in=2560, d_sae=20480 (8×), layer 18, L1=5e-3
+- [x] wandb : https://wandb.ai/arthur-edmond-perso/sae-qwen3-4b/runs/ug6y3exq
+- [ ] Full 20M tokens (à relancer si résultats prometteurs)
 
-### 9.4 Analyse domaine SAE 4B ⬜
-- [ ] `python -m src.steering.analyze_sae_features --model Qwen/Qwen3-4B`
-- [ ] Comparer overlap et sparsité avec 0.6B
+**Fichier :** `results/sae_qwen3_4b_L18_8x/`
 
-### 9.5 Feature-targeted benchmark 4B ⬜
-- [ ] `python -m src.steering.feature_targeted_steering --model Qwen/Qwen3-4B --limit 50`
-- [ ] Hypothèse : le 4B a plus de connaissances domaine → gain possible avec feature-targeted ?
+### 9.4 Analyse domaine SAE 4B ✅
+- [x] `python -m src.steering.analyze_sae_features --model Qwen/Qwen3-4B`
 
-### 9.6 Article & synthèse comparative ⬜
+**Comparaison 0.6B vs 4B :**
+| Métrique | Qwen3-0.6B | Qwen3-4B |
+|----------|:----------:|:--------:|
+| SAE features | 8,192 | 20,480 |
+| Contrastive diffusion (math) | 57% | **45%** |
+| Contrastive diffusion (law) | 59% | **51%** |
+| Contrastive diffusion (history) | 47% | **41%** |
+| Overlap math | 2/20 | 1/20 |
+| Overlap law | 0/20 | **5/20** ★ |
+| Overlap history | 4/20 | 0/20 |
+
+**Résultat clé :** Les vecteurs contrastifs sont **moins diffus sur 4B** (41-51% vs 47-59%). Law montre 5/20 overlap — première fois qu'un domaine aligne significativement les vecteurs contrastifs avec les features SAE.
+
+### 9.5 Feature-targeted benchmark 4B ✅
+- [x] Law (n=50) : baseline 22%, **single α=30 24%** (+2) ★
+- [x] Math (n=50) : baseline 48%, **single α=10 44%** (-4, meilleure préservation)
+- [x] History (n=50) : baseline 34%, contrastive résistant jusqu'à α=30
+
+**Résultats complets 4B (n=50, best per method) :**
+| Domaine | Baseline | Contrastive best | Feature single best | Delta single vs contrastive |
+|---------|:--------:|:----------------:|:-------------------:|:--------------------------:|
+| Math | **48.0%** | 44.0% (α=10) | 44.0% (α=10) | 0pp (equal) |
+| Law | **22.0%** | 24.0% (α=10) | 24.0% (α=30) | +8pp at α=30 ★ |
+| History | **34.0%** | 34.0% (α=10-30) | 32.0% (α=10) | -2pp |
+
+**Comparaison baselines 0.6B vs 4B :**
+| Domaine | 0.6B | 4B | Gain |
+|---------|:----:|:--:|:----:|
+| Math | 18.0% | **48.0%** | +30pp |
+| Law | 24.0% | 22.0% | -2pp |
+| History | 14.0% | **34.0%** | +20pp |
+
+**Conclusions :**
+- Le 4B a des baselines beaucoup plus élevées (math +30pp, history +20pp)
+- **Aucune méthode ne dépasse la baseline** de manière significative — ni sur 0.6B ni sur 4B
+- Single-feature = stratégie la plus robuste : **préserve la baseline mieux** que contrastive à α modéré
+- History sur 4B est remarquablement résistant au steering (34% maintenu jusqu'à α=30)
+- **Verdict : le scaling ne résout pas le problème fondamental** — steering ≠ knowledge injection
+
+### 9.6 Streamlit multi-modèle ✅
+- [x] Sélecteur de modèle (0.6B / 4B) dans la sidebar
+- [x] Chargement dynamique SAE, vecteurs contrastifs, et hook layer par modèle
+
+### 9.7 Article & synthèse comparative ⬜
 - [ ] Table comparative 0.6B vs 4B : SAE metrics, overlap, feature-targeted accuracy
 - [ ] Mise à jour article/main.tex
 

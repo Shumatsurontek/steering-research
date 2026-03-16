@@ -1,6 +1,6 @@
 """
 Streamlit demo: compare baseline, contrastive, and feature-targeted steering
-in real time on Qwen3-0.6B.
+in real time on Qwen3-0.6B or Qwen3-4B.
 
 Usage:
     streamlit run src/steering/app_steering_demo.py
@@ -16,11 +16,22 @@ from sae_lens import SAE
 from transformer_lens import HookedTransformer
 
 RESULTS_DIR = Path(__file__).resolve().parents[2] / "results"
-SAE_PATH = RESULTS_DIR / "sae_qwen3_0.6b_L14_8x"
-MODEL_NAME = "Qwen/Qwen3-0.6B"
-HOOK_NAME = "blocks.14.hook_resid_post"
-MID_LAYER = 14
 TARGET_DOMAINS = ["math", "law", "history"]
+
+MODEL_CONFIGS = {
+    "Qwen3-0.6B": {
+        "model_id": "Qwen/Qwen3-0.6B",
+        "layer": 14,
+        "sae_dir": "sae_qwen3_0.6b_L14_8x",
+        "vectors": "mmlu_pro_vectors_qwen3_0.6b.pt",
+    },
+    "Qwen3-4B": {
+        "model_id": "Qwen/Qwen3-4B",
+        "layer": 18,
+        "sae_dir": "sae_qwen3_4b_L18_8x",
+        "vectors": "mmlu_pro_vectors_qwen3_4b.pt",
+    },
+}
 
 DOMAIN_PROMPTS = {
     "math": [
@@ -63,37 +74,39 @@ DOMAIN_PROMPTS = {
 
 
 # ---------------------------------------------------------------------------
-# Cached resource loading
+# Cached resource loading (keyed by model name)
 # ---------------------------------------------------------------------------
 @st.cache_resource
-def load_hf_model():
+def load_hf_model(model_id: str):
     """Load HuggingFace model + tokenizer for generation."""
     device = _get_device()
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL_NAME, torch_dtype=torch.float16, trust_remote_code=True
+        model_id, torch_dtype=torch.float16, trust_remote_code=True
     ).to(device)
     model.eval()
     return model, tokenizer
 
 
 @st.cache_resource
-def load_contrastive_vectors():
+def load_contrastive_vectors(vectors_file: str):
     """Load precomputed contrastive steering vectors."""
-    path = RESULTS_DIR / "mmlu_pro_vectors_qwen3_0.6b.pt"
+    path = RESULTS_DIR / vectors_file
     return torch.load(path, map_location="cpu", weights_only=True)
 
 
 @st.cache_resource
-def load_sae_and_build_feature_vectors(top_k: int = 20):
+def load_sae_and_build_feature_vectors(model_id: str, sae_dir: str, layer: int, top_k: int = 20):
     """Load SAE, compute domain activations, build feature-targeted vectors."""
     device = _get_device()
+    hook_name = f"blocks.{layer}.hook_resid_post"
+    sae_path = RESULTS_DIR / sae_dir
 
     # Use TransformerLens for SAE encoding
     tl_model = HookedTransformer.from_pretrained_no_processing(
-        MODEL_NAME, device=device
+        model_id, device=device
     )
-    sae = SAE.load_from_disk(str(SAE_PATH), device=device)
+    sae = SAE.load_from_disk(str(sae_path), device=device)
 
     # Compute domain activations
     activations = {}
@@ -101,8 +114,8 @@ def load_sae_and_build_feature_vectors(top_k: int = 20):
         all_acts = []
         for prompt in prompts:
             tokens = tl_model.to_tokens(prompt)
-            _, cache = tl_model.run_with_cache(tokens, stop_at_layer=15)
-            residual = cache[HOOK_NAME]
+            _, cache = tl_model.run_with_cache(tokens, stop_at_layer=layer + 1)
+            residual = cache[hook_name]
             flat = residual.squeeze(0)
             feat_acts = sae.encode(flat)
             mean_acts = feat_acts.mean(dim=0)
@@ -145,7 +158,6 @@ def load_sae_and_build_feature_vectors(top_k: int = 20):
         feature_info[domain] = {
             "top_features": top_indices[:10].tolist(),
             "top_diffs": [f"{v:.3f}" for v in top_values[:10].tolist()],
-            "n_active_contrastive": None,  # filled later if needed
         }
 
     # Free TransformerLens model (HF model is used for generation)
@@ -161,10 +173,8 @@ def highlight_diff(baseline: str, contrastive: str, feature: str) -> str:
 
     Color scheme:
       - No highlight: words shared across all three
-      - Blue background: unique to contrastive
-      - Green background: unique to feature-targeted
-      - Red background: unique to baseline (lost by both)
-      - Orange background: shared by contrastive & feature but not baseline (both changed)
+      - Yellow background: unique to this output
+      - Gray background: shared with one other
     """
     def wordset(text):
         return set(text.lower().split())
@@ -181,16 +191,13 @@ def highlight_diff(baseline: str, contrastive: str, feature: str) -> str:
             in_other1 = wl in other1_set
             in_other2 = wl in other2_set
             if in_other1 and in_other2:
-                # shared across all three
                 html_words.append(w)
             elif not in_other1 and not in_other2:
-                # unique to this output
                 html_words.append(
                     f'<span style="background-color:rgba(255,200,0,0.3);'
                     f'font-weight:bold;border-radius:3px;padding:1px 3px">{w}</span>'
                 )
             else:
-                # shared with one but not the other
                 html_words.append(
                     f'<span style="background-color:rgba(100,100,100,0.15);'
                     f'border-radius:3px;padding:1px 3px">{w}</span>'
@@ -214,15 +221,15 @@ def highlight_diff(baseline: str, contrastive: str, feature: str) -> str:
     {legend}
     <div style="display:flex;gap:16px;margin-top:8px">
         <div style="flex:1;padding:12px;border:1px solid #ddd;border-radius:8px">
-            <h4 style="margin-top:0;color:#E74C3C">📋 Baseline</h4>
+            <h4 style="margin-top:0;color:#E74C3C">Baseline</h4>
             <p style="font-size:0.9em;line-height:1.6">{base_html}</p>
         </div>
         <div style="flex:1;padding:12px;border:1px solid #4A90D9;border-radius:8px">
-            <h4 style="margin-top:0;color:#4A90D9">🔀 Contrastive</h4>
+            <h4 style="margin-top:0;color:#4A90D9">Contrastive</h4>
             <p style="font-size:0.9em;line-height:1.6">{cont_html}</p>
         </div>
         <div style="flex:1;padding:12px;border:1px solid #27AE60;border-radius:8px">
-            <h4 style="margin-top:0;color:#27AE60">🎯 Feature-targeted</h4>
+            <h4 style="margin-top:0;color:#27AE60">Feature-targeted</h4>
             <p style="font-size:0.9em;line-height:1.6">{feat_html}</p>
         </div>
     </div>
@@ -256,7 +263,7 @@ def get_layers(model):
     raise ValueError(f"Cannot find layers in {type(model)}")
 
 
-def generate_text(model, tokenizer, prompt, max_new_tokens, vector=None, coeff=0.0):
+def generate_text(model, tokenizer, prompt, max_new_tokens, layer, vector=None, coeff=0.0):
     """Generate text, optionally with steering."""
     device = next(model.parameters()).device
 
@@ -265,7 +272,7 @@ def generate_text(model, tokenizer, prompt, max_new_tokens, vector=None, coeff=0
     handle = None
     if vector is not None and coeff > 0:
         layers = get_layers(model)
-        handle = layers[MID_LAYER].register_forward_hook(
+        handle = layers[layer].register_forward_hook(
             functools.partial(_steering_hook, vector=vector, coeff=coeff)
         )
 
@@ -295,11 +302,15 @@ def main():
     )
 
     st.title("🧭 Activation Steering — Live Demo")
-    st.markdown("Compare **baseline**, **contrastive**, and **feature-targeted** steering on Qwen3-0.6B")
 
     # --- Sidebar ---
     with st.sidebar:
         st.header("⚙️ Configuration")
+
+        model_name = st.selectbox("Model", list(MODEL_CONFIGS.keys()), index=0)
+        cfg = MODEL_CONFIGS[model_name]
+
+        st.caption(f"Layer {cfg['layer']} · SAE: {cfg['sae_dir']}")
 
         domain = st.selectbox("Domain", TARGET_DOMAINS, index=0)
 
@@ -322,9 +333,17 @@ def main():
         st.markdown("---")
         st.header("📊 Feature Info")
 
+        # Check SAE exists
+        sae_path = RESULTS_DIR / cfg["sae_dir"]
+        if not sae_path.exists():
+            st.error(f"SAE not found: {cfg['sae_dir']}")
+            st.stop()
+
         # Load feature info
         with st.spinner("Loading SAE & building feature vectors..."):
-            feature_vectors, feature_info = load_sae_and_build_feature_vectors(top_k)
+            feature_vectors, feature_info = load_sae_and_build_feature_vectors(
+                cfg["model_id"], cfg["sae_dir"], cfg["layer"], top_k
+            )
 
         info = feature_info[domain]
         st.markdown(f"**Top-10 features ({domain}):**")
@@ -333,14 +352,15 @@ def main():
 
         st.markdown("---")
         st.markdown("**Vector norms:**")
-        cv = load_contrastive_vectors()
-        contrastive_norm = cv[domain][MID_LAYER].float().norm().item()
+        cv = load_contrastive_vectors(cfg["vectors"])
+        contrastive_norm = cv[domain][cfg["layer"]].float().norm().item()
         st.text(f"  Contrastive: {contrastive_norm:.2f}")
         for k, v in feature_vectors[domain].items():
             st.text(f"  Feature {k}: {v.norm().item():.4f}")
 
+    st.markdown(f"Comparing **baseline**, **contrastive**, and **feature-targeted** steering on **{model_name}**")
+
     # --- Main area ---
-    # Prompt input
     example_prompts = {
         "math": "What is the derivative of x^3 + 2x?",
         "law": "What is the difference between a tort and a crime?",
@@ -355,11 +375,10 @@ def main():
 
     if st.button("🚀 Generate", type="primary", use_container_width=True):
         with st.spinner("Loading model..."):
-            model, tokenizer = load_hf_model()
-            contrastive_vectors = load_contrastive_vectors()
-            # feature_vectors already loaded
+            model, tokenizer = load_hf_model(cfg["model_id"])
+            contrastive_vectors = load_contrastive_vectors(cfg["vectors"])
 
-        contrastive_vec = contrastive_vectors[domain][MID_LAYER]
+        contrastive_vec = contrastive_vectors[domain][cfg["layer"]]
         feature_vec = feature_vectors[domain][strategy_key]
 
         col1, col2, col3 = st.columns(3)
@@ -368,7 +387,7 @@ def main():
             st.subheader("📋 Baseline")
             with st.spinner("Generating..."):
                 baseline_text = generate_text(
-                    model, tokenizer, prompt, max_tokens,
+                    model, tokenizer, prompt, max_tokens, cfg["layer"],
                     vector=None, coeff=0,
                 )
             st.markdown(f"```\n{baseline_text}\n```")
@@ -377,7 +396,7 @@ def main():
             st.subheader(f"🔀 Contrastive (α={coeff})")
             with st.spinner("Generating..."):
                 contrastive_text = generate_text(
-                    model, tokenizer, prompt, max_tokens,
+                    model, tokenizer, prompt, max_tokens, cfg["layer"],
                     vector=contrastive_vec, coeff=coeff,
                 )
             st.markdown(f"```\n{contrastive_text}\n```")
@@ -386,7 +405,7 @@ def main():
             st.subheader(f"🎯 Feature-targeted (α={coeff})")
             with st.spinner("Generating..."):
                 feature_text = generate_text(
-                    model, tokenizer, prompt, max_tokens,
+                    model, tokenizer, prompt, max_tokens, cfg["layer"],
                     vector=feature_vec, coeff=coeff,
                 )
             st.markdown(f"```\n{feature_text}\n```")
@@ -418,10 +437,10 @@ def main():
 
     if st.button(f"▶️ Run all {domain} prompts", use_container_width=True):
         with st.spinner("Loading model..."):
-            model, tokenizer = load_hf_model()
-            contrastive_vectors = load_contrastive_vectors()
+            model, tokenizer = load_hf_model(cfg["model_id"])
+            contrastive_vectors = load_contrastive_vectors(cfg["vectors"])
 
-        contrastive_vec = contrastive_vectors[domain][MID_LAYER]
+        contrastive_vec = contrastive_vectors[domain][cfg["layer"]]
         feature_vec = feature_vectors[domain][strategy_key]
 
         prompts = DOMAIN_PROMPTS[domain]
@@ -432,20 +451,20 @@ def main():
             with cols[0]:
                 st.markdown("**Baseline**")
                 with st.spinner("..."):
-                    text = generate_text(model, tokenizer, p, max_tokens)
+                    text = generate_text(model, tokenizer, p, max_tokens, cfg["layer"])
                 st.markdown(f"```\n{text[:500]}\n```")
 
             with cols[1]:
                 st.markdown(f"**Contrastive α={coeff}**")
                 with st.spinner("..."):
-                    text = generate_text(model, tokenizer, p, max_tokens,
+                    text = generate_text(model, tokenizer, p, max_tokens, cfg["layer"],
                                          vector=contrastive_vec, coeff=coeff)
                 st.markdown(f"```\n{text[:500]}\n```")
 
             with cols[2]:
                 st.markdown(f"**Feature {strategy_key} α={coeff}**")
                 with st.spinner("..."):
-                    text = generate_text(model, tokenizer, p, max_tokens,
+                    text = generate_text(model, tokenizer, p, max_tokens, cfg["layer"],
                                          vector=feature_vec, coeff=coeff)
                 st.markdown(f"```\n{text[:500]}\n```")
 

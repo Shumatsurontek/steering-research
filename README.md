@@ -19,7 +19,7 @@
   <a href="article/main.pdf"><img src="https://img.shields.io/badge/📄_Read_the_Paper-PDF-red?style=flat-square" alt="Paper PDF"/></a>
   <img src="https://img.shields.io/badge/Models-Qwen3_·_LFM2.5_·_Llama3-blue?style=flat-square" alt="Multi-Model"/>
   <img src="https://img.shields.io/badge/Benchmarks-GSM8K_·_SWE--bench_·_MMLU--Pro-green?style=flat-square" alt="Benchmarks"/>
-  <img src="https://img.shields.io/badge/Experiments-18-orange?style=flat-square" alt="18 Experiments"/>
+  <img src="https://img.shields.io/badge/Experiments-19-orange?style=flat-square" alt="19 Experiments"/>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License"/>
 </p>
 
@@ -386,6 +386,29 @@ Retrained with 10× higher L1 penalty to verify findings aren't artifacts:
 
 > **Finding is robust**: 10× L1 reduces L0 by only 19% — still far from truly sparse (ideal: L0 < 200). Contrastive vectors remain diffuse across sparsity regimes. Achieving interpretable sparsity would require L1 ≥ 1.0 or a larger SAE (32K+ features).
 
+### 1️⃣7️⃣ Qwen3-4B SAE Comparison — Does Scale Help?
+
+SAE (20,480 features, 8×2560) trained on layer 18 of Qwen3-4B. Feature-targeted benchmark n=50.
+
+**SAE Analysis — 0.6B vs 4B:**
+
+| Metric | Qwen3-0.6B | Qwen3-4B |
+|:---:|:---:|:---:|
+| Contrastive diffusion | 47–59% | **41–51%** |
+| Overlap law | 0/20 | **5/20** ★ |
+| Overlap math | 2/20 | 1/20 |
+| Overlap history | 4/20 | 0/20 |
+
+**Feature-Targeted Benchmark — Qwen3-4B (n=50):**
+
+| Domain | Baseline | Contrastive best | Single-feature best |
+|:---:|:---:|:---:|:---:|
+| Math | **48.0%** | 44.0% (α=10) | 44.0% (α=10) |
+| Law | 22.0% | 24.0% (α=10) | **24.0%** (α=30, +8pp vs contrastive) |
+| History | **34.0%** | 34.0% (α=10-30) | 32.0% (α=10) |
+
+> **4B baselines are 2-3× higher** (math 48% vs 18%, history 34% vs 14%) but **no steering method improves over baseline**. Contrastive vectors are less diffuse on 4B (41-51% vs 47-59%) and law shows 5/20 overlap, yet this doesn't translate to accuracy gains. **Single-feature steering preserves baseline best** — at α=30 on law: 24% (single) vs 16% (contrastive). Scaling doesn't solve the fundamental limitation: steering ≠ knowledge injection.
+
 ### 🎮 Streamlit Demo
 
 ```bash
@@ -463,7 +486,7 @@ python -m src.agents.prompt_baselines     # Phase 4: Eval dataset
 - [x] **Feature-targeted steering** — SAE decoder column vectors preserve baseline better than contrastive
 - [x] **Streamlit demo** — live comparison of steering methods with word-level diff
 - [x] Higher sparsity SAE (L1=0.05) — finding robust: contrastive still diffuse, overlap 0–3/20
-- [ ] **Qwen3-4B SAE comparison** — 20,480 features (8×2560), layer 18. Does a 6.7× larger model show more interpretable features and better feature-targeted steering?
+- [x] **Qwen3-4B SAE comparison** — contrastive less diffuse (41-51%), law overlap 5/20, but still no accuracy gains
 - [ ] Docker evaluation of RAG patches on SWE-bench
 - [ ] Cross-model steering via learned linear projections (leveraging geometric invariance)
 
