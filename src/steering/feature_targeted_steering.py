@@ -253,10 +253,13 @@ def run_eval(hflm, domain, vector, coeff, label, limit, layer=14):
             # Build per-option scores
             option_scores = []
             for j, opt in enumerate(options):
+                ll_val = lls[j] if j < len(lls) else None
+                if isinstance(ll_val, (list, tuple)):
+                    ll_val = ll_val[0]
                 option_scores.append({
                     "key": chr(65 + j),
-                    "text": opt[:200],  # truncate long options
-                    "loglikelihood": round(lls[j], 3) if j < len(lls) else None,
+                    "text": opt[:200],
+                    "loglikelihood": round(float(ll_val), 3) if ll_val is not None else None,
                     "selected": j == best_idx,
                 })
 
