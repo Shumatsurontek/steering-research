@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import HeroBanner from "./components/HeroBanner";
 import ArenaPanel from "./components/ArenaPanel";
 import VectorViz from "./components/VectorViz";
+import BenchmarkPanel from "./components/BenchmarkPanel";
 import LoadingOverlay from "./components/LoadingOverlay";
 import { fetchModels, fetchModelStatus, loadModel } from "./api";
 import type { ModelConfig, ModelStatus, Tab } from "./types";
@@ -101,10 +102,13 @@ export default function App() {
 
         <div className="tabs">
           <button className={`tab ${tab === "arena" ? "active" : ""}`} onClick={() => setTab("arena")}>
-            ⚡ ARENA
+            ARENA
           </button>
           <button className={`tab ${tab === "vectors" ? "active" : ""}`} onClick={() => setTab("vectors")}>
-            📐 VECTOR SPACE
+            VECTOR SPACE
+          </button>
+          <button className={`tab ${tab === "benchmarks" ? "active" : ""}`} onClick={() => setTab("benchmarks")}>
+            BENCHMARKS
           </button>
         </div>
 
@@ -123,6 +127,10 @@ export default function App() {
 
         {tab === "vectors" && (
           <VectorViz layer={layer} modelLoaded={!!status?.loaded_model} />
+        )}
+
+        {tab === "benchmarks" && (
+          <BenchmarkPanel modelLoaded={!!status?.loaded_model} />
         )}
       </main>
     </div>

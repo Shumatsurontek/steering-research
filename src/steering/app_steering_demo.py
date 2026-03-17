@@ -40,6 +40,14 @@ MODEL_CONFIGS = {
         "params": "4B",
         "layers_total": 36,
     },
+    "LFM2-700M": {
+        "model_id": "LiquidAI/LFM2-700M",
+        "layer": 8,
+        "sae_dir": "sae_lfm2_700m_L8_8x",
+        "vectors": "mmlu_pro_vectors_lfm2_700m.pt",
+        "params": "0.7B",
+        "layers_total": 16,
+    },
 }
 
 DOMAIN_COLORS = {

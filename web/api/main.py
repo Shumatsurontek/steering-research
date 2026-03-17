@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from .deps import ModelManager
-from .routers import generate, models, vectors
+from .routers import benchmarks, generate, models, vectors
 
 # ── Logging ─────────────────────────────────────────────────────────────────
 
@@ -76,6 +76,7 @@ async def log_requests(request: Request, call_next):
 app.include_router(models.router, prefix="/api")
 app.include_router(generate.router, prefix="/api")
 app.include_router(vectors.router, prefix="/api")
+app.include_router(benchmarks.router, prefix="/api")
 
 
 @app.get("/api/health")

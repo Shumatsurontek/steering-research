@@ -3,7 +3,7 @@ import ChatCard from "./ChatCard";
 import { streamGenerate } from "../api";
 import type { GenerateRequest, StreamState, StreamStats, SSEConfig } from "../types";
 
-const DOMAIN_ICONS: Record<string, string> = { math: "∑", law: "§", history: "⏳" };
+const DOMAIN_ICONS: Record<string, string> = { math: "∑", law: "§", history: "H" };
 const DOMAIN_COLORS: Record<string, string> = { math: "#dc2626", law: "#0a0a0a", history: "#ca8a04" };
 
 const DOMAIN_PROMPTS: Record<string, string[]> = {

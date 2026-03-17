@@ -67,6 +67,9 @@ Custom SAE (8192 features, 20M tokens) reveals contrastive vectors activate **50
 ### 📉 MMLU-Pro n=200: False Positives
 n=20 suggested +15pp on history. n=200 (stderr ±2.5pp) **reversed every positive finding**. Steering degrades all domains by -2 to -6pp.
 
+### 🔀 LFM2-700M: Cross-Architecture Validation
+Full SAE pipeline on hybrid conv+attention model (10 LIV conv + 6 GQA blocks). Contrastive vectors are **least diffuse** (26–38% vs 47–59% Qwen), but overlap remains tiny (1–2/20). Law shows +8pp with contrastive steering — **same pattern across architectures**.
+
 </td>
 </tr>
 </table>

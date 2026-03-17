@@ -1,6 +1,6 @@
 import type { ModelConfig, ModelStatus } from "../types";
 
-const DOMAIN_ICONS: Record<string, string> = { math: "∑", law: "§", history: "⏳" };
+const DOMAIN_ICONS: Record<string, string> = { math: "∑", law: "§", history: "H" };
 
 interface Props {
   models: Record<string, ModelConfig>;
@@ -40,7 +40,6 @@ export default function Sidebar({
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <div className="icon">⚡</div>
         <div className="title">STEERING ARENA</div>
         <div className="subtitle">Activation Steering Research</div>
       </div>

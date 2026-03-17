@@ -1,3 +1,6 @@
+import { useMemo } from "react";
+import { renderMathText } from "../renderMath";
+
 const METHOD_STYLES: Record<string, { color: string; label: string }> = {
   baseline: { color: "#737373", label: "BASELINE" },
   contrastive: { color: "#0a0a0a", label: "CONTRASTIVE" },
@@ -19,6 +22,8 @@ export default function ChatCard({ method, text, alpha, streaming, strategy, sta
     ? `SAE ${strategy.toUpperCase()}`
     : style.label;
 
+  const rendered = useMemo(() => text ? renderMathText(text) : "", [text]);
+
   return (
     <div className="chat-card">
       <div className="chat-card-header">
@@ -32,8 +37,14 @@ export default function ChatCard({ method, text, alpha, streaming, strategy, sta
       </div>
 
       <div className="chat-card-text">
-        {text || <span className="chat-card-empty">Waiting for generation...</span>}
-        {streaming && text && <span className="cursor" />}
+        {text ? (
+          <>
+            <span dangerouslySetInnerHTML={{ __html: rendered }} />
+            {streaming && <span className="cursor" />}
+          </>
+        ) : (
+          <span className="chat-card-empty">Waiting for generation...</span>
+        )}
       </div>
 
       {stats && (

@@ -11,7 +11,7 @@ const PLOTLY_LIGHT = {
 
 const AXIS_STYLE = { gridcolor: "#e5e5e5", zerolinecolor: "#d4d4d4", linecolor: "#e5e5e5" };
 
-const DOMAIN_ICONS: Record<string, string> = { math: "∑", law: "§", history: "⏳" };
+const DOMAIN_ICONS: Record<string, string> = { math: "∑", law: "§", history: "H" };
 
 const SYMBOL_MAP: Record<string, string> = {
   contrastive: "diamond",

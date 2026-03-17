@@ -30,6 +30,7 @@ CHECKPOINT_DIR = RESULTS_DIR / "sae_checkpoints"
 MODEL_PRESETS = {
     "Qwen/Qwen3-0.6B": (14, 1024),
     "Qwen/Qwen3-4B": (18, 2560),
+    "LiquidAI/LFM2-700M": (8, 1536),
 }
 
 

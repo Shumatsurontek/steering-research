@@ -28,7 +28,9 @@ RUN pip install --no-cache-dir \
     uvicorn[standard]==0.34.* \
     scikit-learn \
     sae-lens \
-    transformer-lens
+    transformer-lens \
+    lm-eval \
+    wandb
 
 # Copy source
 COPY src/ ./src/

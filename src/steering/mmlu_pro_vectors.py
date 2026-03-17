@@ -27,6 +27,7 @@ MODELS = {
     "qwen3_4b": "Qwen/Qwen3-4B",
     "llama3_3b": "meta-llama/Llama-3.2-3B-Instruct",
     "lfm2_1.2b": "LiquidAI/LFM2.5-1.2B-Instruct",
+    "lfm2_700m": "LiquidAI/LFM2-700M",
 }
 
 # ---------------------------------------------------------------------------

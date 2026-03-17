@@ -60,4 +60,4 @@ export interface VizData {
   sae_available: boolean;
 }
 
-export type Tab = "arena" | "vectors";
+export type Tab = "arena" | "vectors" | "benchmarks";

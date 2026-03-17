@@ -13,6 +13,8 @@ run:
     docker run --rm -it \
         -p 8000:8000 \
         -v "$(pwd)/results:/app/results" \
+        --env-file .env \
+        -m 24g \
         --name steering-arena \
         steering-arena
 

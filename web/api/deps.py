@@ -69,10 +69,18 @@ MODEL_CONFIGS = {
     "Qwen3-4B": {
         "model_id": "Qwen/Qwen3-4B",
         "layer": 18,
-        "sae_dir": "sae_qwen3_4b_L18_8x", # TODO: change to the correct SAE directory
-        "vectors": "mmlu_pro_vectors_qwen3_4b.pt", # TODO: change to the correct vectors file
+        "sae_dir": "sae_qwen3_4b_L18_8x",
+        "vectors": "mmlu_pro_vectors_qwen3_4b.pt",
         "params": "4B",
         "layers_total": 36,
+    },
+    "LFM2-700M": {
+        "model_id": "LiquidAI/LFM2-700M",
+        "layer": 8,
+        "sae_dir": "sae_lfm2_700m_L8_8x",
+        "vectors": "mmlu_pro_vectors_lfm2_700m.pt",
+        "params": "0.7B",
+        "layers_total": 16,
     },
 }
 
@@ -137,36 +145,61 @@ class ModelManager:
         logger.info("Loading tokenizer for %s", model_id)
         tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
         logger.info("Loading model weights for %s → %s", model_id, self.device)
+        # Use bfloat16 for LFM2 (native), float16 for others
+        dtype = torch.bfloat16 if "LFM2" in model_id else torch.float16
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, dtype=torch.float16, trust_remote_code=True
+            model_id, torch_dtype=dtype, trust_remote_code=True
         ).to(self.device)
         model.eval()
         logger.info("Model loaded in %.1fs", time.time() - t0)
         return model, tokenizer
 
+    def _load_sae_weights(self, sae_path: str):
+        """Load SAE — try SAELens format first, then custom format."""
+        p = Path(sae_path)
+        # Custom format (train_sae_hf.py)
+        weights_file = p / "sae_weights.pt"
+        if weights_file.exists():
+            logger.info("Loading custom SAE from %s", weights_file)
+            state = torch.load(weights_file, map_location=self.device, weights_only=True)
+            return state["W_enc"], state["b_enc"], state["W_dec"], state["b_dec"]
+        # SAELens format
+        logger.info("Loading SAELens SAE from %s", sae_path)
+        sae = SAE.load_from_disk(sae_path, device=self.device)
+        return sae.W_enc.detach(), sae.b_enc.detach(), sae.W_dec.detach(), sae.b_dec.detach()
+
+    def _encode_with_sae(self, x, W_enc, b_enc):
+        """SAE encode: ReLU(x @ W_enc + b_enc)."""
+        return torch.relu(x @ W_enc.to(x.device, dtype=x.dtype) + b_enc.to(x.device, dtype=x.dtype))
+
     def _build_feature_vectors(self, model_id: str, sae_path: str, layer: int, top_k: int):
         t0 = time.time()
         logger.info("Building SAE feature vectors (layer=%d, top_k=%d)", layer, top_k)
-        hook_name = f"blocks.{layer}.hook_resid_post"
-        logger.info("Loading TransformerLens model + SAE from %s", sae_path)
-        tl_model = HookedTransformer.from_pretrained_no_processing(model_id, device=self.device)
-        sae = SAE.load_from_disk(sae_path, device=self.device)
 
-        activations = {}
-        for domain, prompts in DOMAIN_PROMPTS.items():
-            all_acts = []
-            for prompt in prompts:
-                tokens = tl_model.to_tokens(prompt)
-                _, cache = tl_model.run_with_cache(tokens, stop_at_layer=layer + 1)
-                residual = cache[hook_name]
-                flat = residual.squeeze(0)
-                feat_acts = sae.encode(flat)
-                mean_acts = feat_acts.mean(dim=0)
-                all_acts.append(mean_acts.detach().cpu())
-            activations[domain] = torch.stack(all_acts).mean(dim=0)
+        W_enc, b_enc, W_dec_raw, b_dec = self._load_sae_weights(sae_path)
+
+        # Try TransformerLens path first (Qwen, Llama, etc.)
+        try:
+            hook_name = f"blocks.{layer}.hook_resid_post"
+            tl_model = HookedTransformer.from_pretrained_no_processing(model_id, device=self.device)
+            activations = {}
+            for domain, prompts in DOMAIN_PROMPTS.items():
+                all_acts = []
+                for prompt in prompts:
+                    tokens = tl_model.to_tokens(prompt)
+                    _, cache = tl_model.run_with_cache(tokens, stop_at_layer=layer + 1)
+                    residual = cache[hook_name].squeeze(0).float()
+                    feat_acts = self._encode_with_sae(residual, W_enc, b_enc)
+                    all_acts.append(feat_acts.mean(dim=0).detach().cpu())
+                activations[domain] = torch.stack(all_acts).mean(dim=0)
+            del tl_model
+        except (ValueError, Exception) as e:
+            # Fallback: HuggingFace hooks (LFM2, other unsupported archs)
+            logger.info("TransformerLens unavailable for %s, using HF hooks: %s", model_id, e)
+            activations = self._collect_activations_hf(model_id, layer, W_enc, b_enc)
 
         domains = list(activations.keys())
-        W_dec = sae.W_dec.detach().cpu()
+        W_dec = W_dec_raw.detach().cpu().float()
 
         feature_vectors = {}
         feature_info = {}
@@ -197,12 +230,57 @@ class ModelManager:
                 "top_diffs": [f"{v:.3f}" for v in top_values[:10].tolist()],
             }
 
-        del tl_model, sae
+        del W_enc, b_enc, W_dec_raw, b_dec
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
         logger.info("SAE feature vectors built in %.1fs (%d domains)", time.time() - t0, len(TARGET_DOMAINS))
         return feature_vectors, feature_info
+
+    def _collect_activations_hf(self, model_id, layer, W_enc, b_enc):
+        """Collect SAE activations using HuggingFace model + forward hooks."""
+        import functools
+        dtype = torch.bfloat16 if "LFM2" in model_id else torch.float16
+        hf_model = AutoModelForCausalLM.from_pretrained(
+            model_id, torch_dtype=dtype, trust_remote_code=True
+        ).to(self.device)
+        hf_model.eval()
+        hf_tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+
+        def get_layers_hf(m):
+            if hasattr(m, "model") and hasattr(m.model, "layers"):
+                return m.model.layers
+            if hasattr(m, "model") and hasattr(m.model, "blocks"):
+                return m.model.blocks
+            raise ValueError(f"Cannot find layers in {type(m)}")
+
+        layers_list = get_layers_hf(hf_model)
+        hook_output = {}
+
+        def hook_fn(module, input, output, key="act"):
+            hidden = output[0] if isinstance(output, tuple) else output
+            hook_output[key] = hidden.detach()
+
+        activations = {}
+        for domain, prompts in DOMAIN_PROMPTS.items():
+            all_acts = []
+            for prompt in prompts:
+                handle = layers_list[layer].register_forward_hook(
+                    functools.partial(hook_fn, key="act")
+                )
+                inputs = hf_tokenizer(prompt, return_tensors="pt").to(self.device)
+                with torch.no_grad():
+                    hf_model(**inputs)
+                handle.remove()
+                residual = hook_output["act"].squeeze(0).float()
+                feat_acts = self._encode_with_sae(residual, W_enc, b_enc)
+                all_acts.append(feat_acts.mean(dim=0).detach().cpu())
+            activations[domain] = torch.stack(all_acts).mean(dim=0)
+
+        del hf_model, hf_tokenizer
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        return activations
 
     async def recalculate_sae(self, model_key: str, top_k: int = 20) -> None:
         async with self._lock:

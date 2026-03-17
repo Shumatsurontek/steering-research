@@ -25,6 +25,8 @@ MODEL_PRESETS = {
                           "vectors": "mmlu_pro_vectors_qwen3_0.6b.pt"},
     "Qwen/Qwen3-4B": {"layer": 18, "sae_dir": "sae_qwen3_4b_L18_8x",
                         "vectors": "mmlu_pro_vectors_qwen3_4b.pt"},
+    "LiquidAI/LFM2-700M": {"layer": 8, "sae_dir": "sae_lfm2_700m_L8_8x",
+                             "vectors": "mmlu_pro_vectors_lfm2_700m.pt"},
 }
 
 # Domain-specific prompts for activation analysis
@@ -183,24 +185,18 @@ def main():
     else:
         device = "cpu"
 
-    # Load model
-    print(f"\nLoading model on {device}...")
-    model = HookedTransformer.from_pretrained_no_processing(
-        args.model, device=device
-    )
+    # Load SAE (supports both SAELens and custom format)
+    from .sae_utils import load_sae, compute_all_domain_activations
 
-    # Load SAE
-    print(f"Loading SAE from {sae_path}...")
-    sae = SAE.load_from_disk(str(sae_path), device=device)
+    print(f"\nLoading SAE from {sae_path}...")
+    sae = load_sae(str(sae_path), device=device)
     print(f"  SAE: d_in={sae.cfg.d_in}, d_sae={sae.cfg.d_sae}")
 
-    # Compute activations per domain
-    activations_by_domain = {}
-    for domain, prompts in DOMAIN_PROMPTS.items():
-        print(f"\n  Computing activations for {domain} ({len(prompts)} prompts)...")
-        acts = compute_domain_activations(sae, model, prompts, hook_name)
-        activations_by_domain[domain] = acts
-        print(f"    Shape: {acts.shape}, Mean activation: {acts.mean():.4f}")
+    # Compute activations per domain (single model load)
+    print("\n  Computing activations per domain...")
+    activations_by_domain = compute_all_domain_activations(args.model, sae, DOMAIN_PROMPTS, layer, device)
+    for domain, acts in activations_by_domain.items():
+        print(f"    {domain}: shape={acts.shape}, mean={acts.mean():.4f}")
 
     # Find domain-specific features
     print("\n" + "=" * 60)

@@ -35,7 +35,7 @@ From Mid-Layer Sweet Spots to Dynamic Multi-Agent Orchestration}
 \author[1]{Arthur Edmond}
 \affil[1]{LLM Engineer, Swapn}
 
-\date{\today}
+\date{March 2026}
 
 \begin{document}
 \maketitle
@@ -77,6 +77,7 @@ Recent work has shown that per-layer steering vectors trained via reinforcement 
     \item MMLU-Pro dual-mode evaluation (generation vs.\ loglikelihood) across 3 models $\times$ 3 domains, with $n=200$ validation revealing that both modes degrade under steering and that small-sample ($n=20$) results produce false positives (\cref{sec:mmlu_pro}).
     \item SAE feature decomposition showing that contrastive steering vectors activate 50--60\% of SAE features diffusely, with near-zero overlap (0--3/20) with domain-specific features, explaining why they capture ``style'' but not ``knowledge'' (\cref{sec:sae_analysis}).
     \item A scaling comparison on Qwen3-4B replicating the full SAE pipeline, showing that despite higher baselines (math 48\% vs 18\%, history 34\% vs 14\%), less diffuse contrastive vectors (41--51\% vs 47--59\%), and improved contrastive-SAE overlap (5/20 vs 0/20 for law), \textbf{no steering method exceeds baseline accuracy}---confirming that steering captures style, not knowledge, independent of model scale (\cref{sec:sae_analysis}).
+    \item A cross-architecture validation on LFM2-700M (hybrid conv+attention), requiring a custom SAE training pipeline via HuggingFace hooks. Despite the least diffuse contrastive vectors (26--38\%), the style-not-knowledge pattern is confirmed as \textbf{architecture-invariant} (\cref{sec:lfm2}).
 \end{itemize}
 
 % ===================================================================
@@ -1033,6 +1034,61 @@ SAE analysis reveals that contrastive vectors are \textit{less diffuse} on 4B (4
 The pattern is consistent across scales: single-feature steering preserves baseline accuracy significantly better than contrastive at moderate coefficients (law at $\alpha=30$: 24\% vs.\ 16\%, +8pp; math at $\alpha=30$: 26\% vs.\ 16\%, +10pp). History on 4B is notably steering-resistant, maintaining 34\% through $\alpha=30$ with contrastive vectors---larger models' stronger representations resist perturbation more effectively.
 
 The conclusion is unambiguous: \textbf{scaling from 0.6B to 4B does not solve the fundamental limitation}. Despite higher baselines, less diffuse contrastive representations, and non-trivial SAE overlap on law, steering vectors cannot inject domain knowledge that the model does not already surface through its baseline computation. Feature-targeted steering's value is \textit{harm reduction} at moderate coefficients, not knowledge amplification.
+
+\subsection{Cross-Architecture Validation: LFM2-700M}
+\label{sec:lfm2}
+
+To test whether the style-not-knowledge finding is architecture-specific, we replicate the full SAE pipeline on LFM2-700M~(LiquidAI), a hybrid model with 10 double-gated LIV convolution blocks and 6 grouped query attention blocks ($d=1536$, 16~layers total). This is a fundamentally different architecture from the pure Transformer models studied above.
+
+Since TransformerLens does not support LFM2's hybrid architecture, we implement a custom SAE training pipeline using raw HuggingFace forward hooks (\texttt{register\_forward\_hook}) to capture layer-8 residual stream activations. The resulting SAE (12{,}288 features, 8$\times$ expansion) achieves 98.0\% explained variance on 5M OpenWebText tokens.
+
+\begin{table}[H]
+\centering
+\caption{SAE diffuseness and overlap across architectures. LFM2's hybrid architecture produces the least diffuse contrastive vectors, but overlap with domain-specific features remains negligible.}
+\label{tab:cross_arch_sae}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Qwen3-0.6B} & \textbf{Qwen3-4B} & \textbf{LFM2-700M} \\
+\midrule
+SAE features & 8{,}192 & 20{,}480 & 12{,}288 \\
+Diffusion (math) & 57\% & 45\% & \textbf{38\%} \\
+Diffusion (law) & 59\% & 51\% & \textbf{28\%} \\
+Diffusion (history) & 47\% & 41\% & \textbf{26\%} \\
+Overlap math & 2/20 & 1/20 & 1/20 \\
+Overlap law & 0/20 & 5/20 & 2/20 \\
+Overlap history & 4/20 & 0/20 & 1/20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Feature-targeted steering on LFM2-700M ($n=50$). Law is the only domain with positive steering signal, consistent with Transformer-based models.}
+\label{tab:feature_targeted_lfm2}
+\small
+\begin{tabular}{llccc}
+\toprule
+\textbf{Domain} & \textbf{Method} & $\alpha=10$ & $\alpha=30$ & $\alpha=60$ \\
+\midrule
+\multirow{2}{*}{Math (24\%)}
+  & Contrastive       & 8.0\% & 8.0\% & 8.0\% \\
+  & Feature weighted k20    & \textbf{14.0\%} & \textbf{12.0\%} & \textbf{12.0\%} \\
+\midrule
+\multirow{2}{*}{Law (14\%)}
+  & Contrastive       & \textbf{22.0\%} & \textbf{22.0\%} & 12.0\% \\
+  & Feature weighted k20    & 18.0\% & 14.0\% & 8.0\% \\
+\midrule
+\multirow{2}{*}{History (22\%)}
+  & Contrastive       & 18.0\% & 18.0\% & 18.0\% \\
+  & Feature weighted k20    & 10.0\% & 12.0\% & \textbf{18.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The hybrid conv+attention architecture produces the \textit{least diffuse} contrastive vectors (26--38\% vs.\ 47--59\% on Qwen3-0.6B), suggesting that convolutional layers may create more focused residual stream representations. However, the functional outcome is identical: law shows a positive contrastive signal (+8pp at $\alpha=10$), math is severely degraded ($-$16pp), and no feature-targeted method recovers baseline accuracy on degraded domains. The effective coefficient window is narrower on LFM2 (law drops back to baseline at $\alpha=60$, unlike Qwen where it persists through $\alpha=30$).
+
+\textbf{The style-not-knowledge pattern is architecture-invariant.} Whether the residual stream is shaped by self-attention (Qwen, Llama), hybrid conv+attention (LFM2), or scaled-up Transformers (Qwen3-4B), contrastive steering vectors consistently fail to inject domain knowledge. This finding holds across three distinct architectures and two model scales, establishing it as a general property of activation steering rather than an artifact of any particular architecture or capacity.
 
 \subsection{SWE-bench Verified: RAG + Steering}
 \label{sec:swebench}

@@ -40,6 +40,8 @@ MODEL_PRESETS = {
                           "vectors": "mmlu_pro_vectors_qwen3_0.6b.pt"},
     "Qwen/Qwen3-4B": {"layer": 18, "sae_dir": "sae_qwen3_4b_L18_8x",
                         "vectors": "mmlu_pro_vectors_qwen3_4b.pt"},
+    "LiquidAI/LFM2-700M": {"layer": 8, "sae_dir": "sae_lfm2_700m_L8_8x",
+                             "vectors": "mmlu_pro_vectors_lfm2_700m.pt"},
 }
 
 # Same domain prompts as analyze_sae_features.py for consistency
@@ -86,22 +88,7 @@ DOMAIN_PROMPTS = {
 # ---------------------------------------------------------------------------
 # Build feature-targeted vectors from SAE
 # ---------------------------------------------------------------------------
-def compute_domain_activations(sae, model, prompts, hook_name):
-    """Compute mean SAE feature activations for prompts."""
-    stop_layer = int(hook_name.split(".")[1]) + 1
-    all_acts = []
-    for prompt in prompts:
-        tokens = model.to_tokens(prompt)
-        _, cache = model.run_with_cache(tokens, stop_at_layer=stop_layer)
-        residual = cache[hook_name]
-        flat = residual.squeeze(0)
-        feat_acts = sae.encode(flat)
-        mean_acts = feat_acts.mean(dim=0)
-        all_acts.append(mean_acts.detach().cpu())
-    return torch.stack(all_acts)
-
-
-def build_feature_vectors(sae, model, top_k=20, hook_name="blocks.14.hook_resid_post"):
+def build_feature_vectors(sae, model_id, layer, device, top_k=20):
     """
     Build feature-targeted steering vectors for each domain.
 
@@ -110,11 +97,13 @@ def build_feature_vectors(sae, model, top_k=20, hook_name="blocks.14.hook_resid_
       - 'uniform_k{top_k}': equal-weight sum of top-k decoder columns
       - 'single_best': single best feature's decoder column
     """
+    from .sae_utils import compute_all_domain_activations
+
     print("\n  Computing SAE activations per domain...")
+    raw_activations = compute_all_domain_activations(model_id, sae, DOMAIN_PROMPTS, layer, device)
     activations = {}
-    for domain, prompts in DOMAIN_PROMPTS.items():
-        acts = compute_domain_activations(sae, model, prompts, hook_name)
-        activations[domain] = acts.mean(dim=0)  # (d_sae,)
+    for domain, acts in raw_activations.items():
+        activations[domain] = acts.mean(dim=0)
         print(f"    {domain}: mean act = {activations[domain].mean():.4f}")
 
     domains = list(activations.keys())
@@ -193,25 +182,31 @@ def apply_steering(model, layer, vector, coeff):
 
 
 class SteeredHFLM(HFLM):
-    def __init__(self, steering_vector, steering_layer, steering_coeff, **kwargs):
+    """HFLM subclass with dynamic steering. Set _steering_vector=None for baseline."""
+
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._steering_vector = steering_vector
-        self._steering_layer = steering_layer
-        self._steering_coeff = steering_coeff
+        self._steering_vector = None
+        self._steering_layer = 14
+        self._steering_coeff = 0.0
 
     def _model_call(self, *args, **kwargs):
-        with apply_steering(
-            self.model, self._steering_layer,
-            self._steering_vector, self._steering_coeff
-        ):
-            return super()._model_call(*args, **kwargs)
+        if self._steering_vector is not None and self._steering_coeff > 0:
+            with apply_steering(
+                self.model, self._steering_layer,
+                self._steering_vector, self._steering_coeff
+            ):
+                return super()._model_call(*args, **kwargs)
+        return super()._model_call(*args, **kwargs)
 
     def _model_generate(self, *args, **kwargs):
-        with apply_steering(
-            self.model, self._steering_layer,
-            self._steering_vector, self._steering_coeff
-        ):
-            return super()._model_generate(*args, **kwargs)
+        if self._steering_vector is not None and self._steering_coeff > 0:
+            with apply_steering(
+                self.model, self._steering_layer,
+                self._steering_vector, self._steering_coeff
+            ):
+                return super()._model_generate(*args, **kwargs)
+        return super()._model_generate(*args, **kwargs)
 
 
 def cleanup_memory():
@@ -225,33 +220,61 @@ def cleanup_memory():
 # ---------------------------------------------------------------------------
 # Benchmark
 # ---------------------------------------------------------------------------
-def run_eval(model_id, domain, vector, coeff, label, limit, device, dtype_str, layer=14):
-    """Run a single MMLU-Pro MC evaluation with a given steering vector."""
+def run_eval(hflm, domain, vector, coeff, label, limit, layer=14):
+    """Run a single MMLU-Pro MC evaluation, reusing a pre-loaded HFLM."""
     task = f"mmlu_pro_mc_{domain}"
 
-    if vector is None:
-        # Baseline
-        model = HFLM(pretrained=model_id, device=device, dtype=dtype_str, batch_size=8)
-    else:
-        model = SteeredHFLM(
-            steering_vector=vector,
-            steering_layer=layer,
-            steering_coeff=float(coeff),
-            pretrained=model_id, device=device, dtype=dtype_str, batch_size=8,
-        )
+    # Configure steering on the shared model
+    hflm._steering_vector = vector
+    hflm._steering_layer = layer
+    hflm._steering_coeff = float(coeff) if vector is not None else 0.0
 
     eval_out = lm_eval.simple_evaluate(
-        model=model, tasks=[task], batch_size=8, limit=limit,
+        model=hflm, tasks=[task], batch_size=8, limit=limit,
         task_manager=lm_eval.tasks.TaskManager(include_path=str(TASKS_DIR)),
+        log_samples=True,
     )
     task_res = eval_out["results"].get(task, {})
     acc = task_res.get("acc,none", None)
     stderr = task_res.get("acc_stderr,none", None)
 
-    del model
-    cleanup_memory()
+    # Extract per-sample predictions with options and log-likelihoods
+    samples = []
+    for sample in eval_out.get("samples", {}).get(task, []):
+        doc = sample.get("doc", {})
+        target = sample.get("target", "")
+        resps = sample.get("resps", [])
+        options = doc.get("options", [])
+        if resps and options:
+            lls = [r[0] if isinstance(r, (list, tuple)) else r for r in resps]
+            best_idx = max(range(len(lls)), key=lambda i: lls[i]) if lls else -1
+            answer_key = chr(65 + best_idx) if 0 <= best_idx < len(options) else "?"
 
-    return {"label": label, "acc": acc, "stderr": stderr, "raw": {k: v for k, v in task_res.items() if not k.startswith("alias")}}
+            # Build per-option scores
+            option_scores = []
+            for j, opt in enumerate(options):
+                option_scores.append({
+                    "key": chr(65 + j),
+                    "text": opt[:200],  # truncate long options
+                    "loglikelihood": round(lls[j], 3) if j < len(lls) else None,
+                    "selected": j == best_idx,
+                })
+
+            samples.append({
+                "question": doc.get("question", ""),
+                "answer": answer_key,
+                "answer_text": options[best_idx][:200] if 0 <= best_idx < len(options) else "",
+                "correct": str(target),
+                "correct_text": options[ord(str(target)) - 65][:200] if str(target).isalpha() and ord(str(target)) - 65 < len(options) else "",
+                "is_correct": answer_key == str(target),
+                "options": option_scores,
+            })
+
+    return {
+        "label": label, "acc": acc, "stderr": stderr,
+        "raw": {k: v for k, v in task_res.items() if not k.startswith("alias")},
+        "samples": samples,
+    }
 
 
 def main():
@@ -284,14 +307,13 @@ def main():
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     if torch.cuda.is_available():
-        device, dtype = "cuda", torch.bfloat16
+        device, dtype_str = "cuda", "bfloat16"
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        device, dtype = "mps", torch.float16
+        device, dtype_str = "mps", "float16"
     else:
-        device, dtype = "cpu", torch.float32
+        device, dtype_str = "cpu", "float16"  # float16 on CPU to save RAM
 
-    dtype_str = {torch.float16: "float16", torch.bfloat16: "bfloat16",
-                 torch.float32: "float32"}[dtype]
+    dtype = {"float16": torch.float16, "bfloat16": torch.bfloat16, "float32": torch.float32}[dtype_str]
 
     print("=" * 60)
     print(f"FEATURE-TARGETED STEERING — {args.model} MMLU-Pro MC")
@@ -301,22 +323,30 @@ def main():
     print(f"Coefficients: {coefficients}")
     print(f"SAE: {sae_path}")
 
-    # --- Step 1: Build feature-targeted vectors using TransformerLens ---
-    print("\n" + "=" * 60)
-    print("BUILDING FEATURE-TARGETED VECTORS")
-    print("=" * 60)
+    # --- Step 1: Build or load cached feature-targeted vectors ---
+    cache_path = RESULTS_DIR / f"feature_vectors_{model_short}_L{mid_layer}_k{args.top_k}.pt"
 
-    tl_model = HookedTransformer.from_pretrained_no_processing(
-        args.model, device=device
-    )
-    sae = SAE.load_from_disk(str(sae_path), device=device)
-    print(f"  SAE loaded: d_in={sae.cfg.d_in}, d_sae={sae.cfg.d_sae}")
+    if cache_path.exists():
+        print(f"\n  Loading cached feature vectors from {cache_path}")
+        feature_vectors = torch.load(cache_path, map_location="cpu", weights_only=True)
+    else:
+        print("\n" + "=" * 60)
+        print("BUILDING FEATURE-TARGETED VECTORS")
+        print("=" * 60)
 
-    feature_vectors = build_feature_vectors(sae, tl_model, top_k=args.top_k, hook_name=hook_name)
+        from .sae_utils import load_sae
 
-    # Free TransformerLens model (we'll use HFLM for eval)
-    del tl_model, sae
-    cleanup_memory()
+        sae = load_sae(str(sae_path), device=device)
+        print(f"  SAE loaded: d_in={sae.cfg.d_in}, d_sae={sae.cfg.d_sae}")
+
+        feature_vectors = build_feature_vectors(sae, args.model, mid_layer, device, top_k=args.top_k)
+
+        del sae
+        cleanup_memory()
+
+        # Cache for next run
+        torch.save(feature_vectors, cache_path)
+        print(f"  Cached feature vectors to {cache_path}")
 
     # --- Step 2: Load contrastive vectors for comparison ---
     contrastive_path = RESULTS_DIR / contrastive_file
@@ -327,6 +357,11 @@ def main():
     print("\n" + "=" * 60)
     print("MMLU-Pro MC EVALUATION")
     print("=" * 60)
+
+    # Load model ONCE and reuse across all configs
+    print(f"\n  Loading model for evaluation ({dtype_str} on {device})...")
+    hflm = SteeredHFLM(pretrained=args.model, device=device, dtype=dtype_str, batch_size=8)
+    print(f"  Model loaded.")
 
     all_results = {}
 
@@ -339,7 +374,7 @@ def main():
 
         # Baseline
         print(f"\n  [baseline] n={args.limit}...")
-        res = run_eval(args.model, domain, None, 0, "baseline", args.limit, device, dtype_str, layer=mid_layer)
+        res = run_eval(hflm, domain, None, 0, "baseline", args.limit, layer=mid_layer)
         domain_results.append(res)
         print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
 
@@ -348,7 +383,7 @@ def main():
         for coeff in coefficients:
             label = f"contrastive_a{coeff}"
             print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(args.model, domain, contrastive_vec, coeff, label, args.limit, device, dtype_str, layer=mid_layer)
+            res = run_eval(hflm, domain, contrastive_vec, coeff, label, args.limit, layer=mid_layer)
             domain_results.append(res)
             print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
 
@@ -358,7 +393,7 @@ def main():
             vec = fv[f"weighted_k{args.top_k}"]
             label = f"feat_weighted_k{args.top_k}_a{coeff}"
             print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(args.model, domain, vec, coeff, label, args.limit, device, dtype_str, layer=mid_layer)
+            res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer)
             domain_results.append(res)
             print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
 
@@ -367,7 +402,7 @@ def main():
             vec = fv[f"uniform_k{args.top_k}"]
             label = f"feat_uniform_k{args.top_k}_a{coeff}"
             print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(args.model, domain, vec, coeff, label, args.limit, device, dtype_str, layer=mid_layer)
+            res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer)
             domain_results.append(res)
             print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
 
@@ -376,22 +411,60 @@ def main():
             vec = fv["single_best"]
             label = f"feat_single_a{coeff}"
             print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(args.model, domain, vec, coeff, label, args.limit, device, dtype_str, layer=mid_layer)
+            res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer)
             domain_results.append(res)
             print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
 
         all_results[domain] = domain_results
+
+    del hflm
+    cleanup_memory()
 
     # --- Save ---
     out_path = RESULTS_DIR / f"feature_targeted_benchmark_{model_short}_n{args.limit}.json"
     # Convert to serializable
     save_data = {}
     for domain, results in all_results.items():
+        # Strip per-sample data from main results (saved separately)
+        clean_results = [{k: v for k, v in r.items() if k != "samples"} for r in results]
         save_data[domain] = {
-            "results": results,
-            "top_features": feature_vectors[domain]["top_features"],
-            "top_diff_values": feature_vectors[domain]["top_diff_values"],
+            "results": clean_results,
+            "top_features": feature_vectors[domain].get("top_features", []),
+            "top_diff_values": feature_vectors[domain].get("top_diff_values", []),
         }
+
+    # Save per-sample data separately for the sample viewer
+    samples_data = {}
+    for domain, results in all_results.items():
+        # Get baseline samples as reference (first result)
+        baseline_samples = results[0].get("samples", [])
+        if not baseline_samples:
+            continue
+        merged = []
+        for i, bs in enumerate(baseline_samples):
+            entry = {
+                "question": bs["question"],
+                "correct": bs["correct"],
+                "correct_text": bs.get("correct_text", ""),
+                "options": bs.get("options", []),
+                "results": {},
+            }
+            for res in results:
+                if i < len(res.get("samples", [])):
+                    s = res["samples"][i]
+                    entry["results"][res["label"]] = {
+                        "answer": s["answer"],
+                        "answer_text": s.get("answer_text", ""),
+                        "correct": s["is_correct"],
+                        "options": s.get("options", []),
+                    }
+            merged.append(entry)
+        samples_data[domain] = merged
+
+    samples_path = RESULTS_DIR / f"benchmark_samples_{model_short}_n{args.limit}.json"
+    with open(samples_path, "w") as f:
+        json.dump(samples_data, f, indent=2, default=str)
+    print(f"Saved samples: {samples_path}")
     with open(out_path, "w") as f:
         json.dump(save_data, f, indent=2, default=str)
     print(f"\nSaved: {out_path}")

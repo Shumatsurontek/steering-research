@@ -479,6 +479,64 @@ L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, 
 
 ---
 
+## Phase 10 — LFM2-700M Full Pipeline ✅
+> Reproduire l'intégralité du pipeline SAE + steering sur LFM2-700M (hybrid conv+attention) pour valider la généralité cross-architecture.
+
+### 10.1 Vecteurs contrastifs LFM2-700M ✅
+- [x] `python -m src.steering.mmlu_pro_vectors --model lfm2_700m`
+- [x] 14 domaines × 16 layers × 1536d
+- [x] Fichier : `results/mmlu_pro_vectors_lfm2_700m.pt`
+
+### 10.2 SAE Training (custom HF hooks) ✅
+- [x] TransformerLens ne supporte pas LFM2 → nouveau script `train_sae_hf.py`
+- [x] Architecture-agnostique via `register_forward_hook` (bypass TransformerLens)
+- [x] Config : d_in=1536, d_sae=12288 (8×), layer 8, 5M tokens
+- [x] Final : MSE=0.062, explained variance=98.0%, alive=88%, L0=3190
+- [x] wandb : projet `sae-lfm2_700m`
+- [x] Fichier : `results/sae_lfm2_700m_L8_8x/`
+
+### 10.3 Analyse domaine SAE ✅
+- [x] `python -m src.steering.analyze_sae_features --model LiquidAI/LFM2-700M`
+
+**Comparaison 0.6B vs 4B vs LFM2-700M :**
+| Métrique | Qwen3-0.6B | Qwen3-4B | LFM2-700M |
+|----------|:----------:|:--------:|:---------:|
+| SAE features | 8,192 | 20,480 | 12,288 |
+| Diffusion math | 57% | 45% | **38%** |
+| Diffusion law | 59% | 51% | **28%** |
+| Diffusion history | 47% | 41% | **26%** |
+| Overlap math | 2/20 | 1/20 | 1/20 |
+| Overlap law | 0/20 | 5/20 | 2/20 |
+| Overlap history | 4/20 | 0/20 | 1/20 |
+
+**Résultat clé :** L'architecture hybride conv+attention produit les vecteurs contrastifs **les moins diffus** (26-38% vs 47-59% pour Qwen 0.6B). Overlap reste minime.
+
+### 10.4 Feature-targeted benchmark ✅
+- [x] `python -m src.steering.feature_targeted_steering --model LiquidAI/LFM2-700M --limit 50`
+
+| Domaine | Baseline | Contrastive best | Feature best | Delta |
+|---------|:--------:|:----------------:|:------------:|:-----:|
+| Math | **24.0%** | 8.0% (α=10) | 14.0% (α=10) | -10pp |
+| Law | 14.0% | **22.0%** (α=10) ★ | **18.0%** (α=10) ★ | +8pp / +4pp |
+| History | **22.0%** | 18.0% (α=10) | 18.0% (α=60) | -4pp |
+
+**Conclusions LFM2 :**
+- Law seul domaine positif (+8pp contrastive), même pattern que Qwen
+- Math sévèrement dégradé (-16pp contrastive)
+- Window effective plus étroite (α=60 dégrade law, contrairement à Qwen)
+- **Architecture hybride ne change pas le constat : steering ≠ knowledge injection**
+
+### 10.5 Steering Arena Web App ✅
+- [x] React + FastAPI avec SSE streaming séquentiel
+- [x] 3 modèles : Qwen3-0.6B, Qwen3-4B, LFM2-700M
+- [x] Dynamic layer slider + SAE cross-layer warning
+- [x] Vector space visualizations (PCA, cosine heatmap, norms)
+- [x] KaTeX rendering pour les outputs mathématiques
+- [x] Dockerfile multi-stage + justfile
+- [x] Developed by Arthur EDMOND
+
+---
+
 ## Stack Technique
 
 ```
@@ -494,7 +552,11 @@ Python 3.14 + venv
 ├── sae-lens             # SAE training & analysis
 ├── transformer-lens     # Hook-based model internals (SAE activation extraction)
 ├── wandb                # Training visualization
-└── streamlit            # Interactive steering demo app
+├── streamlit            # Interactive steering demo app (legacy)
+├── fastapi + uvicorn    # Steering Arena API (SSE streaming)
+├── react + vite + ts    # Steering Arena frontend (Bittensor DA)
+├── katex                # LaTeX math rendering in frontend
+└── docker               # Multi-stage containerization
 ```
 
 ## Modèles
@@ -506,6 +568,7 @@ Python 3.14 + venv
 | Qwen3-0.6B | 0.6B | Transformer (28L) | SLM instruct : GSM8K, SWE-bench, MMLU-Pro |
 | Qwen3-0.6B-Base | 0.6B | Transformer (28L) | SLM base : GSM8K steering |
 | LiquidAI/LFM2.5-1.2B-Instruct | 1.2B | Hybrid SSM+Attention (16L) | MMLU-Pro cross-architecture steering |
+| LiquidAI/LFM2-700M | 0.7B | Hybrid Conv+GQA (16L) | Full SAE pipeline + MMLU-Pro benchmark |
 | Llama-3.2-3B-Instruct | 3B | Transformer (32L) | Tokenizer + MMLU-Pro scaling test |
 | Gemma-3-1B-IT | 1B | Transformer | Comparaison tokenizer |
 | Phi-3-mini-4k-instruct | 3.8B | Transformer | Comparaison tokenizer |
