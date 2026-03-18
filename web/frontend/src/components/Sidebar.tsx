@@ -18,6 +18,8 @@ interface Props {
   onTopKChange: (k: number) => void;
   maxTokens: number;
   onMaxTokensChange: (t: number) => void;
+  steeringMode: string;
+  onSteeringModeChange: (m: string) => void;
   status: ModelStatus | null;
   loading: boolean;
 }
@@ -30,6 +32,7 @@ export default function Sidebar({
   strategy, onStrategyChange,
   topK, onTopKChange,
   maxTokens, onMaxTokensChange,
+  steeringMode, onSteeringModeChange,
   status, loading,
 }: Props) {
   const cfg = models[selectedModel];
@@ -97,6 +100,17 @@ export default function Sidebar({
           <option value="weighted">Weighted (top-k × diff)</option>
           <option value="uniform">Uniform (top-k equal)</option>
           <option value="single">Single (best feature)</option>
+          <option value="output_weighted">Output-Score Weighted</option>
+          <option value="output_uniform">Output-Score Uniform</option>
+          <option value="output_single">Output-Score Single</option>
+        </select>
+      </div>
+
+      <div className="sidebar-section">
+        <div className="sidebar-label">STEERING MODE</div>
+        <select value={steeringMode} onChange={(e) => onSteeringModeChange(e.target.value)}>
+          <option value="additive">Additive (h + αv)</option>
+          <option value="multiplicative">Multiplicative (h × (1+αv))</option>
         </select>
       </div>
 

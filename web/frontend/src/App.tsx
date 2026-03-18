@@ -21,6 +21,7 @@ export default function App() {
   const [strategy, setStrategy] = useState("weighted");
   const [topK, setTopK] = useState(20);
   const [maxTokens, setMaxTokens] = useState(128);
+  const [steeringMode, setSteeringMode] = useState("additive");
 
   // UI state
   const [tab, setTab] = useState<Tab>("arena");
@@ -93,6 +94,8 @@ export default function App() {
         onTopKChange={setTopK}
         maxTokens={maxTokens}
         onMaxTokensChange={setMaxTokens}
+        steeringMode={steeringMode}
+        onSteeringModeChange={setSteeringMode}
         status={status}
         loading={loadingModel}
       />
@@ -122,6 +125,7 @@ export default function App() {
             topK={topK}
             modelLoaded={!!status?.loaded_model}
             saeLayer={cfg?.layer ?? 14}
+            steeringMode={steeringMode}
           />
         )}
 

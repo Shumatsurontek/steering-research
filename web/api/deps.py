@@ -61,10 +61,11 @@ MODEL_CONFIGS = {
     "Qwen3-0.6B": {
         "model_id": "Qwen/Qwen3-0.6B",
         "layer": 14,
-        "sae_dir": "sae_qwen3_0.6b_L14_8x", # TODO: change to the correct SAE directory
-        "vectors": "mmlu_pro_vectors_qwen3_0.6b.pt", # TODO: change to the correct vectors file
+        "sae_dir": "sae_qwen3_0.6b_L14_8x",
+        "vectors": "mmlu_pro_vectors_qwen3_0.6b.pt",
         "params": "0.6B",
         "layers_total": 28,
+        "gen": {"temperature": 0.7, "top_p": 0.8, "top_k": 20, "do_sample": True},
     },
     "Qwen3-4B": {
         "model_id": "Qwen/Qwen3-4B",
@@ -73,6 +74,7 @@ MODEL_CONFIGS = {
         "vectors": "mmlu_pro_vectors_qwen3_4b.pt",
         "params": "4B",
         "layers_total": 36,
+        "gen": {"temperature": 0.7, "top_p": 0.8, "top_k": 20, "do_sample": True},
     },
     "LFM2-700M": {
         "model_id": "LiquidAI/LFM2-700M",
@@ -81,6 +83,7 @@ MODEL_CONFIGS = {
         "vectors": "mmlu_pro_vectors_lfm2_700m.pt",
         "params": "0.7B",
         "layers_total": 16,
+        "gen": {"temperature": 0.3, "min_p": 0.15, "repetition_penalty": 1.05, "do_sample": True},
     },
 }
 
@@ -139,6 +142,25 @@ class ModelManager:
                     None, self._build_feature_vectors, cfg["model_id"], str(sae_path), cfg["layer"], 20
                 )
                 logger.info("SAE feature vectors built")
+
+            # Load output-score vectors (if available)
+            model_short = cfg["model_id"].split("/")[-1].lower().replace("-", "_")
+            osv_path = RESULTS_DIR / f"output_score_vectors_{model_short}.pt"
+            if osv_path.exists():
+                osv = await loop.run_in_executor(
+                    None, lambda: torch.load(osv_path, map_location="cpu", weights_only=True)
+                )
+                # Merge output-score strategies into feature_vectors
+                if self.feature_vectors is None:
+                    self.feature_vectors = {}
+                for domain in TARGET_DOMAINS:
+                    if domain in osv:
+                        if domain not in self.feature_vectors:
+                            self.feature_vectors[domain] = {}
+                        for key in ("output_weighted", "output_uniform", "output_single"):
+                            if key in osv[domain]:
+                                self.feature_vectors[domain][key] = osv[domain][key]
+                logger.info("Output-score vectors loaded from %s", osv_path)
 
     def _load_hf_model(self, model_id: str):
         t0 = time.time()

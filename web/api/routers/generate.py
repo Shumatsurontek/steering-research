@@ -25,7 +25,7 @@ def _run_generation_to_queue(
     loop: asyncio.AbstractEventLoop,
     event_name: str,
     model, tokenizer, prompt, max_tokens, layer,
-    vector=None, coeff=0.0,
+    vector=None, coeff=0.0, gen_params=None, steering_mode="additive",
 ):
     """Run a single generation stream in a thread, pushing SSE events to the queue."""
     start = time.time()
@@ -33,7 +33,7 @@ def _run_generation_to_queue(
     try:
         for partial_text in generate_stream(
             model, tokenizer, prompt, max_tokens, layer,
-            vector=vector, coeff=coeff,
+            vector=vector, coeff=coeff, gen_params=gen_params, steering_mode=steering_mode,
         ):
             token_count += 1
             asyncio.run_coroutine_threadsafe(
@@ -89,11 +89,14 @@ async def generate_sse(body: GenerateRequest, request: Request):
     methods = ["baseline"]
     threads = []
 
+    gen_params = cfg.get("gen", {})
+
     # Baseline thread
     t = Thread(
         target=_run_generation_to_queue,
         args=(queue, loop, "baseline", manager.model, manager.tokenizer,
               body.prompt, body.max_tokens, body.layer),
+        kwargs={"gen_params": gen_params},
     )
     threads.append(t)
 
@@ -104,7 +107,7 @@ async def generate_sse(body: GenerateRequest, request: Request):
             target=_run_generation_to_queue,
             args=(queue, loop, "contrastive", manager.model, manager.tokenizer,
                   body.prompt, body.max_tokens, body.layer),
-            kwargs={"vector": contrastive_vec, "coeff": body.alpha},
+            kwargs={"vector": contrastive_vec, "coeff": body.alpha, "gen_params": gen_params, "steering_mode": body.steering_mode},
         )
         threads.append(t)
 
@@ -115,7 +118,7 @@ async def generate_sse(body: GenerateRequest, request: Request):
             target=_run_generation_to_queue,
             args=(queue, loop, "feature", manager.model, manager.tokenizer,
                   body.prompt, body.max_tokens, body.layer),
-            kwargs={"vector": feature_vec, "coeff": body.alpha},
+            kwargs={"vector": feature_vec, "coeff": body.alpha, "gen_params": gen_params, "steering_mode": body.steering_mode},
         )
         threads.append(t)
 

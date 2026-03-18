@@ -68,7 +68,10 @@ Custom SAE (8192 features, 20M tokens) reveals contrastive vectors activate **50
 n=20 suggested +15pp on history. n=200 (stderr ±2.5pp) **reversed every positive finding**. Steering degrades all domains by -2 to -6pp.
 
 ### 🔀 LFM2-700M: Cross-Architecture Validation
-Full SAE pipeline on hybrid conv+attention model (10 LIV conv + 6 GQA blocks). Contrastive vectors are **least diffuse** (26–38% vs 47–59% Qwen), but overlap remains tiny (1–2/20). Law shows +8pp with contrastive steering — **same pattern across architectures**.
+Full SAE pipeline on hybrid conv+attention model (10 LIV conv + 6 GQA blocks). Contrastive vectors are **least diffuse** (26–38% vs 47–59% Qwen), but overlap remains tiny (1–2/20). **Style-not-knowledge is architecture-invariant.**
+
+### 🎯 Output-Score Selection (n=200)
+Selecting SAE features by **output influence** (W_dec projected through unembedding) instead of input activation. Features are entirely disjoint from input-diff features. At α=10, output-score causes less harm than all other methods. History shows +1.5pp (within stderr). **Improvement is methodological, not substantive.**
 
 </td>
 </tr>

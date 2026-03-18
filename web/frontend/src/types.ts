@@ -21,6 +21,7 @@ export interface GenerateRequest {
   feature_strategy: string;
   max_tokens: number;
   top_k: number;
+  steering_mode: string;
 }
 
 export interface SSEConfig {

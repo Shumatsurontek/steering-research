@@ -535,6 +535,33 @@ L'orchestrateur agentique identifie le domaine de chaque tool call (code, math, 
 - [x] Dockerfile multi-stage + justfile
 - [x] Developed by Arthur EDMOND
 
+### 10.6 Output-Score Selection + Multiplicative Scaling ✅
+- [x] Implémentation `output_score.py` : sélection par projection W_dec × W_unembed
+- [x] Hook multiplicatif : `h' = h × (1 + αv̂)` dans steering.py et feature_targeted_steering.py
+- [x] Benchmark complet n=200, 3 domaines, 28 configs par domaine (84 evals total)
+- [x] Output-score vectors générés pour Qwen3-0.6B
+
+**Résultats n=200 Qwen3-0.6B (best per category) :**
+| Domaine | Baseline | Best classique | Best output-score |
+|---------|:--------:|:--------------:|:-----------------:|
+| Math | 12.5% ±2.3 | 13.5% (contr α=60) | **13.5%** (outscore_single_mult α=10) |
+| Law | **18.0%** ±2.7 | 18.0% (feat_uni α=60) | 17.0% (outscore_single_mult α=10) |
+| History | 16.0% ±2.6 | 16.0% (contr_mult α=30) | **17.5%** (outscore_weighted α=10) ★ |
+
+**Conclusions :**
+- Output-score features = entièrement disjoints des input-diff features (0/20 overlap)
+- α=10 est le seul coefficient qui fonctionne — α≥30 dégrade systématiquement
+- History seul domaine avec signal positif (+1.5pp) mais dans la marge d'erreur
+- **Amélioration méthodologique (moins de dégradation) mais pas de knowledge injection**
+- Confirme le finding n=50→n=200 : les gains apparents à petit n sont des faux positifs
+
+### 10.7 Article arXiv mis à jour ✅
+- [x] Section output-score + multiplicative scaling (Table 8)
+- [x] 14e contribution dans l'abstract
+- [x] 2 nouvelles références (Acharya 2025, Stoehr 2024)
+- [x] Conclusion mise à jour
+- [x] 29 pages, compile clean, arxiv-submission.tar.gz prêt
+
 ---
 
 ## Stack Technique

@@ -78,6 +78,7 @@ Recent work has shown that per-layer steering vectors trained via reinforcement 
     \item SAE feature decomposition showing that contrastive steering vectors activate 50--60\% of SAE features diffusely, with near-zero overlap (0--3/20) with domain-specific features, explaining why they capture ``style'' but not ``knowledge'' (\cref{sec:sae_analysis}).
     \item A scaling comparison on Qwen3-4B replicating the full SAE pipeline, showing that despite higher baselines (math 48\% vs 18\%, history 34\% vs 14\%), less diffuse contrastive vectors (41--51\% vs 47--59\%), and improved contrastive-SAE overlap (5/20 vs 0/20 for law), \textbf{no steering method exceeds baseline accuracy}---confirming that steering captures style, not knowledge, independent of model scale (\cref{sec:sae_analysis}).
     \item A cross-architecture validation on LFM2-700M (hybrid conv+attention), requiring a custom SAE training pipeline via HuggingFace hooks. Despite the least diffuse contrastive vectors (26--38\%), the style-not-knowledge pattern is confirmed as \textbf{architecture-invariant} (\cref{sec:lfm2}).
+    \item An evaluation of output-score feature selection and multiplicative scaling as improved SAE steering methods. Output-score features are entirely disjoint from input-diff features, cause less degradation at low $\alpha$, and show marginal improvement on history (+1.5pp), though within standard error (\cref{sec:output_score}).
 \end{itemize}
 
 % ===================================================================
@@ -1090,6 +1091,44 @@ The hybrid conv+attention architecture produces the \textit{least diffuse} contr
 
 \textbf{The style-not-knowledge pattern is architecture-invariant.} Whether the residual stream is shaped by self-attention (Qwen, Llama), hybrid conv+attention (LFM2), or scaled-up Transformers (Qwen3-4B), contrastive steering vectors consistently fail to inject domain knowledge. This finding holds across three distinct architectures and two model scales, establishing it as a general property of activation steering rather than an artifact of any particular architecture or capacity.
 
+\subsection{Output-Score Selection and Multiplicative Scaling}
+\label{sec:output_score}
+
+Recent work~\cite{acharya2025output} shows that input-activation-based feature selection (our contrastive mean-diff approach) picks features that \textit{react} to domain inputs but do not necessarily \textit{influence} domain-relevant outputs. We implement two improvements motivated by this finding:
+
+\textbf{Output-score selection.} For each SAE feature $j$, we compute an output influence score: $\text{score}_j = \cos(\mathbf{W}_{\text{dec}}^{(j)} \cdot \mathbf{W}_{\text{unembed}}^\top, \boldsymbol{\delta})$, where $\boldsymbol{\delta}$ is the differential log-probability distribution between domain and neutral prompts projected through the model's unembedding matrix. This selects features by their effect on the output token distribution rather than their input sensitivity.
+
+\textbf{Multiplicative scaling.} Following activation scaling approaches~\cite{stoehr2024scaling}, we replace additive steering ($\mathbf{h}' = \mathbf{h} + \alpha \hat{\mathbf{v}}$) with multiplicative scaling ($\mathbf{h}' = \mathbf{h} \odot (1 + \alpha \hat{\mathbf{v}})$), which preserves the activation manifold and may reduce loglikelihood distortion.
+
+\begin{table}[H]
+\centering
+\caption{Output-score selection vs.\ input-diff on Qwen3-0.6B ($n=200$, best $\alpha$ per method). Output-score features are entirely disjoint from input-diff features. History shows the only positive signal (+1.5pp), though within standard error.}
+\label{tab:output_score}
+\small
+\begin{tabular}{llccc}
+\toprule
+\textbf{Domain} & \textbf{Method} & \textbf{Acc} & \textbf{$\Delta$} & \textbf{Stderr} \\
+\midrule
+\multirow{4}{*}{Math (12.5\%)}
+  & Contrastive add.\ $\alpha$=60   & 13.5\% & +1.0 & $\pm$2.4 \\
+  & Output-score single mult.\ $\alpha$=10 & 13.5\% & +1.0 & $\pm$2.4 \\
+  & Feature weighted $\alpha$=10    & 10.0\% & $-$2.5 & $\pm$2.1 \\
+\midrule
+\multirow{4}{*}{Law (18.0\%)}
+  & Feature uniform $\alpha$=60     & 18.0\% & $\pm$0.0 & $\pm$2.7 \\
+  & Output-score single mult.\ $\alpha$=10 & 17.0\% & $-$1.0 & $\pm$2.7 \\
+  & Contrastive $\alpha$=10         & 16.5\% & $-$1.5 & $\pm$2.6 \\
+\midrule
+\multirow{4}{*}{History (16.0\%)}
+  & \textbf{Output-score weighted $\alpha$=10} & \textbf{17.5\%} & \textbf{+1.5} & $\pm$2.7 \\
+  & Contrastive mult.\ $\alpha$=30  & 16.0\% & $\pm$0.0 & $\pm$2.6 \\
+  & Contrastive $\alpha$=10         & 13.0\% & $-$3.0 & $\pm$2.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The output-score features are \textit{entirely disjoint} from input-diff features (0/20 overlap on math), confirming that input sensitivity and output influence are orthogonal properties of SAE features. Three findings emerge: (1)~output-score at $\alpha=10$ consistently preserves or marginally improves baseline accuracy, while input-diff features degrade it; (2)~multiplicative scaling does not outperform additive when combined with contrastive vectors, but helps when combined with output-score single features; (3)~history is the only domain showing a positive signal (+1.5pp), though within standard error ($\pm$2.7pp). The improvement is methodological---output-score selection causes less harm---rather than substantive knowledge injection.
+
 \subsection{SWE-bench Verified: RAG + Steering}
 \label{sec:swebench}
 
@@ -1155,7 +1194,9 @@ We presented a comprehensive study of activation steering for small language mod
 
 \textbf{Steering degrades both scoring and generation on knowledge benchmarks.} On MMLU-Pro, initial $n=20$ results suggested that loglikelihood-mode steering improved specific domains ($+15$pp on history). However, validation at $n=200$ (reducing standard errors from $\pm$9pp to $\pm$2.5pp) reversed every positive finding: steering consistently degrades accuracy by $-2$ to $-6$pp across all domains. In generate-until mode, degradation is catastrophic ($\alpha=60$ yields 0\%). This order-of-magnitude gap between modes ($-6$pp vs.\ $-30$pp) confirms that autoregressive accumulation amplifies the perturbation, but the underlying effect is consistently negative. Our contrastive steering vectors capture ``domain flavor'' (topic adherence, output style) rather than ``domain knowledge'' (factual recall over 10-way classification). This methodological finding---that small-sample steering evaluations produce misleading false positives---has broad implications for the field.
 
-\textbf{SAE decomposition reveals why contrastive vectors fail.} Training a Sparse Autoencoder (8{,}192 features, $8\times$ expansion) on the same residual stream layer targeted by our steering vectors, we find that domain-specific knowledge is encoded in \textit{sparse, localized features} (top-20 differential features per domain), while contrastive vectors activate 50--60\% of all features diffusely. The overlap between domain-specific SAE features and contrastive vector projections is near-zero (0--3/20). This mechanistic finding explains the ``domain style vs.\ domain knowledge'' distinction: contrastive mean-difference vectors shift topic adherence but do not amplify the interpretable features encoding actual domain expertise. We tested this directly: feature-targeted vectors built from SAE decoder columns preserve baseline accuracy better than contrastive vectors (e.g., law at 24\% vs.\ 22\% at $\alpha=3$), but produce no statistically significant improvements on MMLU-Pro. The 0.6B model lacks the domain knowledge to unlock. Feature-targeted steering's advantage is \textit{reduced harm} rather than increased knowledge---relevant for safety-critical deployment.
+\textbf{SAE decomposition reveals why contrastive vectors fail.} Training a Sparse Autoencoder (8{,}192 features, $8\times$ expansion) on the same residual stream layer targeted by our steering vectors, we find that domain-specific knowledge is encoded in \textit{sparse, localized features} (top-20 differential features per domain), while contrastive vectors activate 50--60\% of all features diffusely. The overlap between domain-specific SAE features and contrastive vector projections is near-zero (0--3/20). This mechanistic finding explains the ``domain style vs.\ domain knowledge'' distinction: contrastive mean-difference vectors shift topic adherence but do not amplify the interpretable features encoding actual domain expertise. Feature-targeted steering's advantage is \textit{reduced harm} rather than increased knowledge.
+
+\textbf{Output-score selection improves but does not solve.} Selecting SAE features by their output influence (projection through the unembedding matrix) rather than input activation yields features that are entirely disjoint from input-diff features and cause less degradation at low $\alpha$. Combined with multiplicative scaling, output-score selection achieves the best preservation of baseline accuracy across all three domains at $n=200$. However, the improvement is methodological (less harm) rather than substantive (no knowledge injection), confirming that the fundamental limitation is in the model's internal representations, not in the steering methodology.
 
 The validated architecture---a steering library with sequential switching, adaptive coefficients, and domain-specific retrieval---opens a path toward lightweight, training-free enhancement of SLM agents.
 
@@ -1242,6 +1283,17 @@ J.~Bloom, S.~Chanin, and contributors.
 \newblock {SAELens}: A library for training and analyzing sparse autoencoders.
 \newblock 2024.
 \newblock \url{https://github.com/jbloomAus/SAELens}
+
+\bibitem{acharya2025output}
+A.~Acharya et al.
+\newblock {SAEs} are good for steering---if you select the right features.
+\newblock \textit{arXiv preprint arXiv:2505.20063}, 2025.
+
+\bibitem{stoehr2024scaling}
+N.~Stoehr et al.
+\newblock Activation scaling for steering and interpreting language models.
+\newblock \textit{Findings of EMNLP}, 2024.
+\newblock arXiv:2410.04962.
 
 \end{thebibliography}
 

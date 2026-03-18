@@ -24,6 +24,7 @@ class GenerateRequest(BaseModel):
     feature_strategy: str = "weighted"
     max_tokens: int = 128
     top_k: int = 20
+    steering_mode: str = "additive"  # "additive" or "multiplicative"
 
 
 # ── Response models ─────────────────────────────────────────────────────────

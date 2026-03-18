@@ -154,10 +154,14 @@ def build_feature_vectors(sae, model_id, layer, device, top_k=20):
 # ---------------------------------------------------------------------------
 # Steering hook (same as mmlu_pro_benchmark_mc.py)
 # ---------------------------------------------------------------------------
-def _steering_hook(module, input, output, *, vector, coeff):
+def _steering_hook(module, input, output, *, vector, coeff, mode="additive"):
     hidden = output[0] if isinstance(output, tuple) else output
-    vec_normed = vector / (vector.norm() + 1e-8)
-    steered = hidden + coeff * vec_normed.to(hidden.device, dtype=hidden.dtype)
+    v = vector.to(hidden.device, dtype=hidden.dtype)
+    vec_normed = v / (v.norm() + 1e-8)
+    if mode == "multiplicative":
+        steered = hidden * (1.0 + coeff * vec_normed)
+    else:
+        steered = hidden + coeff * vec_normed
     if isinstance(output, tuple):
         return (steered,) + output[1:]
     return steered
@@ -170,10 +174,10 @@ def get_layers(model):
 
 
 @contextmanager
-def apply_steering(model, layer, vector, coeff):
+def apply_steering(model, layer, vector, coeff, mode="additive"):
     layers = get_layers(model)
     handle = layers[layer].register_forward_hook(
-        functools.partial(_steering_hook, vector=vector, coeff=coeff)
+        functools.partial(_steering_hook, vector=vector, coeff=coeff, mode=mode)
     )
     try:
         yield
@@ -189,12 +193,13 @@ class SteeredHFLM(HFLM):
         self._steering_vector = None
         self._steering_layer = 14
         self._steering_coeff = 0.0
+        self._steering_mode = "additive"
 
     def _model_call(self, *args, **kwargs):
         if self._steering_vector is not None and self._steering_coeff > 0:
             with apply_steering(
                 self.model, self._steering_layer,
-                self._steering_vector, self._steering_coeff
+                self._steering_vector, self._steering_coeff, self._steering_mode
             ):
                 return super()._model_call(*args, **kwargs)
         return super()._model_call(*args, **kwargs)
@@ -203,7 +208,7 @@ class SteeredHFLM(HFLM):
         if self._steering_vector is not None and self._steering_coeff > 0:
             with apply_steering(
                 self.model, self._steering_layer,
-                self._steering_vector, self._steering_coeff
+                self._steering_vector, self._steering_coeff, self._steering_mode
             ):
                 return super()._model_generate(*args, **kwargs)
         return super()._model_generate(*args, **kwargs)
@@ -220,7 +225,7 @@ def cleanup_memory():
 # ---------------------------------------------------------------------------
 # Benchmark
 # ---------------------------------------------------------------------------
-def run_eval(hflm, domain, vector, coeff, label, limit, layer=14):
+def run_eval(hflm, domain, vector, coeff, label, limit, layer=14, mode="additive"):
     """Run a single MMLU-Pro MC evaluation, reusing a pre-loaded HFLM."""
     task = f"mmlu_pro_mc_{domain}"
 
@@ -228,6 +233,7 @@ def run_eval(hflm, domain, vector, coeff, label, limit, layer=14):
     hflm._steering_vector = vector
     hflm._steering_layer = layer
     hflm._steering_coeff = float(coeff) if vector is not None else 0.0
+    hflm._steering_mode = mode
 
     eval_out = lm_eval.simple_evaluate(
         model=hflm, tasks=[task], batch_size=8, limit=limit,
@@ -351,10 +357,17 @@ def main():
         torch.save(feature_vectors, cache_path)
         print(f"  Cached feature vectors to {cache_path}")
 
-    # --- Step 2: Load contrastive vectors for comparison ---
+    # --- Step 2: Load contrastive vectors + output-score vectors ---
     contrastive_path = RESULTS_DIR / contrastive_file
     contrastive_vectors = torch.load(contrastive_path, map_location="cpu", weights_only=True)
     print(f"\n  Contrastive vectors loaded from {contrastive_path}")
+
+    # Output-score vectors (optional)
+    osv_path = RESULTS_DIR / f"output_score_vectors_{model_short}.pt"
+    output_score_vectors = None
+    if osv_path.exists():
+        output_score_vectors = torch.load(osv_path, map_location="cpu", weights_only=True)
+        print(f"  Output-score vectors loaded from {osv_path}")
 
     # --- Step 3: Benchmark ---
     print("\n" + "=" * 60)
@@ -366,6 +379,12 @@ def main():
     hflm = SteeredHFLM(pretrained=args.model, device=device, dtype=dtype_str, batch_size=8)
     print(f"  Model loaded.")
 
+    def _eval(vec, coeff, label, mode="additive"):
+        print(f"\n  [{label}] n={args.limit}...")
+        res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer, mode=mode)
+        print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
+        return res
+
     all_results = {}
 
     for domain in domains:
@@ -376,57 +395,62 @@ def main():
         domain_results = []
 
         # Baseline
-        print(f"\n  [baseline] n={args.limit}...")
-        res = run_eval(hflm, domain, None, 0, "baseline", args.limit, layer=mid_layer)
-        domain_results.append(res)
-        print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
+        domain_results.append(_eval(None, 0, "baseline"))
 
-        # Contrastive steering (original approach)
+        # Contrastive steering — additive
         contrastive_vec = contrastive_vectors[domain][mid_layer]
         for coeff in coefficients:
-            label = f"contrastive_a{coeff}"
-            print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(hflm, domain, contrastive_vec, coeff, label, args.limit, layer=mid_layer)
-            domain_results.append(res)
-            print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
+            domain_results.append(_eval(contrastive_vec, coeff, f"contrastive_a{coeff}"))
 
-        # Feature-targeted: weighted
+        # Contrastive — multiplicative
+        for coeff in coefficients:
+            domain_results.append(_eval(contrastive_vec, coeff, f"contrastive_mult_a{coeff}", mode="multiplicative"))
+
+        # Feature-targeted: weighted (additive)
         fv = feature_vectors[domain]
         for coeff in coefficients:
             vec = fv[f"weighted_k{args.top_k}"]
-            label = f"feat_weighted_k{args.top_k}_a{coeff}"
-            print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer)
-            domain_results.append(res)
-            print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
+            domain_results.append(_eval(vec, coeff, f"feat_weighted_k{args.top_k}_a{coeff}"))
 
-        # Feature-targeted: uniform
+        # Feature-targeted: uniform (additive)
         for coeff in coefficients:
             vec = fv[f"uniform_k{args.top_k}"]
-            label = f"feat_uniform_k{args.top_k}_a{coeff}"
-            print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer)
-            domain_results.append(res)
-            print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
+            domain_results.append(_eval(vec, coeff, f"feat_uniform_k{args.top_k}_a{coeff}"))
 
-        # Feature-targeted: single best
+        # Feature-targeted: single best (additive)
         for coeff in coefficients:
             vec = fv["single_best"]
-            label = f"feat_single_a{coeff}"
-            print(f"\n  [{label}] n={args.limit}...")
-            res = run_eval(hflm, domain, vec, coeff, label, args.limit, layer=mid_layer)
-            domain_results.append(res)
-            print(f"    acc={res['acc']:.3f} ± {res['stderr']:.3f}" if res['acc'] is not None else "    ERROR")
+            domain_results.append(_eval(vec, coeff, f"feat_single_a{coeff}"))
+
+        # Output-score vectors (if available)
+        if output_score_vectors and domain in output_score_vectors:
+            osv = output_score_vectors[domain]
+            for key, label_prefix in [
+                ("output_weighted", "outscore_weighted"),
+                ("output_single", "outscore_single"),
+            ]:
+                if key in osv:
+                    for coeff in coefficients:
+                        domain_results.append(_eval(osv[key], coeff, f"{label_prefix}_a{coeff}"))
+                    # Also test multiplicative
+                    for coeff in coefficients:
+                        domain_results.append(_eval(osv[key], coeff, f"{label_prefix}_mult_a{coeff}", mode="multiplicative"))
 
         all_results[domain] = domain_results
 
     del hflm
     cleanup_memory()
 
-    # --- Save ---
+    # --- Save (merge with existing domains) ---
     out_path = RESULTS_DIR / f"feature_targeted_benchmark_{model_short}_n{args.limit}.json"
-    # Convert to serializable
+
+    # Load existing data to merge
     save_data = {}
+    if out_path.exists():
+        with open(out_path) as f:
+            save_data = json.load(f)
+        print(f"  Merging with existing domains: {list(save_data.keys())}")
+
     for domain, results in all_results.items():
         # Strip per-sample data from main results (saved separately)
         clean_results = [{k: v for k, v in r.items() if k != "samples"} for r in results]
@@ -465,8 +489,14 @@ def main():
         samples_data[domain] = merged
 
     samples_path = RESULTS_DIR / f"benchmark_samples_{model_short}_n{args.limit}.json"
+    # Merge samples too
+    existing_samples = {}
+    if samples_path.exists():
+        with open(samples_path) as f:
+            existing_samples = json.load(f)
+    existing_samples.update(samples_data)
     with open(samples_path, "w") as f:
-        json.dump(samples_data, f, indent=2, default=str)
+        json.dump(existing_samples, f, indent=2, default=str)
     print(f"Saved samples: {samples_path}")
     with open(out_path, "w") as f:
         json.dump(save_data, f, indent=2, default=str)

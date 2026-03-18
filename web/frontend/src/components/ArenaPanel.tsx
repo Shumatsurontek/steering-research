@@ -59,9 +59,10 @@ interface Props {
   topK: number;
   modelLoaded: boolean;
   saeLayer: number;
+  steeringMode: string;
 }
 
-export default function ArenaPanel({ domain, layer, alpha, strategy, maxTokens, topK, modelLoaded, saeLayer }: Props) {
+export default function ArenaPanel({ domain, layer, alpha, strategy, maxTokens, topK, modelLoaded, saeLayer, steeringMode }: Props) {
   const [prompt, setPrompt] = useState(() => randomPrompt(domain));
   const [streaming, setStreaming] = useState(false);
   const [texts, setTexts] = useState<StreamState>({ baseline: "", contrastive: "", feature: "" });
@@ -92,6 +93,7 @@ export default function ArenaPanel({ domain, layer, alpha, strategy, maxTokens, 
       feature_strategy: strategy,
       max_tokens: maxTokens,
       top_k: topK,
+      steering_mode: steeringMode,
     };
 
     abortRef.current = streamGenerate(
@@ -119,7 +121,7 @@ export default function ArenaPanel({ domain, layer, alpha, strategy, maxTokens, 
         setStreaming(false);
       },
     );
-  }, [prompt, domain, layer, alpha, strategy, maxTokens, topK, modelLoaded]);
+  }, [prompt, domain, layer, alpha, strategy, maxTokens, topK, modelLoaded, steeringMode]);
 
   const methods = config?.methods ?? ["baseline", "contrastive", "feature"];
   const showFeature = methods.includes("feature");
